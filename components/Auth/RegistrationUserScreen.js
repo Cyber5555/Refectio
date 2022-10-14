@@ -1,0 +1,617 @@
+import React, { Component } from "react";
+import { SafeAreaView, View, Image, Text, TouchableOpacity, TextInput, ScrollView, StyleSheet } from "react-native";
+
+import ArrowGrayComponent from "../../assets/image/ArrowGray";
+import Svg, { Path, Rect } from "react-native-svg";
+import BlueButton from "../Component/Buttons/BlueButton";
+import MaskInput from 'react-native-mask-input';
+import * as ImagePicker from 'expo-image-picker';
+
+
+
+
+export default class RegistrationUserScreenComponent extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      valid: false,
+
+      imgFirst: '',
+      imgSecond: '',
+
+      name: '',
+      name_error: false,
+
+
+      surname: '',
+      surname_error: false,
+
+      phone: '',
+      phone_error: false,
+
+
+      password: '',
+      password_error: false,
+
+      password_confirmation: '',
+      password_confirmation_error: false,
+
+      diplom_photo: null,
+      selfi_photo: null,
+
+      i_agree: false,
+      i_agree_error: false,
+      role_id: 2,
+
+      accessToken: null,
+
+    }
+  }
+  handleForm = (key, value) => {
+    this.setState((currentForm) => ({
+      ...currentForm,
+      [key]: value,
+    }));
+  };
+
+  form_data = new FormData();
+
+
+
+
+  pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      this.setState({ diplom_photo: result.uri });
+    }
+    let res = result.uri.split('.')
+    let type = res[res.length - 1]
+
+    this.form_data.append("diplom_photo", {
+      uri: result.uri,
+      type: 'image/jpg',
+      name: 'photo.jpg',
+    });
+  };
+
+  pickImage2 = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    console.log(result, 'img');
+    if (!result.cancelled) {
+      this.setState({ selfi_photo: result.uri });
+    }
+    let res = result.uri.split('.')
+    let type = res[res.length - 1]
+
+    this.form_data.append("selfi_photo", {
+      uri: result.uri,
+      type: 'image/jpg',
+      name: 'photo.jpg',
+    });
+  };
+
+  DizainerRegisterApi = async (request, response, promptAsync) => {
+    const {
+
+      name,
+      surname,
+      phone,
+      password,
+      password_confirmation,
+      diplom_photo,
+      selfi_photo,
+      i_agree,
+      role_id,
+    } = this.state
+
+
+    this.form_data.append('name', this.state.name);
+    this.form_data.append('surname', surname);
+    this.form_data.append('phone', phone);
+    this.form_data.append('password', password);
+    this.form_data.append('password_confirmation', password_confirmation);
+    this.form_data.append('i_agree', i_agree);
+    this.form_data.append('role_id', role_id);
+
+    var requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'multipart/form-data' },
+      body: this.form_data,
+      redirect: 'follow'
+    };
+
+    await fetch('http://80.78.246.59/Refectio/public/api/DizainerRegister', requestOptions,)
+      .then(response => response.json())
+      .then(res => {
+        if (res.success === false && res.message == 'Validation errors') {
+          if (res.data.hasOwnProperty('name')) {
+            this.setState({
+              name_error: true
+            })
+          } else {
+            this.setState({
+              name_error: false
+            })
+          }
+
+          if (res.data.hasOwnProperty('surname')) {
+            this.setState({
+              surname_error: true
+            })
+          } else {
+            this.setState({
+              surname_error: false
+            })
+          }
+
+          if (res.data.hasOwnProperty('phone')) {
+            this.setState({
+              phone_error: true
+            })
+          } else {
+            this.setState({
+              phone_error: false
+            })
+          }
+
+          if (res.data.hasOwnProperty('password')) {
+            this.setState({
+              password_error: true
+            })
+          } else {
+            this.setState({
+              password_error: false
+            })
+          }
+
+          if (res.data.hasOwnProperty('password_confirmation')) {
+            this.setState({
+              password_confirmation_error: true
+            })
+          } else {
+            this.setState({
+              password_confirmation_error: false
+            })
+          }
+
+          // if (res.data.hasOwnProperty('i_agree')) {
+          //   this.setState({
+          //     i_agree_error: true
+          //   })
+          // } else {
+          //   this.setState({
+          //     i_agree_error: false
+          //   })
+          // }
+
+          return false;
+
+        } else {
+              
+
+          this.props.navigation.navigate('ConfirmTelScreen', {
+            params: res.data.token
+          })
+          // console.log(this.state.accessToken,'this.state.accessToken');
+          // redirect kodi ej
+
+        }
+        console.log(res, 'res');
+        // console.log(this.form_data);
+      })
+  }
+
+  goToRegistredScreen = () => {
+    this.props.navigation.navigate('RegisteredScreen')
+  }
+
+
+
+
+  render() {
+    return (
+      <SafeAreaView
+        style={{
+          backgroundColor: 'white',
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+        }}
+      >
+        <View style={{ width: '100%', }}>
+          <Image
+            source={require('../../assets/image/RefectioWallpaper.png')}
+            style={{
+              width: '95%',
+              height: 125,
+              resizeMode: 'contain',
+              marginTop: 20,
+              alignSelf: 'flex-end',
+            }}
+          />
+          <View
+            style={{
+              width: '100%',
+              height: 152,
+              resizeMode: 'contain',
+              position: 'absolute',
+            }}>
+            <TouchableOpacity
+              style={{
+                position: 'absolute',
+                left: 10,
+                top: 20,
+                zIndex: 100,
+              }}
+              onPress={() => this.goToRegistredScreen()}>
+              <ArrowGrayComponent />
+            </TouchableOpacity>
+            <Text
+              style={{
+                position: 'absolute',
+                color: '#2D9EFB',
+                fontSize: 36,
+                lineHeight: 54,
+                left: 19,
+                top: 58,
+                fontFamily: 'Poppins_500Medium',
+              }}
+            >
+              Регистрация
+            </Text>
+          </View>
+        </View>
+        <ScrollView style={{
+          width: "100%",
+          marginHorizontal: 20,
+        }} >
+          <View>
+            <View>
+              <Text
+                style={[{
+                  fontFamily: 'Poppins_500Medium',
+                  lineHeight: 23,
+                  fontSize: 15,
+                  marginLeft: 25,
+                  marginTop: 27,
+                  marginBottom: 5
+                }, this.state.name_error ? { color: 'red' } : { color: '#5B5B5B' }]}
+              >
+                Имя
+              </Text>
+              <TextInput
+                underlineColorAndroid="transparent"
+                style={[{
+                  borderWidth: 1,
+                  padding: 10,
+                  width: '85%',
+                  borderRadius: 5,
+                  marginLeft: 25
+                }, this.state.name_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+                value={this.state.name}
+                onChangeText={(value) => { this.setState({ name: value }) }}
+              />
+            </View>
+            <View>
+              <Text
+                style={[{
+                  fontFamily: 'Poppins_500Medium',
+                  lineHeight: 23,
+                  fontSize: 15,
+                  marginLeft: 25,
+                  marginTop: 27,
+                  marginBottom: 5
+                },
+                this.state.surname_error ? { color: 'red' } : { color: '#5B5B5B' }
+                ]}
+              >
+                Фамилия
+              </Text>
+              <TextInput
+                underlineColorAndroid="transparent"
+                style={[{
+                  borderWidth: 1,
+                  padding: 10,
+                  width: '85%',
+                  borderRadius: 5,
+                  marginLeft: 25
+                },
+                this.state.surname_error ? { borderColor: 'red', } : { borderColor: '#F5F5F5', }
+                ]}
+                value={this.state.surname}
+                onChangeText={(value) => { this.setState({ surname: value }) }}
+              />
+            </View>
+            <View>
+              <Text
+                style={[{
+                  fontFamily: 'Poppins_500Medium',
+                  lineHeight: 23,
+                  fontSize: 15,
+                  marginLeft: 25,
+                  marginTop: 27,
+                  marginBottom: 5
+                },
+                this.state.phone_error ? { color: 'red' } : { color: '#5B5B5B' }
+                ]}
+              >
+                Номер телефона
+              </Text>
+
+              <MaskInput
+                underlineColorAndroid="transparent"
+                keyboardType="phone-pad"
+                placeholder="+7 (975) 991-99-99"
+                style={[{ borderWidth: 1, padding: 10, width: '85%', borderRadius: 5, marginLeft: 25 },
+                this.state.phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+                value={this.state.phone}
+                onChangeText={(masked, unmasked, obfuscated) => {
+                  this.setState({ phone: masked }); // you can use the unmasked value as well
+                  // console.log(masked); // (99) 99999-9999
+                  // console.log(unmasked); // 99999999999
+                  // console.log(obfuscated); // (99) 99999-9999 (there's no obfuscation on this mask example)
+                }}
+                // mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
+              />
+            </View>
+
+            <View>
+              <Text
+                style={[{
+                  fontFamily: 'Poppins_500Medium',
+                  lineHeight: 23,
+                  fontSize: 15,
+                  color: '#5B5B5B',
+                  marginLeft: 25,
+                  marginTop: 27,
+                  marginBottom: 5
+                },
+                this.state.password_error ? { color: 'red', } : { color: '#5B5B5B', }
+                ]}
+              >
+                Пароль
+              </Text>
+              <TextInput
+                underlineColorAndroid="transparent"
+                secureTextEntry={true}
+                password={true}
+                autoCorrect={false}
+                style={[{
+                  borderWidth: 1,
+                  padding: 10,
+                  width: '85%',
+                  borderRadius: 5,
+                  marginLeft: 25
+                },
+                this.state.password_error ? { borderColor: 'red', } : { borderColor: '#F5F5F5', }
+                ]}
+                value={this.state.password}
+                onChangeText={(value) => { this.setState({ password: value }) }}
+              />
+            </View>
+
+            <View>
+              <Text
+                style={[{
+                  fontFamily: 'Poppins_500Medium',
+                  lineHeight: 23,
+                  fontSize: 15,
+                  marginLeft: 25,
+                  marginTop: 27,
+                  marginBottom: 5
+                },
+                this.state.password_confirmation_error ? { color: 'red', } : { color: '#5B5B5B', }
+                ]}
+              >
+                Повторите пароль
+              </Text>
+              <TextInput
+                underlineColorAndroid="transparent"
+                secureTextEntry={true}
+                password={true}
+                autoCorrect={false}
+                style={[{
+                  borderWidth: 1,
+                  borderColor: '#F5F5F5',
+                  padding: 10,
+                  width: '85%',
+                  borderRadius: 5,
+                  marginLeft: 25
+                },
+                this.state.password_confirmation_error ? { borderColor: 'red', } : { borderColor: '#F5F5F5', }
+                ]}
+                value={this.state.password_confirmation}
+                onChangeText={(value) => { this.setState({ password_confirmation: value }) }}
+              />
+            </View>
+
+            <View>
+              <Text
+                style={{
+                  color: '#888888',
+                  fontSize: 15,
+                  lineHeight: 18,
+                  marginLeft: 25,
+                  marginTop: 27,
+                  fontFamily: 'Raleway_500Medium',
+                }}
+              >
+                Загрузите фото диплома/сертификата
+              </Text>
+            </View>
+            <View style={{ marginTop: 16, flexDirection: "row", alignItems: 'center' }}>
+              <TouchableOpacity style={styles.button} onPress={() => this.pickImage()}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 15,
+                    fontFamily: 'Raleway_500Medium',
+                  }}
+                >
+                  Загрузить
+                </Text>
+              </TouchableOpacity>
+              {this.state.diplom_photo == null &&
+                <>
+
+                </>
+              }
+              {this.state.diplom_photo &&
+                <Image
+                  source={require('../../assets/image/changed.png')}
+                  style={{ width: 32, height: 32 }}
+                />
+
+              }
+            </View>
+
+            <View>
+              <Text
+                style={{
+                  color: '#888888',
+                  fontSize: 15,
+                  lineHeight: 18,
+                  marginLeft: 25,
+                  marginTop: 15,
+                  fontFamily: 'Raleway_500Medium',
+                }}
+              >
+                Загрузите селфи с правами или паспортом
+              </Text>
+              <Text
+                style={{
+                  color: '#888888',
+                  fontSize: 11,
+                  lineHeight: 13,
+                  marginLeft: 25,
+                  marginBottom: 10,
+                  fontFamily: 'Raleway_400Regular',
+                }}
+              >
+                (Можно,чтобы не видно было номер паспорта)
+              </Text>
+            </View>
+            <View style={{ flexDirection: "row", alignItems: 'center' }}>
+              <TouchableOpacity style={styles.button} onPress={() => this.pickImage2()}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontSize: 15,
+                    fontFamily: 'Raleway_500Medium',
+                  }}
+                >
+                  Загрузить
+                </Text>
+              </TouchableOpacity>
+
+              {this.state.selfi_photo &&
+                <Image
+                  source={require('../../assets/image/changed.png')}
+                  style={{ width: 32, height: 32 }}
+                />
+
+              }
+              {this.state.selfi_photo == null &&
+                <>
+                </>
+              }
+            </View>
+            <View style={styles.checkBox}>
+              <TouchableOpacity style={{ marginRight: 10 }} onPress={() => { this.setState({ i_agree: !this.state.i_agree }) }}>
+                <View>
+                  {!this.state.i_agree &&
+                    <Svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <Rect x="1" y="1" width="26" height="26" rx="3" stroke="#B5D8FE" stroke-width="2" />
+                    </Svg>
+
+                  }
+                  {this.state.i_agree &&
+                    <Svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <Rect width="28" height="28" rx="4" fill="#B5D8FE" />
+                      <Path d="M7 15L11.4118 20L22 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                    </Svg>
+                  }
+                </View>
+              </TouchableOpacity>
+              <Text
+                style={{
+                  color: '#888888',
+                  fontSize: 12,
+                  fontFamily: 'Poppins_400Regular',
+                }}>
+                Согласен с правилами <Text
+                  style={{
+                    fontFamily: 'Poppins_700Bold',
+                  }}>
+                  приложения
+                </Text> и {'\n'}
+
+                <Text
+                  style={{
+                    fontFamily: 'Poppins_700Bold',
+                  }}>
+                  политикой конфиденциальности
+                </Text>
+              </Text>
+            </View>
+            <View
+              style={{
+                justifyContent: 'center',
+                width: '100%',
+                flexDirection: 'row'
+
+              }}
+            >
+              <TouchableOpacity
+                style={{
+                  marginVertical: 25
+                }}
+
+                onPress={() => {
+                  // this.validation()
+                  // this.state.validate && this.state.checked ? alert(true) : ''
+                  this.DizainerRegisterApi()
+                }}
+              >
+                <BlueButton
+                  name='Зарегистрироваться'
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    )
+  }
+}
+
+const styles = StyleSheet.create({
+  button: {
+    width: 111,
+    marginLeft: 25,
+    height: 40,
+    backgroundColor: '#B5D8FE',
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 8,
+    marginRight: 5
+  },
+  checkBox: {
+    paddingHorizontal: 25,
+    marginTop: 22,
+    flexDirection: "row",
+    alignItems: "center",
+  }
+})
