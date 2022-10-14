@@ -38,7 +38,7 @@ export default class AddProductComponent extends React.Component {
 
       tabletop: "",
       tabletop_error: false,
-
+      all_images: [],
 
     }
   }
@@ -53,19 +53,61 @@ export default class AddProductComponent extends React.Component {
     if (!result.cancelled) {
       this.setState({ img: result.uri });
     }
-    result.selected.map((element, index) => {
+
+
+
+    let all_images = [];
+
+    await result.selected.map((element, index) => {
       console.log(element);
-      let res = element.uri.split('.')
-      let type = res[res.length - 1]
-      this.formdata.append("photo[]", {
+
+      // this.formdata.append("photo[]", {
+      //   uri: element.uri,
+      //   type: 'image/jpg',
+      //   name: 'photo.jpg',
+      // });
+
+      all_images.push({
         uri: element.uri,
         type: 'image/jpg',
         name: 'photo.jpg',
-      });
+      })
+
     })
 
-    console.log(this.formdata);
+
+    this.setState({
+      all_images: all_images
+    });
+
+
+    // console.log(this.formdata);
   };
+
+  delateSelectedImage = async (index) => {
+    let { all_images } = this.state
+    // all_images.find()
+
+    // if (ind > -1) { // only splice array when item is found
+    //   all_images.splice(ind, 1); // 2nd parameter means remove one item only
+    // }
+    // console.log(ind);
+
+    let new_all_images = [];
+
+    for (let i = 0; i < all_images.length; i++) {
+
+      if (i == index) {
+        continue
+      }
+      new_all_images.push(all_images[i]);
+
+    }
+    this.setState({
+      all_images: new_all_images
+    });
+
+  }
 
 
   getProductCategory = async () => {
@@ -82,6 +124,7 @@ export default class AddProductComponent extends React.Component {
 
 
   sendProduct = async () => {
+    let { all_images } = this.state;
     let myHeaders = new Headers();
     let userToken = await AsyncStorage.getItem('userToken');
     let AuthStr = 'Bearer ' + userToken;
@@ -98,6 +141,16 @@ export default class AddProductComponent extends React.Component {
     this.formdata.append("height", "12");
     this.formdata.append("price", this.state.price);
     this.formdata.append("tabletop", this.state.tabletop);
+
+
+
+    await all_images.map((element, index) => {
+
+      console.log(element);
+
+      this.formdata.append("photo[]", element);
+
+    })
 
 
     let requestOptions = {
@@ -459,6 +512,7 @@ export default class AddProductComponent extends React.Component {
               }}>
               Фотографии продукта
             </Text>
+
             <TouchableOpacity
               onPress={() => this.pickImage()}
               style={{
@@ -479,6 +533,32 @@ export default class AddProductComponent extends React.Component {
                 Загрузить
               </Text>
             </TouchableOpacity>
+
+
+
+            {this.state.all_images.length > 0 &&
+              <ScrollView horizontal={true} style={{ marginTop: 30 }} showsHorizontalScrollIndicator={false}>
+                <View style={{ flexDirection: 'row', height: 120, alignItems: 'center', }}>
+                  {
+                    this.state.all_images.map((item, index) => {
+                      return (
+                        <View key={index} style={{ marginRight: 10, position: 'relative', width: 100, height: 100 }}>
+                          <Image source={{ uri: item.uri }} style={{ width: '100%', height: '100%', resizeMode: 'cover' }} />
+
+                          <TouchableOpacity onPress={() => this.delateSelectedImage(index)} style={{ width: 20, height: 20, position: 'absolute', right: 5, top: 5, backgroundColor: 'white', borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
+                            <Image source={require('../../assets/image/ixs.png')} style={{ width: 10, height: 10 }} />
+                          </TouchableOpacity>
+                        </View>
+                      )
+                    })
+                  }
+
+                </View>
+              </ScrollView>
+            }
+
+
+
             <TouchableOpacity
               onPress={() => {
                 this.sendProduct()

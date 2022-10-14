@@ -25,8 +25,23 @@ export default class PraductiaComponent extends React.Component {
       city_for_sales_user: [],
       products: [],
 
+      limit_without_cat: 2,
+      limit_count_plus: 2,
+
+
+      show_plus_button: false
     }
   }
+
+
+  showMore = async () => {
+    let { limit_count_plus, limit_without_cat } = this.state;
+    limit_without_cat += limit_count_plus
+    await this.setState({ limit_without_cat: limit_without_cat })
+    await this.getObjectData()
+  }
+
+
   enterCheckBox = (id) => {
     let filterSort = this.state.delateSortBy;
     let find = false
@@ -60,8 +75,9 @@ export default class PraductiaComponent extends React.Component {
 
   getObjectData = async () => {
     let userID = this.props.id
+    const { limit_without_cat } = this.state
     console.log(userID, 'useridddd');
-    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID, {
+    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=' + limit_without_cat, {
       method: 'GET'
     })
       .then(response => response.json())
@@ -89,7 +105,8 @@ export default class PraductiaComponent extends React.Component {
           user_bonus_for_designer: res.data.user_bonus_for_designer,
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
-          products: data
+          products: data,
+          show_plus_button: true
         })
       })
   }
@@ -147,7 +164,8 @@ export default class PraductiaComponent extends React.Component {
         if (res.status === false) {
 
           this.setState({
-            products: []
+            products: [],
+            show_plus_button: false
           })
 
           return false;
@@ -174,7 +192,8 @@ export default class PraductiaComponent extends React.Component {
           user_bonus_for_designer: res.data.data.user_bonus_for_designer,
           // user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.data.city_for_sales_user,
-          products: data
+          products: data,
+          show_plus_button: false
         })
       })
       .catch(error => console.log('error', error));
@@ -352,8 +371,6 @@ export default class PraductiaComponent extends React.Component {
                                 <Path d="M5 14L9.41176 19L20 6" stroke="#1571F0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 <Rect x="0.5" y="0.5" width="24" height="24" rx="3.5" stroke="#E5E5E5" />
                               </Svg>
-
-
                             }
                           </View>
                         </TouchableOpacity>
@@ -369,9 +386,12 @@ export default class PraductiaComponent extends React.Component {
                   )
                 })
             }
-            <TouchableOpacity style={{width: '100%', alignItems: 'center', marginBottom: 20}}>
-              <ShowMore />
-            </TouchableOpacity>
+            {
+              this.state.show_plus_button &&
+              <TouchableOpacity style={{ width: '100%', alignItems: 'center', marginBottom: 20 }} onPress={() => this.showMore()}>
+                <ShowMore />
+              </TouchableOpacity>
+            }
           </ScrollView>
         </View>
         <CustomerMainPageNavComponent navigation={this.props.navigation} />

@@ -56,7 +56,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
   getObjectData = async () => {
     let userID = this.props.userID
-    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID, {
+    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=10', {
       method: 'GET'
     })
       .then(response => response.json())

@@ -45,7 +45,6 @@ export default class Slider extends React.Component {
         >
           {
             this.state.img.map((item, index) => {
-              console.log(this.state.urlImage + item.image)
               return (
                 <Image
                   source={{uri: this.state.urlImage + item.image}}
