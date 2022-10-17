@@ -38,6 +38,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
   componentDidMount() {
     const { navigation } = this.props;
+    this.getObjectData()
 
     this.focusListener = navigation.addListener("focus", () => {
 
@@ -56,7 +57,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
   getObjectData = async () => {
     let userID = this.props.userID
-    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=10', {
+    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=2', {
       method: 'GET'
     })
       .then(response => response.json())
@@ -644,9 +645,9 @@ export default class DesignerPageTwoComponent extends React.Component {
               </View>
               {
                 this.state.products.map((item, index) => {
+                  <Slider slid={item.product_image} />
                   return (
                     <View key={index} style={{ marginTop: 18 }}>
-                      <Slider slid={item.product_image} />
                       <Text style={{ fontFamily: 'Raleway_700Bold', fontSize: 13, marginTop: 6 }}>{item.name}</Text>
                       <Text style={styles.zakazInfo}>Фасады : {item.facades}</Text>
                       <Text style={styles.zakazInfo}>Корпус: {item.frame}</Text>

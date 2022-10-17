@@ -22,13 +22,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
       gorod: false,
 
       gorodModal: false,
-      gorodArray: [1, 5, 5, 5, 5,],
+      gorodArray: [],
       gorodFilter: false,
       count: 0,
       authUserState: [],
-      options: [
-        1, 2, 45,
-      ],
+      options: [],
       id: '',
 
       urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
@@ -96,7 +94,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
 
   enterCheckBox = (items) => {
-    let filterSort = this.state.gorodArray;
+    let filterSort = this.state.options;
     let find = true
     filterSort.find((item) => {
       if (item == items) {
@@ -107,11 +105,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
       filterSort.push(items)
       this.setState({ count: this.state.count + 1 });
     }
-    this.setState({ gorodArray: filterSort })
+    this.setState({ options: filterSort })
   }
 
   verifyCheckBox = (items) => {
-    let filterSort = this.state.gorodArray
+    let filterSort = this.state.options
     let find = false
     filterSort.find((item) => {
       if (item == items) {
@@ -123,7 +121,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
       filterSort.splice(index, 1);
       this.setState({ count: this.state.count - 1 });
     }
-    this.setState({ gorodArray: filterSort })
+    this.setState({ options: filterSort })
   }
 
 
@@ -149,8 +147,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                   borderRadius: 20,
                   position: 'relative',
                   paddingHorizontal: 15,
-                }}
-              >
+                }}>
                 <TouchableOpacity
                   style={{
                     position: 'absolute',
@@ -186,7 +183,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}>
                     {
-                      this.state.gorodArray.map((item, index) => {
+                      this.state.options.map((item, index) => {
                         return (
                           <View
                             key={index}
@@ -204,7 +201,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                                 borderRadius: 8,
                                 fontFamily: 'Poppins_500Medium',
                               }}>
-                              {item}
+                              {item.city_name}
                             </Text>
                             <TouchableOpacity
                               onPress={() => {
@@ -275,7 +272,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     style={this.state.gorodFilter ? styles.setGorodFilterActive : styles.setGorodFilter}>
                     <ScrollView nestedScrollEnabled={true} >
                       {
-                        this.state.options.map((item, index) => {
+                        this.state.gorodArray.map((item, index) => {
                           return (
                             <TouchableOpacity
                               key={index}
@@ -285,12 +282,12 @@ export default class CustomerMyAccauntComponent extends React.Component {
                                 textAlign: 'left',
                               }}
                               onPress={(count) => {
-                                this.enterCheckBox(item.city_name)
+                                this.enterCheckBox(item)
 
                               }}
                             >
                               <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
-                                {item.items}
+                                {item.city_name}
                               </Text>
 
                             </TouchableOpacity>
@@ -689,7 +686,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                   {
                     this.state.options.map((item, index) => {
                       return (
-                        <TouchableOpacity
+                        <View
                           key={index}
                           style={{
                             width: '100%',
@@ -699,10 +696,10 @@ export default class CustomerMyAccauntComponent extends React.Component {
                           onPress={() => this.setState({ value: item.items, gorod: false })}
                         >
                           <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
-                            {item.items}
+                            {item.city_name}
                           </Text>
 
-                        </TouchableOpacity>
+                        </View>
                       )
 
                     })
@@ -770,13 +767,13 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     }} />
                 </TouchableOpacity>
               </View>
-              <View
+              {/* <View
                 style={this.state.category ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
                 <ScrollView nestedScrollEnabled={true} >
                   {
                     this.state.options.map((item, index) => {
                       return (
-                        <TouchableOpacity
+                        <View
                           key={index}
                           style={{
                             width: '100%',
@@ -786,16 +783,16 @@ export default class CustomerMyAccauntComponent extends React.Component {
                           onPress={() => this.setState({ value: item.items, category: false })}
                         >
                           <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
-                            {item.items}
+                            {item}
                           </Text>
-
-                        </TouchableOpacity>
+                          {console.log(item.city_name)}
+                        </View>
                       )
 
                     })
                   }
                 </ScrollView>
-              </View>
+              </View> */}
             </View>
 
             {/* dropDown end */}

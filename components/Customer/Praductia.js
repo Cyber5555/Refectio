@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { StyleSheet, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Image, } from "react-native";
+import { StyleSheet, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Image, Modal, ImageBackground } from "react-native";
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import Slider from "../slider/Slider";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
 import Svg, { Path, Rect } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ShowMore from "../Component/Buttons/ShowMore";
+import BlueButton from "../Component/Buttons/BlueButton";
 
 
 
@@ -29,7 +30,10 @@ export default class PraductiaComponent extends React.Component {
       limit_count_plus: 2,
 
 
-      show_plus_button: false
+      show_plus_button: false,
+
+
+      delateProductModal: false
     }
   }
 
@@ -235,6 +239,40 @@ export default class PraductiaComponent extends React.Component {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.main}>
+
+          <Modal visible={this.state.delateProductModal}>
+            <ImageBackground
+              style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}
+              source={require('../../assets/image/blurBg.png')}>
+              <View style={{ backgroundColor: '#FFFFFF', width: '90%', borderRadius: 20, position: 'relative' }}>
+                <TouchableOpacity style={{ position: 'absolute', right: 18, top: 18 }}>
+                  <Image source={require('../../assets/image/ixs.png')} style={{ width: 22.5, height: 22.5 }} />
+                </TouchableOpacity>
+                <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 22, textAlign: 'center', marginTop: 70, color: '#2D9EFB' }}> Удаление продукции</Text>
+                <Text style={{ textAlign: 'center', fontFamily: 'Poppins_400Regular', marginTop: 30, fontSize: 16 }}>Подтвердите удаление выбранной{'\n'}продукции</Text>
+                <TouchableOpacity
+                  onPress={async () => {
+                    await this.delateProduct()
+                    await this.setState({ delateProductModal: false })
+                    await this.getObjectData()
+                  }}
+                  style={{ alignSelf: 'center', marginTop: 67 }}>
+                  <BlueButton name='Подтвердить' />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    this.setState({ delateProductModal: false })
+                    this.updateProduct()
+                  }}
+                  style={{ borderWidth: 3, borderColor: '#B5D8FE', width: 285, height: 44, justifyContent: 'center', borderRadius: 20, alignSelf: 'center', marginTop: 12, marginBottom: 46 }}>
+                  <Text style={{ color: '#B5D8FE', fontSize: 18, textAlign: 'center', fontFamily: 'Poppins_700Bold', }} >
+                    Отменить
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+          </Modal>
+
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('CustomerMyAccaunt')}
             style={{
@@ -282,9 +320,8 @@ export default class PraductiaComponent extends React.Component {
                 }} />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={async () => {
-                await this.delateProduct()
-                await this.updateProduct()
+              onPress={() => {
+                this.setState({ delateProductModal: true })
               }}
               style={{
                 position: 'absolute',

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Keyboard } from "react-native";
+import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Keyboard, Modal } from "react-native";
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import BlueButton from "../Component/Buttons/BlueButton"
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
@@ -40,6 +40,8 @@ export default class AddProductComponent extends React.Component {
       tabletop_error: false,
       all_images: [],
 
+
+      modalBool: true
     }
   }
   formdata = new FormData();
@@ -218,6 +220,13 @@ export default class AddProductComponent extends React.Component {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.main}>
+          <Modal visible={this.state.modalBool}>
+            <View style={{ flex: 1, backgroundColor: '#fff' }}>
+              <Image source={require('../../assets/image/flat-color-icons_ok.png')} />
+            </View>
+          </Modal>
+
+
           <TouchableOpacity
             onPress={() => {
               this.props.navigation.navigate("Praductia", {

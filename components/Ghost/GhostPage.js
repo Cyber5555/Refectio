@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Keyboard, Platform } from "react-native";
+import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Keyboard, Platform, ActivityIndicator } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
 import Slider from "../slider/Slider";
 import GhostNavComponent from "./GhostNav";
@@ -225,7 +225,7 @@ export default class GhostPageComponent extends React.Component {
 
   render() {
     if (!this.state.fontsLoaded) {
-      return null;
+      return null
     }
     // if (!fontsLoaded) {
     //     return null;

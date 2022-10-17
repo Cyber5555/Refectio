@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { StyleSheet, View, Image, Dimensions, ScrollView, Pressable } from 'react-native';
 
 const width = Dimensions.get('window').width - 25
@@ -6,71 +6,66 @@ const width = Dimensions.get('window').width - 25
 
 
 
-export default class Slider extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      imgActive: 0,
-      urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
-      img: []
-    }
+export default React.memo(function Slider(props) {
+  let urlImage = 'http://80.78.246.59/Refectio/storage/app/uploads/';
+  const [imgActive, setInmageActive] = useState(0)
+  const [img, setImg] = useState([])
 
 
-  }
-  change = (nativeEvent) => {
+
+  const change = (nativeEvent) => {
     const slider = Math.ceil(nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width);
-    if (slider !== this.state.imgActive) {
-      this.setState({ imgActive: slider })
+    if (slider !== imgActive) {
+      setInmageActive(slider)
     }
-
   }
 
 
 
+  useEffect(() => {
+    let images = props.slid;
+    setImg(images)
+  }, [])
 
-  componentDidMount() {
-    let images = this.props.slid;
-    this.setState({ img: images })
-  }
 
-  render() {
-    return (
-      <View>
-        <ScrollView
-          horizontal={true}
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          style={styles.wrap}
-          onScroll={({ nativeEvent }) => this.change(nativeEvent)}
-        >
-          {
-            this.state.img.map((item, index) => {
-              return (
-                <Image
-                  source={{uri: this.state.urlImage + item.image}}
-                  style={{ height: '100%', width, resizeMode: "cover" }}
-                  key={index}
-                />
-              )
-            })
-          }
-        </ScrollView>
-        <View style={styles.wrapDot}>
-          {
-            this.state.img.map((dots, index) => {
-              return (
-                <Pressable
-                  style={this.state.imgActive == index ? styles.dotActive : styles.dot}
-                  key={index}>
-                </Pressable>
-              )
-            })
-          }
-        </View>
+
+  return (
+    <View>
+      <ScrollView
+        horizontal={true}
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        style={styles.wrap}
+        onScroll={({ nativeEvent }) => change(nativeEvent)}
+      >
+        {
+          img.map((item, index) => {
+            return (
+              <Image
+                source={{ uri: urlImage + item.image }}
+                style={{ height: '100%', width, resizeMode: "cover" }}
+                key={index}
+              />
+            )
+          })
+        }
+      </ScrollView>
+      <View style={styles.wrapDot}>
+        {
+          img.map((dots, index) => {
+            return (
+              <Pressable
+                style={imgActive == index ? styles.dotActive : styles.dot}
+                key={index}>
+              </Pressable>
+            )
+          })
+        }
       </View>
-    )
-  }
-}
+    </View>
+  )
+
+})
 
 
 
