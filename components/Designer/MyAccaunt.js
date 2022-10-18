@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { SafeAreaView, Keyboard, View, Image, Text, ImageBackground, TouchableOpacity, TextInput, ScrollView, StyleSheet, Modal } from "react-native";
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
+import { AuthContext } from "../AuthContext/context";
 import BlueButton from "../Component/Buttons/BlueButton";
 import DesignerPageNavComponent from "./DesignerPageNav";
 
@@ -14,7 +15,7 @@ export default class MyAccauntComponent extends React.Component {
     }
   }
 
-
+  static contextType = AuthContext
 
   componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener(
@@ -35,7 +36,6 @@ export default class MyAccauntComponent extends React.Component {
 
   _keyboardDidShow = (event) => {
     this.setState({
-
       keyboardOpen: true
     })
 
@@ -267,6 +267,36 @@ export default class MyAccauntComponent extends React.Component {
               </TouchableOpacity>
             </View>
 
+
+            <TouchableOpacity
+              onPress={async () => {
+                let foundUser = {
+                  userToken: this.state.userToken,
+                  userRole: this.state.role_id
+                }
+                this.context.signOut(foundUser);
+              }}
+
+              style={{
+                width: 165,
+                height: 38,
+                backgroundColor: '#B5D8FE',
+                borderRadius: 15,
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
+                marginBottom: 40,
+                marginTop: 100
+              }}>
+              <Text
+                style={{
+                  color: '#fff',
+                  fontSize: 18,
+                  fontFamily: 'Poppins_500Medium',
+                }}>
+                Выйти
+              </Text>
+            </TouchableOpacity>
 
           </ScrollView>
         </View>

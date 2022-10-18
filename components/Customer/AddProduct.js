@@ -41,7 +41,8 @@ export default class AddProductComponent extends React.Component {
       all_images: [],
 
 
-      modalBool: true
+      modalBool: false,
+      status: false
     }
   }
   formdata = new FormData();
@@ -140,7 +141,7 @@ export default class AddProductComponent extends React.Component {
     this.formdata.append("frame", this.state.frame);
     this.formdata.append("facades", this.state.facades);
     this.formdata.append("length", this.state.length);
-    this.formdata.append("height", "12");
+    this.formdata.append("height", this.state.height);
     this.formdata.append("price", this.state.price);
     this.formdata.append("tabletop", this.state.tabletop);
 
@@ -168,8 +169,8 @@ export default class AddProductComponent extends React.Component {
         console.log(result, 'createnewproductProizvoditel')
 
         if (result.status === true) {
-          this.props.navigation.navigate("Praductia", {
-            params: this.props.id
+          this.setState({
+            modalBool: true
           })
           console.log(this.props.id, 'this.props.id')
         }
@@ -221,8 +222,22 @@ export default class AddProductComponent extends React.Component {
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.main}>
           <Modal visible={this.state.modalBool}>
-            <View style={{ flex: 1, backgroundColor: '#fff' }}>
-              <Image source={require('../../assets/image/flat-color-icons_ok.png')} />
+            <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
+              <Image style={{ width: 80, height: 80 }} source={require('../../assets/image/flat-color-icons_ok.png')} />
+              <Text style={{ textAlign: 'center', marginTop: 22, fontFamily: 'Poppins_500Medium', fontSize: 25, color: '#2D9EFB' }}>Вы успешно{'\n'}добавили продукт</Text>
+              <TouchableOpacity style={{ marginTop: 170 }} onPress={() => {
+
+                this.props.navigation.navigate("Praductia", {
+                  params: this.props.id
+                })
+                  &&
+                  this.setState({
+                    modalBool: false
+                  })
+
+              }}>
+                <BlueButton name='В каталог' />
+              </TouchableOpacity>
             </View>
           </Modal>
 
@@ -446,7 +461,34 @@ export default class AddProductComponent extends React.Component {
               />
             </View>
 
-
+            <View>
+              <Text
+                style={{
+                  fontFamily: 'Poppins_500Medium',
+                  lineHeight: 23,
+                  fontSize: 16,
+                  color: '#5B5B5B',
+                  marginBottom: 5,
+                  marginTop: 12
+                }}
+              >
+                Высота
+              </Text>
+              <TextInput
+                underlineColorAndroid="transparent"
+                placeholder="0.5 метров"
+                keyboardType="number-pad"
+                style={{
+                  borderWidth: 1,
+                  borderColor: '#F5F5F5',
+                  padding: 10,
+                  width: '100%',
+                  borderRadius: 5,
+                }}
+                value={this.state.height}
+                onChangeText={(text) => this.setState({ height: text })}
+              />
+            </View>
 
             <View>
               <Text
@@ -571,7 +613,7 @@ export default class AddProductComponent extends React.Component {
             <TouchableOpacity
               onPress={() => {
                 this.sendProduct()
-
+                console.log(this.state.modalBool);
               }}
               style={{
                 alignSelf: 'center',

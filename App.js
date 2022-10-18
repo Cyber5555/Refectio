@@ -14,7 +14,7 @@ import CustomerMainPageComponent from './components/Customer/CustomerMainPage';
 import GhostPageComponent from './components/Ghost/GhostPage';
 import GhostPageTwoComponent from './components/Ghost/GhostPageTwo';
 import DesignerPageComponent from './components/Designer/DesignerPage';
-import ConfirmTelCustomerComponent from './components/Auth/ConfirmTelCustomer';
+import EditPhoneNumberComponent from './components/Auth/EditPhoneNumber';
 import DesignerPageTwoComponent from './components/Designer/DesignerPageTwo';
 import CustomerPageTwoComponent from './components/Customer/CustomerPageTwo';
 import ForgetPasswordComponent from './components/Auth/ForgetPassword';
@@ -97,9 +97,9 @@ function DesignerPage({ navigation }) {
     <DesignerPageComponent navigation={navigation} />
   );
 }
-function ConfirmTelCustomer({ navigation }) {
+function EditPhoneNumber({ navigation }) {
   return (
-    <ConfirmTelCustomerComponent navigation={navigation} />
+    <EditPhoneNumberComponent navigation={navigation} />
   );
 }
 
@@ -108,9 +108,12 @@ function GhostPageTwo({ navigation }) {
     <GhostPageTwoComponent navigation={navigation} />
   );
 }
-function DesignerPageTwo({ navigation }) {
+function DesignerPageTwo({ route, navigation }) {
+
+  const { params } = route.params;
+
   return (
-    <DesignerPageTwoComponent navigation={navigation} />
+    <DesignerPageTwoComponent userID={params} navigation={navigation} />
   );
 }
 
@@ -197,7 +200,7 @@ function PraductiaFunc({ route, navigation }) {
 
 function AddProductScreen({ route, navigation }) {
 
-  const {params} = route.params
+  const { params } = route.params
 
   return (
     <AddProductComponent id={params} navigation={navigation} />
@@ -353,81 +356,29 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <View style={{ backgroundColor: 'black' }}>
-
+      <View style={{ backgroundColor: '#fff', flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size={100} color="#00f" />
       </View>
     );
-  }
+  } else {
 
-  return (
+    return (
 
-    <AuthContext.Provider value={authContext}>
+      <AuthContext.Provider value={authContext}>
 
-      <StatusBar
-        animated={true}
-        hidden={false}
-        backgroundColor='white'
-        barStyle="dark-content"
-      />
-      <NavigationContainer>
+        <StatusBar
+          animated={true}
+          hidden={false}
+          backgroundColor='white'
+          barStyle="dark-content"
+        />
+        <NavigationContainer>
 
-        {
-          //  Designer Pages Tabs
-          loginState.userToken !== null && loginState.userRole == '2' ? (
-            <Tab.Navigator
-              initialRouteName="DesignerPage"
-              screenOptions={({ route }) => ({
-                tabBarShowLabel: false,
-                headerShown: false,
-                tabBarActiveTintColor: '#2EB6A5',
-                tabBarInactiveTintColor: 'gray',
-                tabBarStyle: tabBarStyle,
-
-              })}
-            >
-              <Tab.Screen name="DesignerPage" component={DesignerPageComponent}
-                options={({ route }) => ({
-                  tabBarButton: () => null,
-                  tabBarStyle: { display: 'none' }
-                })}
-              />
-
-              <Tab.Screen name="DesignerMyBroni" component={DesignerMyBroniComponent}
-                options={({ route }) => ({
-                  tabBarButton: () => null,
-                  tabBarStyle: { display: 'none' }
-                })}
-              />
-              <Tab.Screen name="DesignerPageTwo" component={DesignerPageTwoComponent}
-                options={({ route }) => ({
-                  tabBarButton: () => null,
-                  tabBarStyle: { display: 'none' }
-                })}
-              />
-
-              <Tab.Screen name="DesignerSaved" component={DesignerSavedComponent}
-                options={({ route }) => ({
-                  tabBarButton: () => null,
-                  tabBarStyle: { display: 'none' }
-                })}
-              />
-              <Tab.Screen name="MyAccaunt" component={MyAccauntComponent}
-                options={({ route }) => ({
-                  tabBarButton: () => null,
-                  tabBarStyle: { display: 'none' }
-                })}
-              />
-
-
-            </Tab.Navigator>
-          ) :
-
-
-            // Customer Pages Tabs
-
-            loginState.userToken !== null && loginState.userRole == '3' ? (
+          {
+            //  Designer Pages Tabs
+            loginState.userToken !== null && loginState.userRole == '2' ? (
               <Tab.Navigator
-                initialRouteName="CustomerMainPage"
+                initialRouteName="DesignerPage"
                 screenOptions={({ route }) => ({
                   tabBarShowLabel: false,
                   headerShown: false,
@@ -437,64 +388,49 @@ export default function App() {
 
                 })}
               >
-                <Tab.Screen name="CustomerMainPage" component={CustomerMainPageComponent}
-                  options={({ route }) => ({
-                    tabBarButton: () => null,
-                    tabBarStyle: { display: 'none' }
-                  })}
-                />
-                <Tab.Screen name="AddProduct" component={AddProductScreen}
-                  options={({ route }) => ({
-                    tabBarButton: () => null,
-                    tabBarStyle: { display: 'none' }
-                  })}
-                />
-                <Tab.Screen name="CheckDesigner" component={CheckDesignerComponent}
+                <Tab.Screen name="DesignerPage" component={DesignerPageComponent}
                   options={({ route }) => ({
                     tabBarButton: () => null,
                     tabBarStyle: { display: 'none' }
                   })}
                 />
 
-                <Tab.Screen name="CustomerMyAccaunt" component={CustomerMyAccauntComponent}
+                <Tab.Screen name="DesignerMyBroni" component={DesignerMyBroniComponent}
                   options={({ route }) => ({
                     tabBarButton: () => null,
                     tabBarStyle: { display: 'none' }
                   })}
                 />
-                <Tab.Screen name="CustomerMyBroni" component={CustomerMyBroniComponent}
+                <Tab.Screen name="DesignerPageTwo" component={DesignerPageTwoComponent}
                   options={({ route }) => ({
                     tabBarButton: () => null,
                     tabBarStyle: { display: 'none' }
                   })}
                 />
-                <Tab.Screen name="CustomerPageTwo" component={CustomerPageTwo}
+
+                <Tab.Screen name="DesignerSaved" component={DesignerSavedComponent}
                   options={({ route }) => ({
                     tabBarButton: () => null,
                     tabBarStyle: { display: 'none' }
                   })}
                 />
-                <Tab.Screen name="CustomerRewards" component={CustomerRewardsComponent}
+                <Tab.Screen name="MyAccaunt" component={MyAccauntComponent}
                   options={({ route }) => ({
                     tabBarButton: () => null,
                     tabBarStyle: { display: 'none' }
                   })}
                 />
-                <Tab.Screen name="Praductia" component={PraductiaFunc}
-                  options={({ route }) => ({
-                    tabBarButton: () => null,
-                    tabBarStyle: { display: 'none' }
-                  })}
-                />
+
 
               </Tab.Navigator>
             ) :
 
-              // Guest pages tabs
 
-              loginState.userToken == null ? (
+              // Customer Pages Tabs
+
+              loginState.userToken !== null && loginState.userRole == '3' ? (
                 <Tab.Navigator
-                  initialRouteName="GhostPage"
+                  initialRouteName="CustomerMainPage"
                   screenOptions={({ route }) => ({
                     tabBarShowLabel: false,
                     headerShown: false,
@@ -504,88 +440,156 @@ export default function App() {
 
                   })}
                 >
-                  <Tab.Screen name="GhostPage" component={GhostPageComponent}
+                  <Tab.Screen name="CustomerMainPage" component={CustomerMainPageComponent}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }
                     })}
                   />
-                  <Tab.Screen name="Login" component={LoginScreenComponent}
+                  <Tab.Screen name="AddProduct" component={AddProductScreen}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }
                     })}
                   />
-                  <Tab.Screen name="ConfirmTelScreen" component={ConfirmTelScreenFunction}
+                  <Tab.Screen name="CheckDesigner" component={CheckDesignerComponent}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }
                     })}
                   />
-                  <Tab.Screen name="RegisteredScreen" component={RegisteredScreenComponent}
+
+                  <Tab.Screen name="CustomerMyAccaunt" component={CustomerMyAccauntComponent}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }
                     })}
                   />
-                  <Tab.Screen name="RegisteredUserScreen" component={RegistrationUserScreenComponent}
+                  <Tab.Screen name="CustomerMyBroni" component={CustomerMyBroniComponent}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }
                     })}
                   />
-                  <Tab.Screen name="RegistrationManufacturer" component={RegistrationManufacturerComponent}
+                  <Tab.Screen name="CustomerPageTwo" component={CustomerPageTwo}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }
                     })}
                   />
-                  <Tab.Screen name="AuthScreen" component={AuthScreenComponent}
+                  <Tab.Screen name="CustomerRewards" component={CustomerRewardsComponent}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }
                     })}
                   />
-                  <Tab.Screen name="ConfirmTelCustomer" component={ConfirmTelCustomer}
+                  <Tab.Screen name="Praductia" component={PraductiaFunc}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }
                     })}
                   />
-                  <Tab.Screen name="GhostPageTwo" component={GhostPageTwoComponent}
-                    options={({ route }) => ({
-                      tabBarButton: () => null,
-                      tabBarStyle: { display: 'none' }
-                    })}
-                  />
-                  <Tab.Screen name="ForgetPassword" component={ForgetPasswordComponent}
-                    options={({ route }) => ({
-                      tabBarButton: () => null,
-                      tabBarStyle: { display: 'none' }
-                    })}
-                  />
-                  <Tab.Screen name="ForgetPasswordTel" component={ForgetPasswordTelComponent}
-                    options={({ route }) => ({
-                      tabBarButton: () => null,
-                      tabBarStyle: { display: 'none' }
-                    })}
-                  />
-                  <Tab.Screen name="NewPassword" component={NewPasswordComponent}
-                    options={({ route }) => ({
-                      tabBarButton: () => null,
-                      tabBarStyle: { display: 'none' }
-                    })}
-                  />
-                  <Tab.Screen name="Modal" component={ModalComponent}
-                    options={({ route }) => ({
-                      tabBarButton: () => null,
-                      tabBarStyle: { display: 'none' }
-                    })}
-                  />
+
                 </Tab.Navigator>
-              ) : <></>
-        }
-      </NavigationContainer>
-    </AuthContext.Provider>
-  );
+              ) :
+
+                // Guest pages tabs
+
+                loginState.userToken == null ? (
+                  <Tab.Navigator
+                    initialRouteName="GhostPage"
+                    screenOptions={({ route }) => ({
+                      tabBarShowLabel: false,
+                      headerShown: false,
+                      tabBarActiveTintColor: '#2EB6A5',
+                      tabBarInactiveTintColor: 'gray',
+                      tabBarStyle: tabBarStyle,
+
+                    })}
+                  >
+                    <Tab.Screen name="GhostPage" component={GhostPageComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="Login" component={LoginScreenComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="ConfirmTelScreen" component={ConfirmTelScreenFunction}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="RegisteredScreen" component={RegisteredScreenComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="RegisteredUserScreen" component={RegistrationUserScreenComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="RegistrationManufacturer" component={RegistrationManufacturerComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="AuthScreen" component={AuthScreenComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="EditPhoneNumber" component={EditPhoneNumberComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="GhostPageTwo" component={GhostPageTwoComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="ForgetPassword" component={ForgetPasswordComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="ForgetPasswordTel" component={ForgetPasswordTelComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="NewPassword" component={NewPasswordComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                    <Tab.Screen name="Modal" component={ModalComponent}
+                      options={({ route }) => ({
+                        tabBarButton: () => null,
+                        tabBarStyle: { display: 'none' }
+                      })}
+                    />
+                  </Tab.Navigator>
+                ) : <></>
+          }
+        </NavigationContainer>
+      </AuthContext.Provider>
+    );
+  }
 }

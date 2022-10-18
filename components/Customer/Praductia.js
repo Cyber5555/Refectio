@@ -253,8 +253,8 @@ export default class PraductiaComponent extends React.Component {
                 <TouchableOpacity
                   onPress={async () => {
                     await this.delateProduct()
-                    await this.setState({ delateProductModal: false })
                     await this.getObjectData()
+                    this.setState({ delateProductModal: false })
                   }}
                   style={{ alignSelf: 'center', marginTop: 67 }}>
                   <BlueButton name='Подтвердить' />
@@ -262,7 +262,6 @@ export default class PraductiaComponent extends React.Component {
                 <TouchableOpacity
                   onPress={() => {
                     this.setState({ delateProductModal: false })
-                    this.updateProduct()
                   }}
                   style={{ borderWidth: 3, borderColor: '#B5D8FE', width: 285, height: 44, justifyContent: 'center', borderRadius: 20, alignSelf: 'center', marginTop: 12, marginBottom: 46 }}>
                   <Text style={{ color: '#B5D8FE', fontSize: 18, textAlign: 'center', fontFamily: 'Poppins_700Bold', }} >

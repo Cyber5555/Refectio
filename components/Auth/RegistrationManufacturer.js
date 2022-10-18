@@ -561,9 +561,7 @@ export default class RegistrationManufacturerComponent extends Component {
   goToRegistredScreen = () => {
     this.props.navigation.navigate('RegisteredScreen')
   }
-  goToConfirmTelCustomer = () => {
-    this.props.navigation.navigate('ConfirmTelCustomer')
-  }
+ 
 
 
   render() {

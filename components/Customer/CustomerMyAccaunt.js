@@ -5,8 +5,8 @@ import ArrowGrayComponent from "../../assets/image/ArrowGray"
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
 import Svg, { Path, Rect } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-
+import BlueButton from "../Component/Buttons/BlueButton";
+import { AuthContext } from '../AuthContext/context';
 
 
 
@@ -29,9 +29,21 @@ export default class CustomerMyAccauntComponent extends React.Component {
       options: [],
       id: '',
 
+      editModal: false,
+
+      inputs: {
+        placeholder: '',
+        name: '',
+        secureity: false
+      },
+
+      role_id: '',
+      userToken: '',
+
       urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
     }
   }
+  static contextType = AuthContext
 
 
 
@@ -50,10 +62,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
         this.setState({
           authUserState: res.data,
           gorodArray: res.data[0].city_of_sales_manufacturer,
-          id: res.data[0].id
+          id: res.data[0].id,
+          userToken: userToken,
+          role_id: res.data[0].role_id
         })
       })
-    // console.log(this.state.gorodArray);
   }
 
 
@@ -93,7 +106,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
   }
 
 
-  enterCheckBox = (items) => {
+  enterCheckBox = (items, index) => {
     let filterSort = this.state.options;
     let find = true
     filterSort.find((item) => {
@@ -106,6 +119,8 @@ export default class CustomerMyAccauntComponent extends React.Component {
       this.setState({ count: this.state.count + 1 });
     }
     this.setState({ options: filterSort })
+    console.log(this.state.options);
+
   }
 
   verifyCheckBox = (items) => {
@@ -122,6 +137,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
       this.setState({ count: this.state.count - 1 });
     }
     this.setState({ options: filterSort })
+    console.log(this.state.options);
   }
 
 
@@ -281,9 +297,9 @@ export default class CustomerMyAccauntComponent extends React.Component {
                                 justifyContent: 'center',
                                 textAlign: 'left',
                               }}
-                              onPress={(count) => {
-                                this.enterCheckBox(item)
-
+                              onPress={() => {
+                                this.enterCheckBox(item, index)
+                                // console.log(item.city_name, index);
                               }}
                             >
                               <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
@@ -300,6 +316,50 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 </View>
 
                 {/* dropDown end */}
+              </View>
+            </ImageBackground>
+          </Modal>
+
+
+          <Modal visible={this.state.editModal}>
+            <ImageBackground style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} source={require('../../assets/image/blurBg.png')}>
+              <View style={{ width: '90%', height: 300, borderRadius: 20, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+                <TouchableOpacity style={{ position: 'absolute', right: 18, top: 18, }} onPress={() => this.setState({ editModal: false })}>
+                  <Image source={require('../../assets/image/ixs.png')} style={{ width: 22.5, height: 22.5, }} />
+                </TouchableOpacity>
+                <View style={{
+                  flexDirection: 'row',
+                  marginTop: 30,
+                  width: '90%'
+                }}>
+                  <Text
+                    style={{
+                      fontFamily: 'Poppins_500Medium',
+                      lineHeight: 23,
+                      fontSize: 16,
+                      color: '#5B5B5B',
+                      marginBottom: 5,
+                      textAlign: 'left',
+                    }}
+                  >
+                    {this.state.inputs.name}
+                  </Text>
+                </View>
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  placeholder={this.state.inputs.placeholder}
+                  secureTextEntry={this.state.inputs.secureity}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#F5F5F5',
+                    padding: 10,
+                    width: '90%',
+                    borderRadius: 5,
+                  }}
+                />
+                <TouchableOpacity style={{ marginTop: 50 }}>
+                  <BlueButton name='Сохранить' />
+                </TouchableOpacity>
               </View>
             </ImageBackground>
           </Modal>
@@ -426,7 +486,14 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 >
                   Страна производства
                 </Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => this.setState({
+                  inputs: {
+                    placeholder: 'Италия',
+                    secureity: false,
+                    name: 'Страна производства',
+                  },
+                  editModal: true
+                })}>
                   <Image
                     source={require('../../assets/image/ep_edit.png')}
                     style={{
@@ -441,6 +508,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
               <TextInput
                 underlineColorAndroid="transparent"
                 placeholder="Италия"
+                editable={false}
                 style={{
                   borderWidth: 1,
                   borderColor: '#F5F5F5',
@@ -467,7 +535,14 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 >
                   ИНН
                 </Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => this.setState({
+                  inputs: {
+                    placeholder: '7727563778',
+                    secureity: false,
+                    name: 'ИНН',
+                  },
+                  editModal: true
+                })}>
                   <Image
                     source={require('../../assets/image/ep_edit.png')}
                     style={{
@@ -483,7 +558,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
               <TextInput
                 underlineColorAndroid="transparent"
                 placeholder="7727563778"
-                keyboardType="phone-pad"
+                editable={false}
                 style={{
                   borderWidth: 1,
                   borderColor: '#F5F5F5',
@@ -510,7 +585,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 >
                   Номер телефона
                 </Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('EditPhoneNumber')}>
                   <Image
                     source={require('../../assets/image/ep_edit.png')}
                     style={{
@@ -526,7 +601,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
               <TextInput
                 underlineColorAndroid="transparent"
                 placeholder="+7 (909) 099-99-99"
-                keyboardType="phone-pad"
+                editable={false}
                 style={{
                   borderWidth: 1,
                   borderColor: '#F5F5F5',
@@ -570,6 +645,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 underlineColorAndroid="transparent"
                 placeholder="**********"
                 secureTextEntry={true}
+                editable={false}
                 style={{
                   borderWidth: 1,
                   borderColor: '#F5F5F5',
@@ -796,6 +872,40 @@ export default class CustomerMyAccauntComponent extends React.Component {
             </View>
 
             {/* dropDown end */}
+
+
+
+
+
+            <TouchableOpacity
+              onPress={async () => {
+                let foundUser = {
+                  userToken: this.state.userToken,
+                  userRole: this.state.role_id
+                }
+                this.context.signOut(foundUser);
+              }}
+
+              style={{
+                width: 165,
+                height: 38,
+                backgroundColor: '#B5D8FE',
+                borderRadius: 15,
+                justifyContent: 'center',
+                alignItems: 'center',
+                alignSelf: 'center',
+                marginVertical: 40
+              }}>
+              <Text
+                style={{
+                  color: '#fff',
+                  fontSize: 18,
+                  fontFamily: 'Poppins_500Medium',
+                }}>
+                Выйти
+              </Text>
+            </TouchableOpacity>
+
 
           </ScrollView>
         </View>

@@ -4,7 +4,7 @@ import Svg, { Path, Rect } from "react-native-svg";
 import Slider from "../slider/Slider";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
 import FilterComponent from "../Component/FilterComponent";
-import * as Font from 'expo-font'
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 

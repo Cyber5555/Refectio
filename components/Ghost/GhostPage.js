@@ -342,7 +342,7 @@ export default class GhostPageComponent extends React.Component {
                         }
                       </ScrollView>
                     </View>
-                    <Slider />
+                    {/* <Slider /> */}
                   </View>
                 )
               })
