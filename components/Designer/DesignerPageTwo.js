@@ -52,13 +52,12 @@ export default class DesignerPageTwoComponent extends React.Component {
 
 
   getObjectData = async () => {
-    let userID = this.props.userID
+    let userID = this.props.user_id
     await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=2', {
       method: 'GET'
     })
       .then(response => response.json())
       .then(res => {
-        console.log(res, 'ressssssssssssssssssssssssssssssssssss');
         this.setState({
           user: res.data.user,
           user_bonus_for_designer: res.data.user_bonus_for_designer,
@@ -67,7 +66,6 @@ export default class DesignerPageTwoComponent extends React.Component {
           products: res.data.products,
         })
       })
-    console.log(userID, 'iddddddddddddddddddddd');
   }
 
 
@@ -188,7 +186,7 @@ export default class DesignerPageTwoComponent extends React.Component {
             </ImageBackground>
           </Modal>
 
-          {console.log(this.state.user, 'userrrrrrrrrrrrrrrrrr')}
+          
 
           <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 15 }}>
             <View style={styles.campaign}>

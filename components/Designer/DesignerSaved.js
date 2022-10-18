@@ -124,7 +124,7 @@ export default class DesignerSavedComponent extends React.Component {
                         }
                       </ScrollView>
                     </View>
-                    <Slider />
+                    {/* <Slider />s */}
                   </View>
                 )
               })

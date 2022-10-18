@@ -30,6 +30,7 @@ import CheckDesignerComponent from './components/Customer/CheckDesigner';
 import PraductiaComponent from './components/Customer/Praductia';
 import AddProductComponent from './components/Customer/AddProduct';
 import ModalComponent from './components/Ghost/Modal';
+import EditPhoneNumberConfirmComponent from './components/Auth/EditPhoneNumberConfirm';
 
 
 
@@ -102,7 +103,11 @@ function EditPhoneNumber({ navigation }) {
     <EditPhoneNumberComponent navigation={navigation} />
   );
 }
-
+function EditPhoneNumberConfirm({ navigation }) {
+  return (
+    <EditPhoneNumberConfirmComponent navigation={navigation} />
+  );
+}
 function GhostPageTwo({ navigation }) {
   return (
     <GhostPageTwoComponent navigation={navigation} />
@@ -113,7 +118,7 @@ function DesignerPageTwo({ route, navigation }) {
   const { params } = route.params;
 
   return (
-    <DesignerPageTwoComponent userID={params} navigation={navigation} />
+    <DesignerPageTwoComponent user_id={params} navigation={navigation} />
   );
 }
 
@@ -401,7 +406,7 @@ export default function App() {
                     tabBarStyle: { display: 'none' }
                   })}
                 />
-                <Tab.Screen name="DesignerPageTwo" component={DesignerPageTwoComponent}
+                <Tab.Screen name="DesignerPageTwo" component={DesignerPageTwo}
                   options={({ route }) => ({
                     tabBarButton: () => null,
                     tabBarStyle: { display: 'none' }
@@ -420,8 +425,18 @@ export default function App() {
                     tabBarStyle: { display: 'none' }
                   })}
                 />
-
-
+                <Tab.Screen name="EditPhoneNumber" component={EditPhoneNumberComponent}
+                  options={({ route }) => ({
+                    tabBarButton: () => null,
+                    tabBarStyle: { display: 'none' }
+                  })}
+                />
+                <Tab.Screen name="EditPhoneNumberConfirm" component={EditPhoneNumberConfirmComponent}
+                  options={({ route }) => ({
+                    tabBarButton: () => null,
+                    tabBarStyle: { display: 'none' }
+                  })}
+                />
               </Tab.Navigator>
             ) :
 
@@ -489,7 +504,18 @@ export default function App() {
                       tabBarStyle: { display: 'none' }
                     })}
                   />
-
+                  <Tab.Screen name="EditPhoneNumber" component={EditPhoneNumberComponent}
+                    options={({ route }) => ({
+                      tabBarButton: () => null,
+                      tabBarStyle: { display: 'none' }
+                    })}
+                  />
+                  <Tab.Screen name="EditPhoneNumberConfirm" component={EditPhoneNumberConfirmComponent}
+                    options={({ route }) => ({
+                      tabBarButton: () => null,
+                      tabBarStyle: { display: 'none' }
+                    })}
+                  />
                 </Tab.Navigator>
               ) :
 
@@ -544,12 +570,6 @@ export default function App() {
                       })}
                     />
                     <Tab.Screen name="AuthScreen" component={AuthScreenComponent}
-                      options={({ route }) => ({
-                        tabBarButton: () => null,
-                        tabBarStyle: { display: 'none' }
-                      })}
-                    />
-                    <Tab.Screen name="EditPhoneNumber" component={EditPhoneNumberComponent}
                       options={({ route }) => ({
                         tabBarButton: () => null,
                         tabBarStyle: { display: 'none' }

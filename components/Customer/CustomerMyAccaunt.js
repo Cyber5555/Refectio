@@ -28,17 +28,22 @@ export default class CustomerMyAccauntComponent extends React.Component {
       authUserState: [],
       options: [],
       id: '',
+      inn: '',
+      strana: '',
 
       editModal: false,
+      editModalInn: false,
 
-      inputs: {
-        placeholder: '',
-        name: '',
-        secureity: false
-      },
 
       role_id: '',
       userToken: '',
+
+      made_in: '',
+
+      individual_number: '',
+
+      phone: '',
+      phone_code: '',
 
       urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
     }
@@ -63,15 +68,79 @@ export default class CustomerMyAccauntComponent extends React.Component {
           authUserState: res.data,
           gorodArray: res.data[0].city_of_sales_manufacturer,
           id: res.data[0].id,
+          inn: res.data[0].individual_number,
+          strana: res.data[0].made_in,
           userToken: userToken,
-          role_id: res.data[0].role_id
+          role_id: res.data[0].role_id,
+          phone: res.data[0].phone,
+          phone_code: res.data[0].phone_code,
         })
+        console.log(res);
       })
   }
 
+  sendMadeIn = async () => {
+    let userToken = await AsyncStorage.getItem('userToken');
+    let AuthStr = "Bearer " + userToken
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "multipart/form-data");
+    myHeaders.append("Authorization", AuthStr);
+
+
+    let formdata = new FormData();
+    formdata.append("made_in", this.state.made_in);
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    await fetch("http://80.78.246.59/Refectio/public/api/updateManeInProizvoditel", requestOptions)
+      .then(response => response.json())
+      .then(result => result)
+      .catch(error => console.log('error', error));
+  }
+
+  sendInn = async () => {
+    let userToken = await AsyncStorage.getItem('userToken');
+    let AuthStr = "Bearer " + userToken
+    let myHeaders = new Headers();
+    myHeaders.append("Content-Type", "multipart/form-data");
+    myHeaders.append("Authorization", AuthStr);
+
+
+    let formdata = new FormData();
+    formdata.append("individual_number", this.state.individual_number);
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    await fetch("http://80.78.246.59/Refectio/public/api/UpdateIndividualNumberProizvoditel", requestOptions)
+      .then(response => response.json())
+      .then(result => result)
+      .catch(error => console.log('error', error));
+  }
+
+
 
   componentDidMount() {
+
+
+    const { navigation } = this.props;
     this.getAuthUserProfile()
+
+    this.focusListener = navigation.addListener("focus", () => {
+
+      this.getAuthUserProfile()
+
+    });
+
     this.keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       this._keyboardDidShow,
@@ -84,6 +153,12 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
 
   componentWillUnmount() {
+
+    if (this.focusListener) {
+      this.focusListener();
+      console.log(' END')
+    }
+
     this.keyboardDidShowListener.remove();
     this.keyboardDidHideListener.remove();
   }
@@ -342,13 +417,12 @@ export default class CustomerMyAccauntComponent extends React.Component {
                       textAlign: 'left',
                     }}
                   >
-                    {this.state.inputs.name}
+                    Страна производства
                   </Text>
                 </View>
                 <TextInput
                   underlineColorAndroid="transparent"
-                  placeholder={this.state.inputs.placeholder}
-                  secureTextEntry={this.state.inputs.secureity}
+                  placeholder={'Италия'}
                   style={{
                     borderWidth: 1,
                     borderColor: '#F5F5F5',
@@ -356,13 +430,67 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     width: '90%',
                     borderRadius: 5,
                   }}
+                  value={this.state.made_in}
+                  onChangeText={(text) => this.setState({ made_in: text })}
                 />
-                <TouchableOpacity style={{ marginTop: 50 }}>
+                <TouchableOpacity style={{ marginTop: 50 }} onPress={async () => {
+                  await this.sendMadeIn()
+                  this.setState({ editModal: false })
+                }}>
                   <BlueButton name='Сохранить' />
                 </TouchableOpacity>
               </View>
             </ImageBackground>
           </Modal>
+
+          <Modal visible={this.state.editModalInn}>
+            <ImageBackground style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} source={require('../../assets/image/blurBg.png')}>
+              <View style={{ width: '90%', height: 300, borderRadius: 20, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+                <TouchableOpacity style={{ position: 'absolute', right: 18, top: 18, }} onPress={() => this.setState({ editModalInn: false })}>
+                  <Image source={require('../../assets/image/ixs.png')} style={{ width: 22.5, height: 22.5, }} />
+                </TouchableOpacity>
+                <View style={{
+                  flexDirection: 'row',
+                  marginTop: 30,
+                  width: '90%'
+                }}>
+                  <Text
+                    style={{
+                      fontFamily: 'Poppins_500Medium',
+                      lineHeight: 23,
+                      fontSize: 16,
+                      color: '#5B5B5B',
+                      marginBottom: 5,
+                      textAlign: 'left',
+                    }}
+                  >
+                    ИНН
+                  </Text>
+                </View>
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  placeholder={this.state.inn}
+                  keyboardType={'number-pad'}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#F5F5F5',
+                    padding: 10,
+                    width: '90%',
+                    borderRadius: 5,
+                  }}
+                  value={this.state.individual_number}
+                  onChangeText={(text) => this.setState({ individual_number: text })}
+                />
+                <TouchableOpacity style={{ marginTop: 50 }} onPress={async () => {
+                  await this.sendInn()
+                  this.setState({ editModalInn: false })
+                }}>
+                  <BlueButton name='Сохранить' />
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+          </Modal>
+
 
 
           <TouchableOpacity
@@ -486,14 +614,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 >
                   Страна производства
                 </Text>
-                <TouchableOpacity onPress={() => this.setState({
-                  inputs: {
-                    placeholder: 'Италия',
-                    secureity: false,
-                    name: 'Страна производства',
-                  },
-                  editModal: true
-                })}>
+                <TouchableOpacity onPress={() => this.setState({ editModal: true })}>
                   <Image
                     source={require('../../assets/image/ep_edit.png')}
                     style={{
@@ -507,7 +628,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
               </View>
               <TextInput
                 underlineColorAndroid="transparent"
-                placeholder="Италия"
+                placeholder={this.state.strana}
                 editable={false}
                 style={{
                   borderWidth: 1,
@@ -535,14 +656,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 >
                   ИНН
                 </Text>
-                <TouchableOpacity onPress={() => this.setState({
-                  inputs: {
-                    placeholder: '7727563778',
-                    secureity: false,
-                    name: 'ИНН',
-                  },
-                  editModal: true
-                })}>
+                <TouchableOpacity onPress={() => this.setState({ editModalInn: true })}>
                   <Image
                     source={require('../../assets/image/ep_edit.png')}
                     style={{
@@ -557,7 +671,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
               </View>
               <TextInput
                 underlineColorAndroid="transparent"
-                placeholder="7727563778"
+                placeholder={this.state.inn}
                 editable={false}
                 style={{
                   borderWidth: 1,
@@ -600,7 +714,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
               </View>
               <TextInput
                 underlineColorAndroid="transparent"
-                placeholder="+7 (909) 099-99-99"
+                placeholder={this.state.phone_code + this.state.phone}
                 editable={false}
                 style={{
                   borderWidth: 1,

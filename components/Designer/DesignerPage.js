@@ -208,10 +208,10 @@ export default class CustomerMainPageComponent extends React.Component {
                   <View key={index} style={styles.campaign} >
                     <TouchableOpacity
                       onPress={async () => {
+                        console.log(item.id, 'before navigation');
                         this.props.navigation.navigate('DesignerPageTwo', {
                           params: item.id
                         })
-                        console.log(item.id);
                       }}>
                       <View style={styles.infoCompanyMain}>
                         <Image
