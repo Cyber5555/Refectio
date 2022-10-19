@@ -52,7 +52,19 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
       phone: '',
 
+      RewardModal: true,
+
       urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
+
+      valid_error: false,
+
+      procentArray: [
+        {
+          to: '0',
+          from: '',
+          percent: ''
+        },
+      ],
     }
   }
   static contextType = AuthContext
@@ -63,7 +75,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
     })
       .then(response => response.json())
       .then((res) => {
-        console.log(res.data.region, 'res.data.region');
+        // console.log(res.data.region, 'res.data.region');
         this.setState({
           oblostArray: res.data.region,
           gorodModal: true
@@ -153,6 +165,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
           phone: res.data[0].phone,
         })
         // console.log(res.data[0].city_of_sales_manufacturer, 'res.data[0].city_of_sales_manufacturer');
+        // console.log(this.state.authUserState);
       })
   }
 
@@ -204,6 +217,127 @@ export default class CustomerMyAccauntComponent extends React.Component {
       .catch(error => console.log('error', error));
   }
 
+
+  removeInputRow = () => {
+
+    let { procentArray } = this.state;
+
+    procentArray.pop();
+
+    this.setState({
+      procentArray: procentArray
+    })
+  }
+
+
+  addInputRow = () => {
+
+    let { procentArray } = this.state;
+
+    procentArray.push({
+      to: '',
+      from: '',
+      percent: ''
+    })
+    let newProcentArray = procentArray;
+
+    this.setState({
+      procentArray: newProcentArray
+    })
+
+  }
+
+
+  savePercont = async () => {
+    let { procentArray } = this.state;
+
+    let result = [];
+    let valid_error = false;
+
+    for (let i = 0; i < procentArray.length; i++) {
+
+      if (procentArray[i].to == '' || procentArray[i].from == '' || procentArray[i].percent == '') {
+        valid_error = true;
+        break;
+      }
+
+      let resultString = procentArray[i].to + '^' + procentArray[i].from + '^' + procentArray[i].percent
+      result.push(resultString)
+    }
+
+    if (valid_error) {
+
+      this.setState({
+        valid_error: true
+      })
+
+      setTimeout(() => {
+        this.setState({
+          valid_error: false
+        })
+
+      }, 2000)
+
+    } else {
+      let myHeaders = new Headers();
+      let userToken = await AsyncStorage.getItem('userToken')
+      let AuthStr = "Bearer " + userToken
+      myHeaders.append("Content-Type", "multipart/form-data");
+      myHeaders.append("Authorization", AuthStr);
+
+      let formdata = new FormData();
+      formdata.append("percent_bonus[]", result);
+
+      let requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow'
+      };
+
+      fetch("http://80.78.246.59/Refectio/public/api/UpdatePracentForDesigner", requestOptions)
+        .then(response => response.json())
+        .then(res => {
+          console.log(res);
+        })
+        .catch(error => console.log('error', error));
+
+
+
+
+    }
+
+    // console.log(result);
+  }
+
+  changeTo = (value, index) => {
+    let { procentArray } = this.state;
+    procentArray[index].to = value;
+
+    this.setState({
+      procentArray: procentArray
+    })
+  }
+
+
+  changeFrom = (value, index) => {
+    let { procentArray } = this.state;
+    procentArray[index].from = value;
+
+    this.setState({
+      procentArray: procentArray
+    })
+  }
+
+
+  changePercent = (value, index) => {
+    let { procentArray } = this.state;
+    procentArray[index].percent = value;
+
+    this.setState({
+      procentArray: procentArray
+    })
+  }
 
 
   componentDidMount() {
@@ -280,7 +414,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
 
     this.setState({ gorodArray: filterSort })
-    console.log(this.state.gorodArray, 'options  ssss');
 
   }
 
@@ -298,20 +431,10 @@ export default class CustomerMyAccauntComponent extends React.Component {
       filterSort.splice(index, 1);
     }
     this.setState({ gorodArray: filterSort })
-    console.log(this.state.gorodArray);
   }
 
 
 
-  // checkSelectedCity = (item) => {
-
-  //   console.log(item, 'checkSelectedCity');
-
-
-
-  //   return false;
-
-  // }
 
   render() {
     return (
@@ -563,7 +686,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
                               }}
                               onPress={() => {
                                 this.enterCheckBox(item, index)
-                                // console.log(item.city_name, index);
                               }}
                             >
                               <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
@@ -1173,7 +1295,355 @@ export default class CustomerMyAccauntComponent extends React.Component {
             {/* dropDown end */}
 
 
+            {/* <View
+              style={{
+                width: '100%',
+                // height: ,
+                backgroundColor: '#000',
+                borderRadius: 20,
 
+
+              }}>
+
+              <View>
+                <View style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 30,
+                }}>
+                  <Text
+                    style={{
+                      fontFamily: 'Poppins_500Medium',
+                      lineHeight: 23,
+                      fontSize: 16,
+                      color: '#5B5B5B',
+                      marginBottom: 5,
+                    }}
+                  >
+                    Вознаграждение
+                  </Text>
+                  <TouchableOpacity>
+                    <Image
+                      source={require('../../assets/image/ep_edit.png')}
+                      style={{
+                        width: 15,
+                        height: 15,
+                        marginLeft: 5,
+                        marginBottom: 5
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+                
+
+
+              </View>
+
+
+              
+
+              {this.state.valid_error === true &&
+
+                <Text
+                  style={{
+                    color: 'red',
+                    fontSize: 18,
+                    marginTop: 20,
+                    textAlign: 'center',
+                    fontFamily: 'Poppins_500Medium',
+                  }}>
+                  Ошибка: заполните все поля.
+                </Text>
+
+              }
+
+
+              < View style={styles.DesignerRemunerationPercentageParent} >
+                {
+                  this.state.procentArray.map((item, index) => {
+                    return (
+                      <View style={styles.DesignerRemunerationPercentage} key={index}>
+
+                        <Text style={styles.procentText}>От</Text>
+
+                        <TextInput
+                          editable={index === 0 ? false : true}
+                          keyboardType={'number-pad'}
+                          style={styles.procentInput}
+                          value={item.to}
+                          onChangeText={async (value) => {
+
+                            // await this.setState({ attttttt: value })
+                            this.changeTo(value, index)
+                            console.log(value)
+
+                          }}
+                        />
+
+                        <View style={styles.rubli}>
+                          <Svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <Path d="M6.285 8.99997C7.37392 9.02686 8.42909 8.62091 9.21919 7.8711C10.0093 7.1213 10.4699 6.08881 10.5 4.99997C10.4699 3.91113 10.0093 2.87865 9.21919 2.12884C8.42909 1.37904 7.37392 0.973087 6.285 0.999974H2C1.86739 0.999974 1.74021 1.05265 1.64645 1.14642C1.55268 1.24019 1.5 1.36737 1.5 1.49997V7.99997H0.5C0.367392 7.99997 0.240215 8.05265 0.146447 8.14642C0.0526785 8.24019 0 8.36736 0 8.49997C0 8.63258 0.0526785 8.75976 0.146447 8.85353C0.240215 8.9473 0.367392 8.99997 0.5 8.99997H1.5V9.99997H0.5C0.367392 9.99997 0.240215 10.0527 0.146447 10.1464C0.0526785 10.2402 0 10.3674 0 10.5C0 10.6326 0.0526785 10.7598 0.146447 10.8535C0.240215 10.9473 0.367392 11 0.5 11H1.5V14.5C1.5 14.6326 1.55268 14.7598 1.64645 14.8535C1.74021 14.9473 1.86739 15 2 15C2.13261 15 2.25979 14.9473 2.35355 14.8535C2.44732 14.7598 2.5 14.6326 2.5 14.5V11H7C7.13261 11 7.25979 10.9473 7.35355 10.8535C7.44732 10.7598 7.5 10.6326 7.5 10.5C7.5 10.3674 7.44732 10.2402 7.35355 10.1464C7.25979 10.0527 7.13261 9.99997 7 9.99997H2.5V8.99997H6.285ZM2.5 1.99997H6.285C7.10839 1.9743 7.90853 2.27531 8.51083 2.83733C9.11313 3.39935 9.46872 4.17677 9.5 4.99997C9.47001 5.82362 9.11483 6.60182 8.51223 7.16412C7.90964 7.72642 7.10875 8.02698 6.285 7.99997H2.5V1.99997Z" fill="#888888" />
+                          </Svg>
+                        </View>
+
+                        <Text style={styles.procentText}>До</Text>
+
+                        <TextInput
+                          maxLength={10}
+                          keyboardType="number-pad"
+                          style={styles.procentInput}
+                          value={item.from}
+                          onChangeText={async (value) => {
+                            // await this.setState({ doooooo: value })
+                            console.log(value)
+                            this.changeFrom(value, index)
+                          }}
+
+                        />
+
+                        <View style={styles.rubli}>
+                          <Svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <Path d="M6.285 8.99997C7.37392 9.02686 8.42909 8.62091 9.21919 7.8711C10.0093 7.1213 10.4699 6.08881 10.5 4.99997C10.4699 3.91113 10.0093 2.87865 9.21919 2.12884C8.42909 1.37904 7.37392 0.973087 6.285 0.999974H2C1.86739 0.999974 1.74021 1.05265 1.64645 1.14642C1.55268 1.24019 1.5 1.36737 1.5 1.49997V7.99997H0.5C0.367392 7.99997 0.240215 8.05265 0.146447 8.14642C0.0526785 8.24019 0 8.36736 0 8.49997C0 8.63258 0.0526785 8.75976 0.146447 8.85353C0.240215 8.9473 0.367392 8.99997 0.5 8.99997H1.5V9.99997H0.5C0.367392 9.99997 0.240215 10.0527 0.146447 10.1464C0.0526785 10.2402 0 10.3674 0 10.5C0 10.6326 0.0526785 10.7598 0.146447 10.8535C0.240215 10.9473 0.367392 11 0.5 11H1.5V14.5C1.5 14.6326 1.55268 14.7598 1.64645 14.8535C1.74021 14.9473 1.86739 15 2 15C2.13261 15 2.25979 14.9473 2.35355 14.8535C2.44732 14.7598 2.5 14.6326 2.5 14.5V11H7C7.13261 11 7.25979 10.9473 7.35355 10.8535C7.44732 10.7598 7.5 10.6326 7.5 10.5C7.5 10.3674 7.44732 10.2402 7.35355 10.1464C7.25979 10.0527 7.13261 9.99997 7 9.99997H2.5V8.99997H6.285ZM2.5 1.99997H6.285C7.10839 1.9743 7.90853 2.27531 8.51083 2.83733C9.11313 3.39935 9.46872 4.17677 9.5 4.99997C9.47001 5.82362 9.11483 6.60182 8.51223 7.16412C7.90964 7.72642 7.10875 8.02698 6.285 7.99997H2.5V1.99997Z" fill="#888888" />
+                          </Svg>
+                        </View>
+
+                        <View
+                          style={styles.procent}
+                        >
+                          <TextInput
+                            keyboardType="number-pad"
+                            maxLength={2}
+                            value={item.percent}
+                            onChangeText={async (value) => {
+                              // await this.setState({ proccccc: value })
+                              console.log(value)
+                              this.changePercent(value, index)
+
+                            }}
+                          />
+                          <Text>%</Text>
+                        </View>
+                      </View>
+                    )
+                  })
+                }
+
+
+
+                <View View style={{ flexDirection: "row", justifyContent: 'flex-end' }}>
+
+
+                  {this.state.procentArray.length > 1 &&
+                    <TouchableOpacity
+                      style={[styles.presoble, { marginRight: 11 }]}
+                      onPress={async () => {
+                        this.removeInputRow()
+                      }}>
+                      <Text style={styles.procentText}>Удалить</Text>
+                    </TouchableOpacity>
+
+                  }
+
+
+
+
+
+
+                  <TouchableOpacity
+                    style={styles.presoble}
+                    onPress={async () => {
+                      this.addInputRow()
+                    }}>
+                    <Text style={styles.procentText}>Добавить</Text>
+                  </TouchableOpacity>
+
+
+                  
+
+                </View >
+              </View >
+
+              <TouchableOpacity
+                style={{ alignSelf: 'center', marginTop: 93, marginBottom: 56 }}
+                onPress={() => { this.savePercont() }}>
+                <BlueButton name="Сохранить" />
+              </TouchableOpacity>
+            </View> */}
+
+            {/* vajnagrajdenia modal start */}
+
+            <Modal visible={this.state.RewardModal}>
+              <ImageBackground
+                source={require('../../assets/image/blurBg.png')}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <View
+                  style={{
+                    width: '90%',
+                    // height: ,
+                    backgroundColor: '#fff',
+                    borderRadius: 20,
+                    position: 'relative',
+
+                  }}>
+
+                  <TouchableOpacity
+                    style={{
+                      position: 'absolute',
+                      width: 22.5,
+                      height: 22.5,
+                      right: 21.75,
+                      top: 21.75,
+                    }}
+                    onPress={() => this.setState({ RewardModal: false })}>
+                    <Image
+                      source={require('../../assets/image/ixs.png')}
+                      style={{
+                        width: '100%',
+                        height: '100%'
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <Text
+                    style={{
+                      color: '#2D9EFB',
+                      fontSize: 26,
+                      marginTop: 70,
+                      textAlign: 'center',
+                      fontFamily: 'Poppins_500Medium',
+                    }}>
+                    Вознаграждение
+                  </Text>
+
+
+                  {this.state.valid_error === true &&
+
+                    <Text
+                      style={{
+                        color: 'red',
+                        fontSize: 18,
+                        marginTop: 20,
+                        textAlign: 'center',
+                        fontFamily: 'Poppins_500Medium',
+                      }}>
+                      Ошибка: заполните все поля.
+                    </Text>
+
+                  }
+
+
+                  < View style={styles.DesignerRemunerationPercentageParent} >
+                    {
+                      this.state.procentArray.map((item, index) => {
+                        return (
+                          <View style={styles.DesignerRemunerationPercentage} key={index}>
+
+                            <Text style={styles.procentText}>От</Text>
+
+                            <TextInput
+                              editable={index === 0 ? false : true}
+                              keyboardType={'number-pad'}
+                              style={styles.procentInput}
+                              value={item.to}
+                              onChangeText={async (value) => {
+                                this.changeTo(value, index)
+                              }}
+                            />
+
+                            <View style={styles.rubli}>
+                              <Svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <Path d="M6.285 8.99997C7.37392 9.02686 8.42909 8.62091 9.21919 7.8711C10.0093 7.1213 10.4699 6.08881 10.5 4.99997C10.4699 3.91113 10.0093 2.87865 9.21919 2.12884C8.42909 1.37904 7.37392 0.973087 6.285 0.999974H2C1.86739 0.999974 1.74021 1.05265 1.64645 1.14642C1.55268 1.24019 1.5 1.36737 1.5 1.49997V7.99997H0.5C0.367392 7.99997 0.240215 8.05265 0.146447 8.14642C0.0526785 8.24019 0 8.36736 0 8.49997C0 8.63258 0.0526785 8.75976 0.146447 8.85353C0.240215 8.9473 0.367392 8.99997 0.5 8.99997H1.5V9.99997H0.5C0.367392 9.99997 0.240215 10.0527 0.146447 10.1464C0.0526785 10.2402 0 10.3674 0 10.5C0 10.6326 0.0526785 10.7598 0.146447 10.8535C0.240215 10.9473 0.367392 11 0.5 11H1.5V14.5C1.5 14.6326 1.55268 14.7598 1.64645 14.8535C1.74021 14.9473 1.86739 15 2 15C2.13261 15 2.25979 14.9473 2.35355 14.8535C2.44732 14.7598 2.5 14.6326 2.5 14.5V11H7C7.13261 11 7.25979 10.9473 7.35355 10.8535C7.44732 10.7598 7.5 10.6326 7.5 10.5C7.5 10.3674 7.44732 10.2402 7.35355 10.1464C7.25979 10.0527 7.13261 9.99997 7 9.99997H2.5V8.99997H6.285ZM2.5 1.99997H6.285C7.10839 1.9743 7.90853 2.27531 8.51083 2.83733C9.11313 3.39935 9.46872 4.17677 9.5 4.99997C9.47001 5.82362 9.11483 6.60182 8.51223 7.16412C7.90964 7.72642 7.10875 8.02698 6.285 7.99997H2.5V1.99997Z" fill="#888888" />
+                              </Svg>
+                            </View>
+
+                            <Text style={styles.procentText}>До</Text>
+
+                            <TextInput
+                              maxLength={10}
+                              keyboardType="number-pad"
+                              style={styles.procentInput}
+                              value={item.from}
+                              onChangeText={async (value) => {
+                                this.changeFrom(value, index)
+                              }}
+
+                            />
+
+                            <View style={styles.rubli}>
+                              <Svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <Path d="M6.285 8.99997C7.37392 9.02686 8.42909 8.62091 9.21919 7.8711C10.0093 7.1213 10.4699 6.08881 10.5 4.99997C10.4699 3.91113 10.0093 2.87865 9.21919 2.12884C8.42909 1.37904 7.37392 0.973087 6.285 0.999974H2C1.86739 0.999974 1.74021 1.05265 1.64645 1.14642C1.55268 1.24019 1.5 1.36737 1.5 1.49997V7.99997H0.5C0.367392 7.99997 0.240215 8.05265 0.146447 8.14642C0.0526785 8.24019 0 8.36736 0 8.49997C0 8.63258 0.0526785 8.75976 0.146447 8.85353C0.240215 8.9473 0.367392 8.99997 0.5 8.99997H1.5V9.99997H0.5C0.367392 9.99997 0.240215 10.0527 0.146447 10.1464C0.0526785 10.2402 0 10.3674 0 10.5C0 10.6326 0.0526785 10.7598 0.146447 10.8535C0.240215 10.9473 0.367392 11 0.5 11H1.5V14.5C1.5 14.6326 1.55268 14.7598 1.64645 14.8535C1.74021 14.9473 1.86739 15 2 15C2.13261 15 2.25979 14.9473 2.35355 14.8535C2.44732 14.7598 2.5 14.6326 2.5 14.5V11H7C7.13261 11 7.25979 10.9473 7.35355 10.8535C7.44732 10.7598 7.5 10.6326 7.5 10.5C7.5 10.3674 7.44732 10.2402 7.35355 10.1464C7.25979 10.0527 7.13261 9.99997 7 9.99997H2.5V8.99997H6.285ZM2.5 1.99997H6.285C7.10839 1.9743 7.90853 2.27531 8.51083 2.83733C9.11313 3.39935 9.46872 4.17677 9.5 4.99997C9.47001 5.82362 9.11483 6.60182 8.51223 7.16412C7.90964 7.72642 7.10875 8.02698 6.285 7.99997H2.5V1.99997Z" fill="#888888" />
+                              </Svg>
+                            </View>
+
+                            <View
+                              style={styles.procent}
+                            >
+                              <TextInput
+                                keyboardType="number-pad"
+                                maxLength={2}
+                                value={item.percent}
+                                onChangeText={async (value) => {
+                                  this.changePercent(value, index)
+
+                                }}
+                              />
+                              <Text>%</Text>
+                            </View>
+                          </View>
+                        )
+                      })
+                    }
+
+
+
+                    <View View style={{ flexDirection: "row", justifyContent: 'flex-end' }}>
+
+                      {/* jnjel */}
+
+                      {this.state.procentArray.length > 1 &&
+                        <TouchableOpacity
+                          style={[styles.presoble, { marginRight: 11 }]}
+                          onPress={async () => {
+                            this.removeInputRow()
+                          }}>
+                          <Text style={styles.procentText}>Удалить</Text>
+                        </TouchableOpacity>
+
+                      }
+
+
+
+                      {/* avelacnel */}
+
+
+
+                      <TouchableOpacity
+                        style={styles.presoble}
+                        onPress={async () => {
+                          this.addInputRow()
+                        }}>
+                        <Text style={styles.procentText}>Добавить</Text>
+                      </TouchableOpacity>
+
+
+                      {/* kojak  */}
+
+                    </View >
+                  </View >
+
+                  <TouchableOpacity
+                    style={{ alignSelf: 'center', marginTop: 93, marginBottom: 56 }}
+                    onPress={() => { this.savePercont() }}>
+                    <BlueButton name="Сохранить" />
+                  </TouchableOpacity>
+                </View>
+              </ImageBackground>
+            </Modal>
+            {/* vajnagrajdenia modal end */}
 
 
             <TouchableOpacity
@@ -1258,5 +1728,67 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 5,
     backgroundColor: '#fff'
-  }
+  },
+  DesignerRemunerationPercentageParent: {
+    width: '90%',
+    marginTop: 0,
+    alignSelf: 'center',
+  },
+  DesignerRemunerationPercentage: {
+    width: '100%',
+    height: 50,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 10,
+    justifyContent: 'space-between'
+  },
+  procentText: {
+    fontSize: 14,
+    fontFamily: 'Poppins_500Medium',
+    color: '#888888',
+  },
+  procentInput: {
+    borderWidth: 1,
+    borderColor: '#F5F5F5',
+    borderRadius: 6,
+    width: '22%',
+    height: '100%',
+    paddingLeft: 5,
+    fontSize: 14,
+    fontFamily: 'Poppins_500Medium',
+    color: '#888888',
+    marginRight: 10
+  },
+  rubli: {
+    height: '100%',
+    width: 21,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: '#888888',
+    marginRight: 10
+  },
+  procent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#F5F5F5',
+    borderRadius: 6,
+    width: 45,
+    height: '100%',
+    paddingLeft: 5,
+    fontSize: 14,
+    fontFamily: 'Poppins_500Medium',
+    color: '#888888',
+  },
+  presoble: {
+    width: 90,
+    height: 32,
+    backgroundColor: '#F5F5F5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+  },
 })

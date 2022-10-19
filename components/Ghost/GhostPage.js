@@ -318,7 +318,6 @@ export default class GhostPageComponent extends React.Component {
                             style={{
                               fontSize: 16,
                               color: "#A8A8A8",
-                              fontWeight: '500',
                               marginTop: 5,
                               fontFamily: 'Raleway_500Medium',
                             }}>

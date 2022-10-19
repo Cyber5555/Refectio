@@ -1628,7 +1628,7 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingLeft: 5,
     fontSize: 14,
-    fontWeight: '400',
+    fontFamily: 'Poppins_500Medium',
     color: '#888888',
     marginRight: 10
   },
@@ -1652,7 +1652,7 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingLeft: 5,
     fontSize: 14,
-    fontWeight: '400',
+    fontFamily: 'Poppins_500Medium',
     color: '#888888',
   },
   presoble: {

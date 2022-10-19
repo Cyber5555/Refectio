@@ -492,28 +492,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     position: "relative"
   },
-  nameCompanyParent: {
-    marginTop: 12,
-    paddingLeft: 2,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  user: {
-    width: 30,
-    height: 30,
-    backgroundColor: '#F3F3F3',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 15
-  },
   campaign: {
     width: '100%',
     marginBottom: 34,
   },
   infoCompanyMain: {
     width: '100%',
-    // borderWidth: 1,
-    // borderColor: '#000',
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -536,7 +520,6 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-
   },
   infoText: {
     fontSize: 10,
@@ -585,41 +568,10 @@ const styles = StyleSheet.create({
     marginTop: 85,
     alignSelf: 'center',
   },
-  DesignerRemunerationPercentage: {
-    width: '100%',
-    height: 50,
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginBottom: 10,
-    justifyContent: 'space-between'
-  },
   procentText: {
     fontSize: 14,
     fontFamily: 'Poppins_500Medium',
     color: '#888888',
-  },
-  procentInput: {
-    borderWidth: 1,
-    borderColor: '#F5F5F5',
-    borderRadius: 6,
-    width: '22%',
-    height: '100%',
-    paddingLeft: 5,
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#888888',
-    marginRight: 10
-  },
-  rubli: {
-    height: '100%',
-    width: 21,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-    color: '#888888',
-    marginRight: 10
   },
   procent: {
     flexDirection: 'row',
@@ -631,27 +583,12 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingLeft: 5,
     fontSize: 14,
-    fontWeight: '400',
+    fontFamily: 'Poppins_500Medium',
     color: '#888888',
-  },
-  presoble: {
-    width: 90,
-    height: 32,
-    backgroundColor: '#F5F5F5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
   },
   zakazInfo: {
     fontSize: 14,
     fontFamily: 'Raleway_400Regular',
-    // marginTop: 5
-  },
-
-  DesignerRemunerationPercentageParent: {
-    width: '90%',
-    marginTop: 85,
-    alignSelf: 'center',
   },
   DesignerRemunerationPercentage: {
     width: '100%',
@@ -662,11 +599,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     justifyContent: 'space-between'
   },
-  procentText: {
-    fontSize: 14,
-    fontFamily: 'Poppins_500Medium',
-    color: '#888888',
-  },
   procentInput: {
     borderWidth: 1,
     borderColor: '#F5F5F5',
@@ -675,7 +607,7 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingLeft: 5,
     fontSize: 14,
-    fontWeight: '400',
+    fontFamily: 'Poppins_500Medium',
     color: '#888888',
     marginRight: 10
   },
@@ -688,26 +620,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     color: '#888888',
     marginRight: 10
-  },
-  procent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#F5F5F5',
-    borderRadius: 6,
-    width: 45,
-    height: '100%',
-    paddingLeft: 5,
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#888888',
-  },
-  presoble: {
-    width: 90,
-    height: 32,
-    backgroundColor: '#F5F5F5',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
   },
 })
