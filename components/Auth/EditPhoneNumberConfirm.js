@@ -6,6 +6,7 @@ import BlueButton from "../Component/Buttons/BlueButton"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
+let timer = null
 export default class EditPhoneNumberConfirmComponent extends React.Component {
   constructor(props) {
     super(props)
@@ -24,7 +25,16 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
       modalVisible: false,
 
       code: '',
+      error_code: false,
+      error_code_text: '',
+      timerMinut: 1,
+      timerSecond: 60,
+      timerBool: false,
+
+
     };
+
+    let interval = null;
   }
 
   sendPhoneCode = async () => {
@@ -34,7 +44,7 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
     myHeaders.append("Content-Type", "multipart/form-data");
     myHeaders.append("Authorization", AouthStr);
 
-    
+
 
     let formdata = new FormData();
     formdata.append("code", this.state.code);
@@ -51,16 +61,195 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
       .then(result => {
         console.log(result);
         if (result.status === true) {
-          this.setState({ modalVisible: true })
+
+
+          this.setState({
+            error_code: false,
+            modalVisible: true,
+            pin1: '',
+            pin2: '',
+            pin3: '',
+            pin4: '',
+          })
+
+
+        }
+        else if (result.status === false) {
+
+          if (result.hasOwnProperty('message')) {
+
+            if (result.message == 'code required') {
+              this.setState({
+                error_code: true,
+                error_code_text: 'Код обязателен для заполнения!',
+                pin1: '',
+                pin2: '',
+                pin3: '',
+                pin4: '',
+              })
+              this.pin1Ref.current.focus()
+            } else if (result.message == 'wrong verification code') {
+              this.setState({
+                error_code: true,
+                error_code_text: 'Не верный код!',
+                pin1: '',
+                pin2: '',
+                pin3: '',
+                pin4: '',
+              })
+              this.pin1Ref.current.focus()
+            }
+            setTimeout(() => {
+              this.setState({
+                error_code_text: '',
+                error_code: false
+              })
+            }, 3000)
+          }
+
+
+
         }
       })
       .catch(error => console.log('error', error));
   }
 
-  goToCustomerPage = () => {
-    this.props.navigation.navigate('CustomerMainPage');
-    this.setState({ modalVisible: false })
+  goToCustomerPage = async () => {
+
+    clearInterval(this.interval);
+    await this.setState({
+      timerMinut: 1,
+      timerBool: true,
+      timerSecond: 60,
+      modalVisible: false
+    })
+
+    this.props.navigation.navigate('CustomerMyAccaunt');
   }
+
+  printTimer = () => {
+
+    let timeer_second = this.state.timerSecond;
+    let timer_minute = this.state.timerMinut;
+    let time_result = '';
+
+    if (timer_minute == 0) {
+      time_result = '00:';
+
+      let sec = '';
+      if (timeer_second > 0 && timeer_second < 10) {
+        sec = '0' + timeer_second
+      } else if (timeer_second > 10) {
+        sec = timeer_second
+      }
+
+      time_result = time_result + sec;
+
+    } else {
+
+      time_result = '01:00';
+
+    }
+
+    return time_result;
+
+  }
+
+  timer = () => {
+
+    this.interval = setInterval(() => {
+
+      console.log(this.state.timerSecond)
+      if (this.state.timerSecond == 0) {
+
+        clearInterval(this.interval);
+
+        this.setState({
+          timerMinut: 1,
+          timerBool: true,
+          timerSecond: 60
+        })
+
+        console.log('STOP')
+
+        return false;
+      }
+
+      this.setState({
+        timerMinut: 0,
+        timerSecond: this.state.timerSecond - 1
+      })
+
+    }, 1000)
+  }
+
+  updateCodeSend = async () => {
+    if (this.state.timerBool == true) {
+      let myHeaders = new Headers();
+      let userToken = await AsyncStorage.getItem('userToken')
+      let AouthStr = "Bearer " + userToken;
+
+      myHeaders.append("Content-Type", "multipart/form-data");
+      myHeaders.append("Authorization", AouthStr);
+
+      let requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: this.props.phoneNumb,
+        redirect: 'follow'
+      };
+      console.log(this.props.phoneNumb);
+      await fetch('http://80.78.246.59/Refectio/public/api/updateCodeIntestTable', requestOptions)
+        .then(response => response.json())
+        .then(result => {
+
+
+          if (result.status) {
+
+            this.setState({
+              timerBool: false
+            })
+
+            clearInterval(this.interval)
+            this.timer()
+
+          }
+
+          console.log(result)
+        })
+    }
+  }
+
+
+  componentDidMount() {
+
+    const { navigation } = this.props
+
+    clearInterval(this.interval);
+
+    // this.timer()
+
+    this.focusListener = navigation.addListener("focus", () => {
+
+      console.log(this.props.phoneNumb, 'hamarrrrrrr');
+      clearInterval(this.interval);
+      this.timer()
+      // this.timer()
+
+    });
+  }
+
+  goToBack = async () => {
+    clearInterval(this.interval);
+    await this.setState({
+      timerMinut: 1,
+      timerBool: true,
+      timerSecond: 60,
+      modalVisible: false
+    })
+    this.props.navigation.navigate('CustomerMyAccaunt')
+  }
+
   render() {
     const { pin1, pin2, pin3, pin4, } = this.state
     return (
@@ -91,21 +280,21 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
                   marginTop: 27,
                   fontFamily: 'Poppins_500Medium'
                 }}>
-                Вы успешно{'\n'}зарегистрировались
+                Ваш номер{'\n'}успешно изменён
               </Text>
               <TouchableOpacity
                 style={{
                   marginTop: 170
                 }}
                 onPress={() => { this.goToCustomerPage() }}>
-                <BlueButton name="Войти" />
+                <BlueButton name="Вернуться" />
               </TouchableOpacity>
             </View>
           </Modal>
 
 
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('CustomerMyAccaunt')}
+            onPress={() => { this.goToBack() }}
             style={{
               position: 'absolute',
               top: 18.29,
@@ -149,9 +338,9 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
                   marginTop: 16,
                   color: '#2D9EFB',
                   fontSize: 15,
-                  fontFamily: 'Raleway_500Medium'
                 }}>
-                01:00
+
+                {this.printTimer()}
               </Text>
             </View>
 
@@ -223,7 +412,25 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
               />
 
             </View>
-            <View>
+
+
+            {this.state.error_code === true &&
+              <View>
+                <Text style={{ paddingLeft: 25, color: 'red' }}>
+                  {this.state.error_code_text}
+                </Text>
+              </View>
+            }
+            <TouchableOpacity activeOpacity={0.6} onPress={async () => {
+              this.updateCodeSend()
+              // if (this.state.timerBool == true) {
+              //   this.setState({
+              //     timerBool: false,
+              //     timerMinut: 1,
+              //     timerSecond: 60,
+              //   })
+              // }
+            }}>
               <Text
                 style={{
                   fontSize: 14,
@@ -237,7 +444,7 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
                 }}>
                 Отправить код повторно
               </Text>
-            </View>
+            </TouchableOpacity>
             <View
               style={{
                 alignItems: 'center',
@@ -248,7 +455,6 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
                   await this.setState({ code: pin1 + pin2 + pin3 + pin4 })
 
                   await this.sendPhoneCode()
-
                 }}
               >
                 <BlueButton name="Подтвердить" />

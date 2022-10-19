@@ -24,7 +24,6 @@ export default class EditPhoneNumberComponent extends React.Component {
 
     let formdata = new FormData();
     formdata.append("phone", this.state.phone);
-    formdata.append("phone_code", "+374");
 
     let requestOptions = {
       method: 'POST',
@@ -36,8 +35,13 @@ export default class EditPhoneNumberComponent extends React.Component {
     await fetch("http://80.78.246.59/Refectio/public/api/newnumberProizvoditel", requestOptions)
       .then(response => response.json())
       .then(result => {
+
+        console.log(this.state.phone, 'uxarkumenq')
+        
         if (result.status === true && result.message == 'code send your phone number') {
-          this.props.navigation.navigate('EditPhoneNumberConfirm');
+          this.props.navigation.navigate('EditPhoneNumberConfirm', {
+            params: this.state.phone
+          });
         }
       })
       .catch(error => console.log('error', error));
@@ -99,11 +103,11 @@ export default class EditPhoneNumberComponent extends React.Component {
                   color: '#5B5B5B'
                 }}
               >
-                Старый номер телефона
+                Новый номер телефона
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"
-                keyboardType="number-pad"
+                keyboardType="phone-pad"
                 style={{
                   borderWidth: 1,
                   padding: 10,

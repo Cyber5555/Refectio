@@ -22,11 +22,19 @@ export default class CustomerMyAccauntComponent extends React.Component {
       gorod: false,
 
       gorodModal: false,
+
+      oblostArray: [],
+      oblostFilter: false,
+
       gorodArray: [],
       gorodFilter: false,
-      count: 0,
+
+      cityItems: [],
+
+
       authUserState: [],
       options: [],
+
       id: '',
       inn: '',
       strana: '',
@@ -43,13 +51,83 @@ export default class CustomerMyAccauntComponent extends React.Component {
       individual_number: '',
 
       phone: '',
-      phone_code: '',
 
       urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
     }
   }
   static contextType = AuthContext
 
+  getRegionApi = async () => {
+    await fetch("http://80.78.246.59/Refectio/public/api/getregion", {
+      method: 'GET'
+    })
+      .then(response => response.json())
+      .then((res) => {
+        console.log(res.data.region, 'res.data.region');
+        this.setState({
+          oblostArray: res.data.region,
+          gorodModal: true
+        })
+      })
+      .catch(error => error, 'error')
+  }
+
+  updatedCities = async () => {
+    let gorodArraySort = this.state.gorodArray
+
+
+    if (gorodArraySort.length == 0) {
+
+      this.setState({
+        cities_empty_error: true,
+        cities_empty_error_text: 'Выберите город!'
+      })
+      return false;
+    } else {
+      this.setState({
+        cities_empty_error: false,
+        cities_empty_error_text: ''
+      })
+    }
+
+
+    let new_gorod_sort = [];
+    for (let i = 0; i < gorodArraySort.length; i++) {
+      let city = gorodArraySort[i].city_id + '^' + gorodArraySort[i].city_name
+      new_gorod_sort.push(city)
+    }
+
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken')
+    let AuthStr = "Bearer " + userToken
+
+    myHeaders.append("Authorization", AuthStr);
+
+    let formdata = new FormData();
+    formdata.append("sales_city[]", new_gorod_sort);
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+    fetch("http://80.78.246.59/Refectio/public/api/UpdategorodaProdaji", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        if (result.status === true) {
+          this.getAuthUserProfile()
+          this.setState({ gorodModal: false })
+        }
+      })
+      .catch(error => console.log('error', error));
+
+
+
+    // ete succesy true ya kanchumenq getAuthUserProfile es funkcian u pagumenq popapy
+
+
+  }
 
 
   getAuthUserProfile = async () => {
@@ -73,9 +151,8 @@ export default class CustomerMyAccauntComponent extends React.Component {
           userToken: userToken,
           role_id: res.data[0].role_id,
           phone: res.data[0].phone,
-          phone_code: res.data[0].phone_code,
         })
-        console.log(res);
+        // console.log(res.data[0].city_of_sales_manufacturer, 'res.data[0].city_of_sales_manufacturer');
       })
   }
 
@@ -135,9 +212,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
     const { navigation } = this.props;
     this.getAuthUserProfile()
 
+
     this.focusListener = navigation.addListener("focus", () => {
 
       this.getAuthUserProfile()
+
 
     });
 
@@ -182,39 +261,57 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
 
   enterCheckBox = (items, index) => {
-    let filterSort = this.state.options;
+    // let old_gorodArray =;
+
+    items.city_id = items.id;
+    items.city_name = items.name;
+
+    let filterSort = this.state.gorodArray;
+
     let find = true
     filterSort.find((item) => {
-      if (item == items) {
+      if (item.city_id == items.city_id) {
         find = false
       }
     })
     if (find) {
       filterSort.push(items)
-      this.setState({ count: this.state.count + 1 });
     }
-    this.setState({ options: filterSort })
-    console.log(this.state.options);
+
+
+    this.setState({ gorodArray: filterSort })
+    console.log(this.state.gorodArray, 'options  ssss');
 
   }
 
   verifyCheckBox = (items) => {
-    let filterSort = this.state.options
+    let filterSort = this.state.gorodArray
     let find = false
     filterSort.find((item) => {
       if (item == items) {
         find = true
       }
     })
+
     if (find) {
       const index = filterSort.indexOf(items);
       filterSort.splice(index, 1);
-      this.setState({ count: this.state.count - 1 });
     }
-    this.setState({ options: filterSort })
-    console.log(this.state.options);
+    this.setState({ gorodArray: filterSort })
+    console.log(this.state.gorodArray);
   }
 
+
+
+  // checkSelectedCity = (item) => {
+
+  //   console.log(item, 'checkSelectedCity');
+
+
+
+  //   return false;
+
+  // }
 
   render() {
     return (
@@ -274,7 +371,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}>
                     {
-                      this.state.options.map((item, index) => {
+                      this.state.gorodArray.map((item, index) => {
                         return (
                           <View
                             key={index}
@@ -319,8 +416,98 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     }
                   </ScrollView>
                 </View>
-                {/* dropDown  start*/}
 
+
+                {/* dropDown oblost start*/}
+
+                <View style={styles.gorodFilter}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      position: 'relative',
+                      alignItems: 'center',
+                    }}>
+                    <TouchableOpacity
+                      style={{
+                        borderWidth: 1,
+                        borderColor: '#F5F5F5',
+                        padding: 10,
+                        width: '100%',
+                        borderRadius: 6,
+                        position: 'relative',
+                        height: 45,
+                        marginRight: 12
+
+                      }}
+                      onPress={() => !this.state.oblostFilter ? this.setState({ oblostFilter: true }) : this.setState({ oblostFilter: false })}
+                    >
+                      <Text style={{ color: "#000", fontFamily: 'Poppins_500Medium', }}>Область</Text>
+                      <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
+                        {!this.state.oblostFilter &&
+                          <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                          </Svg>
+                        }
+                        {this.state.oblostFilter &&
+                          <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                          </Svg>
+                        }
+
+                      </View>
+                    </TouchableOpacity>
+
+                  </View>
+                  <View
+                    style={this.state.oblostFilter ? styles.setGorodFilterActive : styles.setGorodFilter}>
+                    <ScrollView nestedScrollEnabled={true} >
+                      {
+                        this.state.oblostArray.map((item, index) => {
+                          return (
+                            <TouchableOpacity
+                              key={index}
+                              style={{
+                                width: '100%',
+                                justifyContent: 'center',
+                                textAlign: 'left',
+                              }}
+                              onPress={() => {
+
+                                let formdata = new FormData();
+                                formdata.append("region_id", item.id);
+
+                                let requestOptions = {
+                                  method: 'POST',
+                                  body: formdata,
+                                  redirect: 'follow'
+                                };
+
+                                fetch("http://80.78.246.59/Refectio/public/api/getCity", requestOptions)
+                                  .then((response) => (response.json()))
+                                  .then((res) => this.setState({
+                                    cityItems: res.data.city,
+                                    oblostFilter: false
+                                  }))
+                              }}
+                            >
+                              <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
+                                {item.name}
+                              </Text>
+
+                            </TouchableOpacity>
+                          )
+                        })
+                      }
+                    </ScrollView>
+                  </View>
+                </View>
+
+                {/* dropDown oblost end */}
+
+
+
+
+                {/* gorod dropDown start */}
                 <View style={styles.gorodFilter}>
                   <View
                     style={{
@@ -363,14 +550,16 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     style={this.state.gorodFilter ? styles.setGorodFilterActive : styles.setGorodFilter}>
                     <ScrollView nestedScrollEnabled={true} >
                       {
-                        this.state.gorodArray.map((item, index) => {
+                        this.state.cityItems.map((item, index) => {
                           return (
                             <TouchableOpacity
                               key={index}
                               style={{
                                 width: '100%',
-                                justifyContent: 'center',
+                                justifyContent: 'space-between',
                                 textAlign: 'left',
+                                flexDirection: 'row',
+                                alignItems: 'center'
                               }}
                               onPress={() => {
                                 this.enterCheckBox(item, index)
@@ -378,8 +567,15 @@ export default class CustomerMyAccauntComponent extends React.Component {
                               }}
                             >
                               <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
-                                {item.city_name}
+                                {item.name}
                               </Text>
+
+
+                              {/* {this.checkSelectedCity(item) &&
+
+                                <Text>Selected</Text>
+                              } */}
+
 
                             </TouchableOpacity>
                           )
@@ -389,8 +585,21 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     </ScrollView>
                   </View>
                 </View>
+                {/* gorod dropdown end */}
 
-                {/* dropDown end */}
+
+
+
+
+
+
+
+
+
+                <TouchableOpacity style={{ alignSelf: 'center', position: 'absolute', bottom: '20%' }} onPress={() => this.updatedCities()}>
+                  <BlueButton name="Сохранить" />
+                </TouchableOpacity>
+
               </View>
             </ImageBackground>
           </Modal>
@@ -714,7 +923,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
               </View>
               <TextInput
                 underlineColorAndroid="transparent"
-                placeholder={this.state.phone_code + this.state.phone}
+                placeholder={this.state.phone}
                 editable={false}
                 style={{
                   borderWidth: 1,
@@ -823,7 +1032,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                   color: '#333333',
                 }}
               >
-                Города (продажи продукции)({this.state.count})
+                Города (продажи продукции)({this.state.gorodArray.length})
               </Text>
               <View
                 style={{
@@ -843,11 +1052,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     marginRight: 12
 
                   }}
-                  onPress={() => !this.state.gorod ? this.setState({ gorod: true }) : this.setState({ gorod: false })}
+                  onPress={() => { }}
                 >
                   <Text style={{ fontFamily: 'Poppins_500Medium', color: '#888888' }}>Москва</Text>
                   <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
-                    {!this.state.gorod &&
+                    {/* {!this.state.gorod &&
                       <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                       </Svg>
@@ -856,12 +1065,14 @@ export default class CustomerMyAccauntComponent extends React.Component {
                       <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                       </Svg>
-                    }
+                    } */}
 
                   </View>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => this.setState({ gorodModal: true })}>
+                  onPress={() => {
+                    this.getRegionApi()
+                  }}>
                   <Image
                     source={require('../../assets/image/ep_edit.png')}
                     style={{
@@ -869,32 +1080,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
                       height: 30,
                     }} />
                 </TouchableOpacity>
-              </View>
-              <View
-                style={this.state.gorod ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
-                <ScrollView nestedScrollEnabled={true} >
-                  {
-                    this.state.options.map((item, index) => {
-                      return (
-                        <View
-                          key={index}
-                          style={{
-                            width: '100%',
-                            justifyContent: 'center',
-                            textAlign: 'left',
-                          }}
-                          onPress={() => this.setState({ value: item.items, gorod: false })}
-                        >
-                          <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
-                            {item.city_name}
-                          </Text>
-
-                        </View>
-                      )
-
-                    })
-                  }
-                </ScrollView>
               </View>
             </View>
 

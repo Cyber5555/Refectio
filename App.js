@@ -103,9 +103,12 @@ function EditPhoneNumber({ navigation }) {
     <EditPhoneNumberComponent navigation={navigation} />
   );
 }
-function EditPhoneNumberConfirm({ navigation }) {
+function EditPhoneNumberConfirm({ route, navigation }) {
+
+  const { params } = route.params
+
   return (
-    <EditPhoneNumberConfirmComponent navigation={navigation} />
+    <EditPhoneNumberConfirmComponent phoneNumb={params} navigation={navigation} />
   );
 }
 function GhostPageTwo({ navigation }) {
@@ -510,7 +513,7 @@ export default function App() {
                       tabBarStyle: { display: 'none' }
                     })}
                   />
-                  <Tab.Screen name="EditPhoneNumberConfirm" component={EditPhoneNumberConfirmComponent}
+                  <Tab.Screen name="EditPhoneNumberConfirm" component={EditPhoneNumberConfirm}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }

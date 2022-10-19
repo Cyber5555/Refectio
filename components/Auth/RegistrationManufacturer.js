@@ -1111,6 +1111,9 @@ export default class RegistrationManufacturerComponent extends Component {
                             {item.name}
                           </Text>
 
+
+                          
+
                         </TouchableOpacity>
                       )
                     })
