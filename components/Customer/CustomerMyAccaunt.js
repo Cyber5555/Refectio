@@ -7,7 +7,7 @@ import Svg, { Path, Rect } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import BlueButton from "../Component/Buttons/BlueButton";
 import { AuthContext } from '../AuthContext/context';
-
+import * as ImagePicker from 'expo-image-picker';
 
 
 
@@ -37,7 +37,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
       cityItems: [],
 
-      editUserdataModal: true,
+      editUserDataModal: true,
 
       authUserState: [],
 
@@ -61,6 +61,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
       RewardModal: false,
 
       urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
+
+      logo: '',
+      companyName: '',
+      site: '',
+      teleg: '',
 
       valid_error: false,
 
@@ -242,8 +247,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
           phone: res.data[0].phone,
           procentArray: res.data[0].user_pracient_for_designer,
           categoryArray: res.data[0].user_category_product,
+          logo: res.data[0].logo,
+          companyName: res.data[0].company_name,
+          site: res.data[0].saite,
+          teleg: res.data[0].telegram,
         })
-        // console.log(res.data[0].city_of_sales_manufacturer, 'res.data[0].city_of_sales_manufacturer');
       })
   }
 
@@ -556,10 +564,112 @@ export default class CustomerMyAccauntComponent extends React.Component {
     // console.log(filterSort, 'filterSort');
   }
 
-  editUserdata = () => {
-    this.setState({ editUserdataModal: true })
+  editNameCompany = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken');
+    let AuthStr = 'Bearer ' + userToken;
+    myHeaders.append("Authorization", AuthStr);
+
+    var formdata = new FormData();
+    formdata.append("company_name", this.state.companyName);
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/updateProfileCompanyName", requestOptions)
+      .then(response => response.json())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
   }
 
+  editSite = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken');
+    let AuthStr = 'Bearer ' + userToken;
+    myHeaders.append("Authorization", AuthStr);
+
+    var formdata = new FormData();
+    formdata.append("saite", this.state.site);
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/updateSaiteProizvaditel", requestOptions)
+      .then(response => response.json())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
+  }
+
+
+  editTeleg = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken');
+    let AuthStr = 'Bearer ' + userToken;
+    myHeaders.append("Authorization", AuthStr);
+
+    var formdata = new FormData();
+    formdata.append("saite", this.state.teleg);
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/updateSaiteProizvaditel", requestOptions)
+      .then(response => response.json())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
+  }
+
+  pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+
+    }
+    // let res = result.uri.split('.')
+    // let type = res[res.length - 1]
+
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken');
+    let AuthStr = 'Bearer ' + userToken;
+    myHeaders.append("Authorization", AuthStr);
+
+    var formdata = new FormData();
+
+    formdata.append("logo", {
+      uri: result.uri,
+      type: 'image/jpg',
+      name: 'photo.jpg',
+    });
+
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/updateLogoProizvoditel", requestOptions)
+      .then(response => response.json())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
+  };
 
   render() {
     return (
@@ -1128,7 +1238,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
             </ImageBackground>
           </Modal>
 
-          <Modal visible={this.state.editUserdataModal}>
+          <Modal visible={this.state.editUserDataModal}>
             <ImageBackground
               style={{
                 flex: 1,
@@ -1152,7 +1262,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     right: 18,
                     top: 18,
                   }}
-                  onPress={() => this.setState({ editUserdataModal: false })}>
+                  onPress={() => this.setState({ editUserDataModal: false })}>
                   <Image
                     source={require('../../assets/image/ixs.png')}
                     style={{
@@ -1169,20 +1279,28 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     textAlign: 'center',
                     color: '#2D9EFB',
                     fontFamily: 'Poppins_500Medium',
+                    marginBottom: 20
                   }}>
                   Изменения личных{'\n'}данных
                 </Text>
-                <View
-                  style={{
-                    marginTop: 41,
-                    height: 50
-                  }}>
 
-                </View>
 
 
 
                 <ScrollView showsVerticalScrollIndicator={false}>
+                  <View style={{ width: 75, height: 75, borderRadius: 8, position: 'relative', overflow: 'hidden', alignSelf: 'center', borderWidth: 1, borderColor: '#888888' }}>
+                    <Image
+                      source={{ uri: this.state.urlImage + this.state.logo }}
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                    <TouchableOpacity style={{ position: 'absolute', right: 0, top: 0 }} onPress={() => {
+                      this.pickImage()
+                    }}>
+                      <Image source={require('../../assets/image/edit.png')} style={{ width: 22, height: 22, }} />
+                    </TouchableOpacity>
+                  </View>
+                  <Text style={{ textAlign: 'center', marginTop: 7, fontFamily: 'Poppins_500Medium', fontSize: 15, color: '#5B5B5B' }}>Изменить логотип</Text>
+
                   <View>
                     <Text
                       style={{
@@ -1198,14 +1316,18 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     <View style={{ position: 'relative' }}>
                       <TextInput
                         underlineColorAndroid="transparent"
+                        placeholder={this.state.companyName}
                         style={{
                           borderWidth: 1,
                           borderColor: '#F5F5F5',
                           padding: 10,
                           width: '100%',
                           borderRadius: 5,
-                        }} />
-                      <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }}>
+                        }}
+                        value={this.state.companyName}
+                        onChangeText={(text) => this.setState({ companyName: text })}
+                      />
+                      <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }} onPress={() => this.editNameCompany()}>
                         <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, color: '#2D9EFB' }}>Сохранить</Text>
                       </TouchableOpacity>
                     </View>
@@ -1230,14 +1352,18 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     <View style={{ position: 'relative' }}>
                       <TextInput
                         underlineColorAndroid="transparent"
+                        placeholder={this.state.site}
                         style={{
                           borderWidth: 1,
                           borderColor: '#F5F5F5',
                           padding: 10,
                           width: '100%',
                           borderRadius: 5,
-                        }} />
-                      <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }}>
+                        }}
+                        value={this.state.site}
+                        onChangeText={(text) => this.setState({ site: text })}
+                      />
+                      <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }} onPress={() => this.editSite()}>
                         <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, color: '#2D9EFB' }}>Сохранить</Text>
                       </TouchableOpacity>
                     </View>
@@ -1267,8 +1393,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
                           padding: 10,
                           width: '100%',
                           borderRadius: 5,
-                        }} />
-                      <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }}>
+                        }}
+                        value={this.state.companyName}
+                        onChangeText={(text) => this.setState({ companyName: text })} />
+
+                      <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }}  onPress={() => this.editTeleg()}>
                         <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, color: '#2D9EFB' }}>Сохранить</Text>
                       </TouchableOpacity>
                     </View>
@@ -1363,7 +1492,9 @@ export default class CustomerMyAccauntComponent extends React.Component {
                         </View>
                       </View>
                       <TouchableOpacity onPress={() => {
-                        this.editUserdata()
+                        this.setState({
+                          editUserDataModal: true,
+                        })
                       }}>
                         <Image
                           source={require('../../assets/image/ep_edit.png')}

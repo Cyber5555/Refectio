@@ -91,8 +91,18 @@ export default class CustomerMainPageComponent extends React.Component {
 
 
   componentDidMount() {
+    const { navigation } = this.props;
     this.getAuthUserProfile()
     this.getProductsFunction()
+
+
+    this.focusListener = navigation.addListener("focus", () => {
+
+      this.getAuthUserProfile()
+      this.getProductsFunction()
+
+    });
+
     this.keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       this._keyboardDidShow,
@@ -105,6 +115,11 @@ export default class CustomerMainPageComponent extends React.Component {
 
 
   componentWillUnmount() {
+
+    if (this.focusListener) {
+      this.focusListener();
+      console.log(' END')
+    }
     this.keyboardDidShowListener.remove();
     this.keyboardDidHideListener.remove();
   }
