@@ -18,22 +18,28 @@ export default class CustomerMyAccauntComponent extends React.Component {
     super(props)
     this.state = {
       keyboardOpen: false,
-      category: false,
-      gorod: false,
 
-      gorodModal: false,
+
+
+      categoryModal: false,
+      categoryArray: [],
+      categoryItems: [],
+      categoryFilter: false,
+      category_empty_error: false,
+      category_empty_error_text: '',
 
       oblostArray: [],
       oblostFilter: false,
 
+      gorodModal: false,
       gorodArray: [],
       gorodFilter: false,
 
       cityItems: [],
 
+      editUserdataModal: true,
 
       authUserState: [],
-      options: [],
 
       id: '',
       inn: '',
@@ -52,7 +58,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
       phone: '',
 
-      RewardModal: true,
+      RewardModal: false,
 
       urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
 
@@ -60,8 +66,8 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
       procentArray: [
         {
-          to: '0',
-          from: '',
+          start_price: '0',
+          before_price: '',
           percent: ''
         },
       ],
@@ -75,7 +81,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
     })
       .then(response => response.json())
       .then((res) => {
-        // console.log(res.data.region, 'res.data.region');
         this.setState({
           oblostArray: res.data.region,
           gorodModal: true
@@ -141,6 +146,78 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
   }
 
+  getAllCategory = async () => {
+
+    let requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    await fetch("http://80.78.246.59/Refectio/public/api/GetProductCategory", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        this.setState({ categoryItems: result.data.city })
+      })
+      .catch(error => console.log('error', error));
+  }
+
+  updateCategory = async () => {
+    let categoryArraySort = this.state.categoryArray
+
+
+    if (categoryArraySort.length == 0) {
+
+      this.setState({
+        category_empty_error: true,
+        category_empty_error_text: 'Выберите Категории!'
+      })
+      return false;
+    } else {
+      this.setState({
+        category_empty_error: false,
+        category_empty_error_text: ''
+      })
+    }
+
+
+    let new_category_sort = [];
+    for (let i = 0; i < categoryArraySort.length; i++) {
+      let city = categoryArraySort[i].category_id + '^' + categoryArraySort[i].category_name
+      new_category_sort.push(city)
+    }
+
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken')
+    let AuthStr = "Bearer " + userToken
+
+    myHeaders.append("Authorization", AuthStr);
+
+    let formdata = new FormData();
+    formdata.append("product_category[]", new_category_sort);
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+    fetch("http://80.78.246.59/Refectio/public/api/UpdateCategoryProizvoditel", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        if (result.status === true) {
+          this.getAuthUserProfile()
+          this.setState({ categoryModal: false })
+        }
+      })
+      .catch(error => console.log('error', error));
+
+
+
+    // ete succesy true ya kanchumenq getAuthUserProfile es funkcian u pagumenq popapy
+
+
+  }
+
 
   getAuthUserProfile = async () => {
     let myHeaders = new Headers();
@@ -163,9 +240,10 @@ export default class CustomerMyAccauntComponent extends React.Component {
           userToken: userToken,
           role_id: res.data[0].role_id,
           phone: res.data[0].phone,
+          procentArray: res.data[0].user_pracient_for_designer,
+          categoryArray: res.data[0].user_category_product,
         })
         // console.log(res.data[0].city_of_sales_manufacturer, 'res.data[0].city_of_sales_manufacturer');
-        // console.log(this.state.authUserState);
       })
   }
 
@@ -234,9 +312,10 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
     let { procentArray } = this.state;
 
+
     procentArray.push({
-      to: '',
-      from: '',
+      start_price: '',
+      before_price: '',
       percent: ''
     })
     let newProcentArray = procentArray;
@@ -256,12 +335,12 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
     for (let i = 0; i < procentArray.length; i++) {
 
-      if (procentArray[i].to == '' || procentArray[i].from == '' || procentArray[i].percent == '') {
+      if (procentArray[i].start_price == '' || procentArray[i].before_price == '' || procentArray[i].percent == '') {
         valid_error = true;
         break;
       }
 
-      let resultString = procentArray[i].to + '^' + procentArray[i].from + '^' + procentArray[i].percent
+      let resultString = procentArray[i].start_price + '^' + procentArray[i].before_price + '^' + procentArray[i].percent
       result.push(resultString)
     }
 
@@ -298,13 +377,12 @@ export default class CustomerMyAccauntComponent extends React.Component {
       fetch("http://80.78.246.59/Refectio/public/api/UpdatePracentForDesigner", requestOptions)
         .then(response => response.json())
         .then(res => {
-          console.log(res);
+          if (res.status === true) {
+            this.getAuthUserProfile()
+            this.setState({ RewardModal: false })
+          }
         })
         .catch(error => console.log('error', error));
-
-
-
-
     }
 
     // console.log(result);
@@ -312,7 +390,8 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
   changeTo = (value, index) => {
     let { procentArray } = this.state;
-    procentArray[index].to = value;
+
+    procentArray[index].start_price = value;
 
     this.setState({
       procentArray: procentArray
@@ -322,7 +401,8 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
   changeFrom = (value, index) => {
     let { procentArray } = this.state;
-    procentArray[index].from = value;
+
+    procentArray[index].before_price = value;
 
     this.setState({
       procentArray: procentArray
@@ -332,6 +412,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
   changePercent = (value, index) => {
     let { procentArray } = this.state;
+
     procentArray[index].percent = value;
 
     this.setState({
@@ -393,9 +474,10 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
   }
 
+  // gorod startttttttttt
 
   enterCheckBox = (items, index) => {
-    // let old_gorodArray =;
+
 
     items.city_id = items.id;
     items.city_name = items.name;
@@ -433,7 +515,50 @@ export default class CustomerMyAccauntComponent extends React.Component {
     this.setState({ gorodArray: filterSort })
   }
 
+  // categoryyyyyyyyy starttttttttttttt
 
+  categoryAdd = async (items, index) => {
+    items.category_name = items.name;
+    items.category_id = items.id
+
+    console.log(items);
+    let filterSort = this.state.categoryArray;
+
+    let find = true
+    filterSort.find((item) => {
+      if (item.category_id == items.category_id) {
+        find = false
+      }
+    })
+    if (find) {
+      filterSort.push(items)
+    }
+
+
+    await this.setState({ categoryArray: filterSort })
+    // console.log(this.state.categoryArray, 'filterSort');
+  }
+
+  categoryDelate = async (items) => {
+    let filterSort = this.state.categoryArray
+    let find = false
+    filterSort.find((item) => {
+      if (item == items) {
+        find = true
+      }
+    })
+
+    if (find) {
+      const index = filterSort.indexOf(items);
+      filterSort.splice(index, 1);
+    }
+    await this.setState({ categoryArray: filterSort })
+    // console.log(filterSort, 'filterSort');
+  }
+
+  editUserdata = () => {
+    this.setState({ editUserdataModal: true })
+  }
 
 
   render() {
@@ -693,11 +818,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
                               </Text>
 
 
-                              {/* {this.checkSelectedCity(item) &&
-
-                                <Text>Selected</Text>
-                              } */}
-
 
                             </TouchableOpacity>
                           )
@@ -719,6 +839,192 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
 
                 <TouchableOpacity style={{ alignSelf: 'center', position: 'absolute', bottom: '20%' }} onPress={() => this.updatedCities()}>
+                  <BlueButton name="Сохранить" />
+                </TouchableOpacity>
+
+              </View>
+            </ImageBackground>
+          </Modal>
+
+          <Modal visible={this.state.categoryModal}>
+            <ImageBackground
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              source={require('../../assets/image/blurBg.png')}
+            >
+              <View
+                style={{
+                  width: '90%',
+                  height: '90%',
+                  backgroundColor: '#fff',
+                  borderRadius: 20,
+                  position: 'relative',
+                  paddingHorizontal: 15,
+                }}>
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    right: 18,
+                    top: 18,
+                  }}
+                  onPress={() => this.setState({ categoryModal: false })}>
+                  <Image
+                    source={require('../../assets/image/ixs.png')}
+                    style={{
+                      width: 22.5,
+                      height: 22.5,
+                    }}
+                  />
+                </TouchableOpacity>
+
+                <Text
+                  style={{
+                    marginTop: 70,
+                    fontSize: 26,
+                    textAlign: 'center',
+                    color: '#2D9EFB',
+                    fontFamily: 'Poppins_500Medium',
+                  }}>
+                  Категории
+                </Text>
+                <View
+                  style={{
+                    marginTop: 41,
+                    height: 50
+                  }}>
+                  <ScrollView
+                    horizontal={true}
+                    showsHorizontalScrollIndicator={false}>
+                    {
+                      this.state.categoryArray.map((item, index) => {
+                        console.log(item);
+                        return (
+                          <View
+                            key={index}
+                            style={{
+                              position: 'relative',
+                              marginRight: 10,
+                              marginTop: 10,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                paddingHorizontal: 16,
+                                paddingVertical: 10,
+                                backgroundColor: '#F5F5F5',
+                                borderRadius: 8,
+                                fontFamily: 'Poppins_500Medium',
+                              }}>
+                              {item.category_name}
+                              {/* {console.log(item)} */}
+                            </Text>
+                            <TouchableOpacity
+                              onPress={() => {
+                                this.categoryDelate(item)
+                              }}
+                              style={{
+                                position: 'absolute',
+                                right: -5,
+                                top: -5,
+                                // borderWidth: 1,
+                              }}>
+                              <Image
+                                source={require('../../assets/image/ixs.png')}
+                                style={{
+                                  width: 12,
+                                  height: 12,
+                                }}
+                              />
+                            </TouchableOpacity>
+                          </View>
+                        )
+                      })
+                    }
+                  </ScrollView>
+                </View>
+
+
+                {/* dropDown category start*/}
+
+                <View style={styles.gorodFilter}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      position: 'relative',
+                      alignItems: 'center',
+                    }}>
+                    <TouchableOpacity
+                      style={{
+                        borderWidth: 1,
+                        borderColor: '#F5F5F5',
+                        padding: 10,
+                        width: '100%',
+                        borderRadius: 6,
+                        position: 'relative',
+                        height: 45,
+                        marginRight: 12
+
+                      }}
+                      onPress={() => !this.state.categoryFilter ? this.setState({ categoryFilter: true }) : this.setState({ categoryFilter: false })}
+                    >
+                      <Text style={{ color: "#000", fontFamily: 'Poppins_500Medium', }}>Категории</Text>
+                      <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
+                        {!this.state.categoryFilter &&
+                          <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                          </Svg>
+                        }
+                        {this.state.categoryFilter &&
+                          <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                          </Svg>
+                        }
+
+                      </View>
+                    </TouchableOpacity>
+
+                  </View>
+                  <View
+                    style={this.state.categoryFilter ? styles.setGorodFilterActive : styles.setGorodFilter}>
+                    <ScrollView nestedScrollEnabled={true} >
+                      {
+                        this.state.categoryItems.map((item, index) => {
+                          return (
+                            <TouchableOpacity
+                              key={index}
+                              style={{
+                                width: '100%',
+                                justifyContent: 'space-between',
+                                textAlign: 'left',
+                                flexDirection: 'row',
+                                alignItems: 'center'
+                              }}
+                              onPress={() => {
+                                this.categoryAdd(item, index)
+                              }}
+                            >
+                              <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
+                                {item.name}
+                              </Text>
+                            </TouchableOpacity>
+                          )
+
+                        })
+                      }
+                    </ScrollView>
+                  </View>
+                </View>
+
+                {/* dropDown category end */}
+
+                <TouchableOpacity
+                  style={{ alignSelf: 'center', position: 'absolute', bottom: '20%' }}
+                  onPress={() => {
+                    this.updateCategory()
+                  }}>
                   <BlueButton name="Сохранить" />
                 </TouchableOpacity>
 
@@ -822,7 +1128,155 @@ export default class CustomerMyAccauntComponent extends React.Component {
             </ImageBackground>
           </Modal>
 
+          <Modal visible={this.state.editUserdataModal}>
+            <ImageBackground
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+              source={require('../../assets/image/blurBg.png')}
+            >
+              <View
+                style={{
+                  width: '90%',
+                  height: 500,
+                  backgroundColor: '#fff',
+                  borderRadius: 20,
+                  position: 'relative',
+                  paddingHorizontal: 15,
+                }}>
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    right: 18,
+                    top: 18,
+                  }}
+                  onPress={() => this.setState({ editUserdataModal: false })}>
+                  <Image
+                    source={require('../../assets/image/ixs.png')}
+                    style={{
+                      width: 22.5,
+                      height: 22.5,
+                    }}
+                  />
+                </TouchableOpacity>
 
+                <Text
+                  style={{
+                    marginTop: 70,
+                    fontSize: 26,
+                    textAlign: 'center',
+                    color: '#2D9EFB',
+                    fontFamily: 'Poppins_500Medium',
+                  }}>
+                  Изменения личных{'\n'}данных
+                </Text>
+                <View
+                  style={{
+                    marginTop: 41,
+                    height: 50
+                  }}>
+
+                </View>
+
+
+
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  <View>
+                    <Text
+                      style={{
+                        fontFamily: 'Poppins_500Medium',
+                        lineHeight: 23,
+                        fontSize: 15,
+                        marginTop: 27,
+                        marginBottom: 5,
+                        color: '#5B5B5B',
+                      }}>
+                      Изменить название компании
+                    </Text>
+                    <View style={{ position: 'relative' }}>
+                      <TextInput
+                        underlineColorAndroid="transparent"
+                        style={{
+                          borderWidth: 1,
+                          borderColor: '#F5F5F5',
+                          padding: 10,
+                          width: '100%',
+                          borderRadius: 5,
+                        }} />
+                      <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }}>
+                        <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, color: '#2D9EFB' }}>Сохранить</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+
+                  <View>
+                    <Text
+                      style={{
+                        fontFamily: 'Poppins_500Medium',
+                        lineHeight: 23,
+                        fontSize: 15,
+                        marginTop: 27,
+                        marginBottom: 5,
+                        color: '#5B5B5B',
+                      }}
+                    >
+                      Изменить ссылку на веб сайт
+                    </Text>
+
+
+                    <View style={{ position: 'relative' }}>
+                      <TextInput
+                        underlineColorAndroid="transparent"
+                        style={{
+                          borderWidth: 1,
+                          borderColor: '#F5F5F5',
+                          padding: 10,
+                          width: '100%',
+                          borderRadius: 5,
+                        }} />
+                      <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }}>
+                        <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, color: '#2D9EFB' }}>Сохранить</Text>
+                      </TouchableOpacity>
+                    </View>
+
+                  </View>
+
+
+
+                  <View style={{ marginBottom: 30 }}>
+                    <Text
+                      style={{
+                        fontFamily: 'Poppins_500Medium',
+                        lineHeight: 23,
+                        fontSize: 15,
+                        marginTop: 27,
+                        marginBottom: 5,
+                        color: '#5B5B5B',
+                      }}>
+                      Изменить ссылку телеграм
+                    </Text>
+                    <View style={{ position: 'relative' }}>
+                      <TextInput
+                        underlineColorAndroid="transparent"
+                        style={{
+                          borderWidth: 1,
+                          borderColor: '#F5F5F5',
+                          padding: 10,
+                          width: '100%',
+                          borderRadius: 5,
+                        }} />
+                      <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }}>
+                        <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, color: '#2D9EFB' }}>Сохранить</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </ScrollView>
+              </View>
+            </ImageBackground>
+          </Modal>
 
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('CustomerMainPage')}
@@ -908,7 +1362,9 @@ export default class CustomerMyAccauntComponent extends React.Component {
                           }
                         </View>
                       </View>
-                      <TouchableOpacity>
+                      <TouchableOpacity onPress={() => {
+                        this.editUserdata()
+                      }}>
                         <Image
                           source={require('../../assets/image/ep_edit.png')}
                           style={{
@@ -924,7 +1380,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
             }
 
 
-            {/* sharunakel stexic */}
+
 
 
 
@@ -1174,22 +1630,8 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     marginRight: 12
 
                   }}
-                  onPress={() => { }}
                 >
                   <Text style={{ fontFamily: 'Poppins_500Medium', color: '#888888' }}>Москва</Text>
-                  <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
-                    {/* {!this.state.gorod &&
-                      <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                      </Svg>
-                    }
-                    {this.state.gorod &&
-                      <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                      </Svg>
-                    } */}
-
-                  </View>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
@@ -1218,7 +1660,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                   color: '#333333'
                 }}
               >
-                Категории (8)
+                Категории ({this.state.categoryArray.length})
               </Text>
               <View
                 style={{
@@ -1236,26 +1678,14 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     position: 'relative',
                     height: 45,
                     marginRight: 12
-
                   }}
-                  onPress={() => !this.state.category ? this.setState({ category: true }) : this.setState({ category: false })}
                 >
                   <Text style={{ fontFamily: 'Poppins_500Medium', color: '#888888' }}>Кухня</Text>
-                  <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
-                    {!this.state.category &&
-                      <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                      </Svg>
-                    }
-                    {this.state.category &&
-                      <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                      </Svg>
-                    }
-
-                  </View>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                  this.getAllCategory()
+                  this.setState({ categoryModal: true })
+                }}>
                   <Image
                     source={require('../../assets/image/ep_edit.png')}
                     style={{
@@ -1264,45 +1694,18 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     }} />
                 </TouchableOpacity>
               </View>
-              {/* <View
-                style={this.state.category ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
-                <ScrollView nestedScrollEnabled={true} >
-                  {
-                    this.state.options.map((item, index) => {
-                      return (
-                        <View
-                          key={index}
-                          style={{
-                            width: '100%',
-                            justifyContent: 'center',
-                            textAlign: 'left',
-                          }}
-                          onPress={() => this.setState({ value: item.items, category: false })}
-                        >
-                          <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
-                            {item}
-                          </Text>
-                          {console.log(item.city_name)}
-                        </View>
-                      )
-
-                    })
-                  }
-                </ScrollView>
-              </View> */}
             </View>
 
             {/* dropDown end */}
 
+            {/* vajnagrajdenia tpelu start */}
 
-            {/* <View
+            <View
               style={{
                 width: '100%',
                 // height: ,
-                backgroundColor: '#000',
+                backgroundColor: '#fff',
                 borderRadius: 20,
-
-
               }}>
 
               <View>
@@ -1322,7 +1725,9 @@ export default class CustomerMyAccauntComponent extends React.Component {
                   >
                     Вознаграждение
                   </Text>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={() => {
+                    this.setState({ RewardModal: true })
+                  }}>
                     <Image
                       source={require('../../assets/image/ep_edit.png')}
                       style={{
@@ -1334,31 +1739,10 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     />
                   </TouchableOpacity>
                 </View>
-                
-
-
               </View>
 
 
-              
-
-              {this.state.valid_error === true &&
-
-                <Text
-                  style={{
-                    color: 'red',
-                    fontSize: 18,
-                    marginTop: 20,
-                    textAlign: 'center',
-                    fontFamily: 'Poppins_500Medium',
-                  }}>
-                  Ошибка: заполните все поля.
-                </Text>
-
-              }
-
-
-              < View style={styles.DesignerRemunerationPercentageParent} >
+              < View style={styles.DesignerRemunerationPercentageParentRead} >
                 {
                   this.state.procentArray.map((item, index) => {
                     return (
@@ -1367,17 +1751,10 @@ export default class CustomerMyAccauntComponent extends React.Component {
                         <Text style={styles.procentText}>От</Text>
 
                         <TextInput
-                          editable={index === 0 ? false : true}
+                          editable={false}
                           keyboardType={'number-pad'}
                           style={styles.procentInput}
-                          value={item.to}
-                          onChangeText={async (value) => {
-
-                            // await this.setState({ attttttt: value })
-                            this.changeTo(value, index)
-                            console.log(value)
-
-                          }}
+                          value={item.start_price}
                         />
 
                         <View style={styles.rubli}>
@@ -1392,13 +1769,8 @@ export default class CustomerMyAccauntComponent extends React.Component {
                           maxLength={10}
                           keyboardType="number-pad"
                           style={styles.procentInput}
-                          value={item.from}
-                          onChangeText={async (value) => {
-                            // await this.setState({ doooooo: value })
-                            console.log(value)
-                            this.changeFrom(value, index)
-                          }}
-
+                          value={item.before_price}
+                          editable={false}
                         />
 
                         <View style={styles.rubli}>
@@ -1414,11 +1786,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
                             keyboardType="number-pad"
                             maxLength={2}
                             value={item.percent}
-                            onChangeText={async (value) => {
-                              // await this.setState({ proccccc: value })
-                              console.log(value)
-                              this.changePercent(value, index)
-
+                            editable={false}
+                            style={{
+                              fontSize: 14,
+                              fontFamily: 'Poppins_500Medium',
+                              color: '#888888',
                             }}
                           />
                           <Text>%</Text>
@@ -1427,48 +1799,12 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     )
                   })
                 }
-
-
-
-                <View View style={{ flexDirection: "row", justifyContent: 'flex-end' }}>
-
-
-                  {this.state.procentArray.length > 1 &&
-                    <TouchableOpacity
-                      style={[styles.presoble, { marginRight: 11 }]}
-                      onPress={async () => {
-                        this.removeInputRow()
-                      }}>
-                      <Text style={styles.procentText}>Удалить</Text>
-                    </TouchableOpacity>
-
-                  }
-
-
-
-
-
-
-                  <TouchableOpacity
-                    style={styles.presoble}
-                    onPress={async () => {
-                      this.addInputRow()
-                    }}>
-                    <Text style={styles.procentText}>Добавить</Text>
-                  </TouchableOpacity>
-
-
-                  
-
-                </View >
               </View >
+            </View>
+            {/* vajnagrajdenia tpelu end */}
 
-              <TouchableOpacity
-                style={{ alignSelf: 'center', marginTop: 93, marginBottom: 56 }}
-                onPress={() => { this.savePercont() }}>
-                <BlueButton name="Сохранить" />
-              </TouchableOpacity>
-            </View> */}
+
+
 
             {/* vajnagrajdenia modal start */}
 
@@ -1484,7 +1820,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 <View
                   style={{
                     width: '90%',
-                    // height: ,
                     backgroundColor: '#fff',
                     borderRadius: 20,
                     position: 'relative',
@@ -1548,7 +1883,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                               editable={index === 0 ? false : true}
                               keyboardType={'number-pad'}
                               style={styles.procentInput}
-                              value={item.to}
+                              value={item.start_price}
                               onChangeText={async (value) => {
                                 this.changeTo(value, index)
                               }}
@@ -1566,7 +1901,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                               maxLength={10}
                               keyboardType="number-pad"
                               style={styles.procentInput}
-                              value={item.from}
+                              value={item.before_price}
                               onChangeText={async (value) => {
                                 this.changeFrom(value, index)
                               }}
@@ -1734,6 +2069,11 @@ const styles = StyleSheet.create({
     marginTop: 0,
     alignSelf: 'center',
   },
+  DesignerRemunerationPercentageParentRead: {
+    width: '100%',
+    marginTop: 0,
+    alignSelf: 'center',
+  },
   DesignerRemunerationPercentage: {
     width: '100%',
     height: 50,
@@ -1779,9 +2119,6 @@ const styles = StyleSheet.create({
     width: 45,
     height: '100%',
     paddingLeft: 5,
-    fontSize: 14,
-    fontFamily: 'Poppins_500Medium',
-    color: '#888888',
   },
   presoble: {
     width: 90,
