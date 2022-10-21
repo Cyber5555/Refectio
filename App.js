@@ -31,6 +31,7 @@ import PraductiaComponent from './components/Customer/Praductia';
 import AddProductComponent from './components/Customer/AddProduct';
 import ModalComponent from './components/Ghost/Modal';
 import EditPhoneNumberConfirmComponent from './components/Auth/EditPhoneNumberConfirm';
+import EditPasswordCustomerCompnent from './components/Auth/EditPaswordCustomer';
 
 
 
@@ -111,6 +112,13 @@ function EditPhoneNumberConfirm({ route, navigation }) {
     <EditPhoneNumberConfirmComponent phoneNumb={params} navigation={navigation} />
   );
 }
+
+function EditPasswordCustomer({ navigation }) {
+  return (
+    <EditPasswordCustomerCompnent navigation={navigation} />
+  );
+}
+
 function GhostPageTwo({ navigation }) {
   return (
     <GhostPageTwoComponent navigation={navigation} />
@@ -514,6 +522,13 @@ export default function App() {
                     })}
                   />
                   <Tab.Screen name="EditPhoneNumberConfirm" component={EditPhoneNumberConfirm}
+                    options={({ route }) => ({
+                      tabBarButton: () => null,
+                      tabBarStyle: { display: 'none' }
+                    })}
+                  />
+
+                  <Tab.Screen name="EditPasswordCustomer" component={EditPasswordCustomerCompnent}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }

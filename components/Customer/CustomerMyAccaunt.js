@@ -19,8 +19,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
     this.state = {
       keyboardOpen: false,
 
-
-
       categoryModal: false,
       categoryArray: [],
       categoryItems: [],
@@ -37,7 +35,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
       cityItems: [],
 
-      editUserDataModal: true,
+      editUserDataModal: false,
 
       authUserState: [],
 
@@ -625,7 +623,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
       redirect: 'follow'
     };
 
-    fetch("http://80.78.246.59/Refectio/public/api/updateSaiteProizvaditel", requestOptions)
+    fetch("http://80.78.246.59/Refectio/public/api/UpdateTelegramChanel", requestOptions)
       .then(response => response.json())
       .then(result => console.log(result))
       .catch(error => console.log('error', error));
@@ -1394,8 +1392,8 @@ export default class CustomerMyAccauntComponent extends React.Component {
                           width: '100%',
                           borderRadius: 5,
                         }}
-                        value={this.state.companyName}
-                        onChangeText={(text) => this.setState({ companyName: text })} />
+                        value={this.state.teleg}
+                        onChangeText={(text) => this.setState({ teleg: text })} />
 
                       <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }}  onPress={() => this.editTeleg()}>
                         <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, color: '#2D9EFB' }}>Сохранить</Text>
@@ -1661,7 +1659,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 >
                   Пароль
                 </Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=> this.props.navigation.navigate('EditPasswordCustomer')}>
                   <Image
                     source={require('../../assets/image/ep_edit.png')}
                     style={{
