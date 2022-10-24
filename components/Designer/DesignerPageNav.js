@@ -16,26 +16,24 @@ export default class DesignerPageNavComponent extends React.Component {
         { images: require('../../assets/image/broni.png'), text: 'Брони', change: 'DesignerMyBroni', id: 4 },
         { images: require('../../assets/image/carbon_user-avatar.png'), text: 'Профиль', change: 'MyAccaunt', id: 5 }
       ],
-      active: 0,
-      dropDown: false,
-      value: 'Выберите категорию',
+      // active: 0,
 
 
     }
   }
 
-  componentDidMount = () => {
+  // componentDidMount = () => {
 
-    const { navigation } = this.props;
+  //   const { navigation } = this.props;
 
-    this.focusListener = navigation.addListener("focus", () => {
+  //   this.focusListener = navigation.addListener("focus", () => {
 
-      console.log(this.state.active, 'active');
+  //     console.log(this.state.active, 'active');
 
-    });
+  //   });
 
 
-  }
+  // }
 
   componentWillUnmount() {
 

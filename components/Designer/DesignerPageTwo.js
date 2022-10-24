@@ -72,9 +72,41 @@ export default class DesignerPageTwoComponent extends React.Component {
     }
   }
 
-  setNewPraizvaditelPrice =  async (value, index) => {
+  setNewPraizvaditelPrice = async (value, index) => {
     let { getPraizvaditelMap } = this.state;
     getPraizvaditelMap[index].proizvoditel_price = value;
+
+    await this.setState({
+      getPraizvaditelMap: getPraizvaditelMap
+    })
+
+
+    console.log(getPraizvaditelMap, 'getPraizvaditelMap')
+
+  }
+
+
+  delatePraizvaditelPrice = async (index) => {
+    let { getPraizvaditelMap } = this.state;
+    getPraizvaditelMap.splice(index, 1)
+
+    await this.setState({
+      getPraizvaditelMap: getPraizvaditelMap
+    })
+
+
+    console.log(getPraizvaditelMap, 'getPraizvaditelMap')
+
+  }
+
+  addPraizvaditelPrice = async (index) => {
+    let { getPraizvaditelMap } = this.state;
+    getPraizvaditelMap.push({
+      drobdown_is_open: false,
+      proizvoditel_price: "",
+      proizvodtel_id: "",
+      proizvodtel_name: "",
+    })
 
     await this.setState({
       getPraizvaditelMap: getPraizvaditelMap
@@ -106,7 +138,7 @@ export default class DesignerPageTwoComponent extends React.Component {
     let { getPraizvaditelMap } = this.state;
 
     getPraizvaditelMap[index].drobdown_is_open = !getPraizvaditelMap[index].drobdown_is_open;
-   
+
     await this.setState({
       getPraizvaditelMap: getPraizvaditelMap
     })
@@ -258,13 +290,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                 }}>
 
                 <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    width: 22.5,
-                    height: 22.5,
-                    right: 21.75,
-                    top: 21.75,
-                  }}
+                  style={{ position: 'absolute', width: 22.5, height: 22.5, right: 21.75, top: 21.75, }}
                   onPress={() => this.setState({ RewardModal: false })}>
                   <Image
                     source={require('../../assets/image/ixs.png')}
@@ -274,14 +300,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                     }}
                   />
                 </TouchableOpacity>
-                <Text
-                  style={{
-                    color: '#2D9EFB',
-                    fontSize: 26,
-                    marginTop: 70,
-                    textAlign: 'center',
-                    fontFamily: 'Poppins_500Medium',
-                  }}>
+                <Text style={{ color: '#2D9EFB', fontSize: 26, marginTop: 70, textAlign: 'center', fontFamily: 'Poppins_500Medium', }}>
                   Вознаграждение
                 </Text>
 
@@ -302,7 +321,6 @@ export default class DesignerPageTwoComponent extends React.Component {
                             style={styles.procentInput}
                             value={item.start_price}
                           />
-                          {console.log(item)}
                           <View style={styles.rubli}>
                             <Svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <Path d="M6.285 8.99997C7.37392 9.02686 8.42909 8.62091 9.21919 7.8711C10.0093 7.1213 10.4699 6.08881 10.5 4.99997C10.4699 3.91113 10.0093 2.87865 9.21919 2.12884C8.42909 1.37904 7.37392 0.973087 6.285 0.999974H2C1.86739 0.999974 1.74021 1.05265 1.64645 1.14642C1.55268 1.24019 1.5 1.36737 1.5 1.49997V7.99997H0.5C0.367392 7.99997 0.240215 8.05265 0.146447 8.14642C0.0526785 8.24019 0 8.36736 0 8.49997C0 8.63258 0.0526785 8.75976 0.146447 8.85353C0.240215 8.9473 0.367392 8.99997 0.5 8.99997H1.5V9.99997H0.5C0.367392 9.99997 0.240215 10.0527 0.146447 10.1464C0.0526785 10.2402 0 10.3674 0 10.5C0 10.6326 0.0526785 10.7598 0.146447 10.8535C0.240215 10.9473 0.367392 11 0.5 11H1.5V14.5C1.5 14.6326 1.55268 14.7598 1.64645 14.8535C1.74021 14.9473 1.86739 15 2 15C2.13261 15 2.25979 14.9473 2.35355 14.8535C2.44732 14.7598 2.5 14.6326 2.5 14.5V11H7C7.13261 11 7.25979 10.9473 7.35355 10.8535C7.44732 10.7598 7.5 10.6326 7.5 10.5C7.5 10.3674 7.44732 10.2402 7.35355 10.1464C7.25979 10.0527 7.13261 9.99997 7 9.99997H2.5V8.99997H6.285ZM2.5 1.99997H6.285C7.10839 1.9743 7.90853 2.27531 8.51083 2.83733C9.11313 3.39935 9.46872 4.17677 9.5 4.99997C9.47001 5.82362 9.11483 6.60182 8.51223 7.16412C7.90964 7.72642 7.10875 8.02698 6.285 7.99997H2.5V1.99997Z" fill="#888888" />
@@ -345,99 +363,43 @@ export default class DesignerPageTwoComponent extends React.Component {
           <Modal visible={this.state.bronyModal}>
             <ImageBackground
               source={require('../../assets/image/blurBg.png')}
-              style={{
-                width: '100%',
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  width: '90%',
-                  height: '90%',
-                  backgroundColor: '#fff',
-                  borderRadius: 20,
-                  position: 'relative',
-
-                }}>
+              style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', }}>
+              <View style={{ width: '90%', height: '90%', backgroundColor: '#fff', borderRadius: 20, position: 'relative' }}>
 
                 <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    width: 22.5,
-                    height: 22.5,
-                    right: 21.75,
-                    top: 21.75,
-                  }}
+                  style={{ position: 'absolute', width: 22.5, height: 22.5, right: 21.75, top: 21.75, }}
                   onPress={() => this.setState({ bronyModal: false })}>
                   <Image
                     source={require('../../assets/image/ixs.png')}
-                    style={{
-                      width: '100%',
-                      height: '100%'
-                    }}
+                    style={{ width: '100%', height: '100%' }}
                   />
                 </TouchableOpacity>
-                <Text
-                  style={{
-                    color: '#2D9EFB',
-                    fontSize: 26,
-                    marginTop: 70,
-                    textAlign: 'center',
-                    fontFamily: 'Poppins_500Medium',
-                  }}>
+                <Text style={{ color: '#2D9EFB', fontSize: 26, marginTop: 70, textAlign: 'center', fontFamily: 'Poppins_500Medium', }}>
                   Забронировать клиента
                 </Text>
 
-                <ScrollView showsVerticalScrollIndicator={true}  >
-                  <View style={{ paddingHorizontal: 25, marginBottom: 30 }}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                  <View style={{ paddingHorizontal: 25, }}>
 
                     <View>
-                      <Text
-                        style={[{
-                          fontFamily: 'Poppins_500Medium',
-                          lineHeight: 23,
-                          fontSize: 15,
-                          marginTop: 27,
-                          marginBottom: 5
-                        }, this.state.phone_error ? { color: 'red' } : { color: '#5B5B5B' }]}
-                      >
+                      <Text style={[{ fontFamily: 'Poppins_500Medium', lineHeight: 23, fontSize: 15, marginTop: 27, marginBottom: 5 }, this.state.phone_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
                         *Номер телефона
                       </Text>
                       <TextInput
                         underlineColorAndroid="transparent"
-                        style={[{
-                          borderWidth: 1,
-                          padding: 10,
-                          width: '100%',
-                          borderRadius: 5,
-                        }, this.state.phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+                        style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, }, this.state.phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                         value={this.state.phone}
                         onChangeText={(value) => { this.setState({ phone: value }) }}
                       />
                     </View>
 
                     <View>
-                      <Text
-                        style={{
-                          fontFamily: 'Poppins_500Medium',
-                          lineHeight: 23,
-                          fontSize: 15,
-                          marginTop: 27,
-                          marginBottom: 5,
-                          color: '#5B5B5B'
-                        }}
-                      >
+                      <Text style={{ fontFamily: 'Poppins_500Medium', lineHeight: 23, fontSize: 15, marginTop: 27, marginBottom: 5, color: '#5B5B5B' }} >
                         Доп. номер телефона (необязательно)
                       </Text>
                       <TextInput
                         underlineColorAndroid="transparent"
-                        style={[{
-                          borderWidth: 1,
-                          padding: 10,
-                          width: '100%',
-                          borderRadius: 5,
-                        }, this.state.made_in_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+                        style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, }, this.state.made_in_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                         value={this.state.dubl_phone}
                         onChangeText={(value) => { this.setState({ dubl_phone: value }) }}
                       />
@@ -445,24 +407,12 @@ export default class DesignerPageTwoComponent extends React.Component {
 
                     <View>
                       <Text
-                        style={[{
-                          fontFamily: 'Poppins_500Medium',
-                          lineHeight: 23,
-                          fontSize: 15,
-                          marginTop: 27,
-                          marginBottom: 5
-                        }, this.state.name_error ? { color: 'red' } : { color: '#5B5B5B' }]}
-                      >
+                        style={[{ fontFamily: 'Poppins_500Medium', lineHeight: 23, fontSize: 15, marginTop: 27, marginBottom: 5 }, this.state.name_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
                         *ФИО
                       </Text>
                       <TextInput
                         underlineColorAndroid="transparent"
-                        style={[{
-                          borderWidth: 1,
-                          padding: 10,
-                          width: '100%',
-                          borderRadius: 5,
-                        }, this.state.name_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+                        style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, }, this.state.name_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                         value={this.state.name}
                         onChangeText={(value) => { this.setState({ name: value }) }}
                       />
@@ -470,26 +420,12 @@ export default class DesignerPageTwoComponent extends React.Component {
 
                     <View>
                       <Text
-                        style={{
-                          fontFamily: 'Poppins_500Medium',
-                          lineHeight: 23,
-                          fontSize: 15,
-                          marginTop: 27,
-                          marginBottom: 5,
-                          color: '#5B5B5B'
-                        }}
-                      >
+                        style={{ fontFamily: 'Poppins_500Medium', lineHeight: 23, fontSize: 15, marginTop: 27, marginBottom: 5, color: '#5B5B5B' }}>
                         Доп. ФИО(необязательно)
                       </Text>
                       <TextInput
                         underlineColorAndroid="transparent"
-                        style={{
-                          borderWidth: 1,
-                          padding: 10,
-                          width: '100%',
-                          borderRadius: 5,
-                          borderColor: '#F5F5F5'
-                        }}
+                        style={{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, borderColor: '#F5F5F5' }}
                         value={this.state.dubl_name}
                         onChangeText={(value) => { this.setState({ dubl_name: value }) }}
                       />
@@ -613,9 +549,9 @@ export default class DesignerPageTwoComponent extends React.Component {
                           <View>
 
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                           
 
-                              <View key={ind} style={{ position: 'relative', width: '80%' }}>
+
+                              <View key={ind} style={{ position: 'relative', marginBottom: 10, width: '87%' }}>
 
                                 <Text style={[{ fontFamily: 'Poppins_500Medium', lineHeight: 23, fontSize: 15, marginTop: 27, marginBottom: 5, }, this.state.proizvaditel_info_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
                                   Прозводитель
@@ -630,7 +566,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                                     // this.setState({ 
                                     //   praizvaditelSelect: !this.state.praizvaditelSelect
                                     // })
-                                    
+
                                   }}
                                 >
                                   <Text style={{ height: 25, width: '100%', borderRadius: 5, fontFamily: 'Poppins_500Medium', color: '#5B5B5B', }}>
@@ -680,16 +616,40 @@ export default class DesignerPageTwoComponent extends React.Component {
                               </View>
 
                               {this.state.getPraizvaditelMap.length - 1 == ind ?
-
-                                <TouchableOpacity>
-                                  <Text>+</Text>
+                                <TouchableOpacity style={{ width: 30, height: 48, borderWidth: 1, borderColor: '#E5E5E5', marginBottom: 10, borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}
+                                  onPress={() => {
+                                    ind < 2 && this.addPraizvaditelPrice()
+                                  }}>
+                                  <Svg
+                                    width={24}
+                                    height={24}
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <Path
+                                      d="M12 20v-8m0 0V4m0 8h8m-8 0H4"
+                                      stroke="#888"
+                                      strokeWidth={2}
+                                      strokeLinecap="round"
+                                    />
+                                  </Svg>
                                 </TouchableOpacity>
-
                                 :
-
-
-                                <TouchableOpacity>
-                                  <Text>-</Text>
+                                <TouchableOpacity style={{ width: 30, height: 48, borderWidth: 1, borderColor: '#E5E5E5', marginBottom: 10, borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}
+                                  onPress={() => this.delatePraizvaditelPrice(ind)}>
+                                  <Svg
+                                    width={32}
+                                    height={34}
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <Path
+                                      d="M10.343 22.657 16 17m0 0 5.657-5.657M16 17l5.657 5.657M16 17l-5.657-5.657"
+                                      stroke="#888"
+                                      strokeWidth={2}
+                                      strokeLinecap="round"
+                                    />
+                                  </Svg>
                                 </TouchableOpacity>
                               }
 
@@ -707,33 +667,27 @@ export default class DesignerPageTwoComponent extends React.Component {
                               }}
 
                               value={element.proizvoditel_price}
-                              onChangeText={(value) => { 
-                                
+                              onChangeText={(value) => {
+
                                 this.setNewPraizvaditelPrice(value, ind)
-                                 
+
                               }}
                             />
-
-
-
                           </View>
-
-
                         )
                       })
                     }
                     {/* change manufacturer end */}
 
-
+                    <TouchableOpacity style={{ marginTop: 50, marginBottom: 54 }}>
+                      <BlueButton name='Забронировать' />
+                    </TouchableOpacity>
                   </View>
 
                 </ScrollView>
-
-
-
               </View>
             </ImageBackground>
-          </Modal>
+          </Modal >
 
 
           <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 15 }}>
@@ -940,15 +894,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
 
 
-              <View style={{
-                width: "100%",
-                height: 58,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 14,
-                marginBottom: 19,
-                zIndex: -1
-              }}>
+              <View style={{ width: "100%", height: 58, flexDirection: 'row', justifyContent: 'space-between', marginTop: 14, marginBottom: 19, zIndex: -1 }}>
                 <TouchableOpacity
                   style={[
                     styles.info,
@@ -969,21 +915,13 @@ export default class DesignerPageTwoComponent extends React.Component {
                 <View style={[styles.info, { borderRightWidth: 2, borderRightColor: '#EEEEEE' }]}>
                   <Image
                     source={require('../../assets/image/clarity_ruble-line.png')}
-                    style={{
-                      width: 30,
-                      height: 30,
-                      resizeMode: 'contain',
-                    }} />
+                    style={{ width: 30, height: 30, resizeMode: 'contain', }} />
                   <Text style={styles.infoText}>Запрос{'\n'}стоимости</Text>
                 </View>
                 <TouchableOpacity style={styles.info} onPress={() => this.setState({ bronyModal: true })}>
                   <Image
                     source={require('../../assets/image/pcichka.png')}
-                    style={{
-                      width: 30,
-                      height: 30,
-                      resizeMode: 'contain',
-                    }} />
+                    style={{ width: 30, height: 30, resizeMode: 'contain', }} />
                   <Text style={styles.infoText}>Бронировать</Text>
                 </TouchableOpacity>
               </View>
@@ -1025,7 +963,7 @@ export default class DesignerPageTwoComponent extends React.Component {
               }
             </View>
           </ScrollView>
-        </View>
+        </View >
         <DesignerPageNavComponent navigation={this.props.navigation} />
       </SafeAreaView >
     )
