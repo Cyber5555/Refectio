@@ -295,8 +295,6 @@ const styles = StyleSheet.create({
     position: "relative"
   },
   nameCompanyParent: {
-    // borderColor: '#000',
-    // borderWidth: 1,
     marginTop: 12,
     paddingLeft: 2,
     flexDirection: 'row',

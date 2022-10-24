@@ -4,6 +4,7 @@ import Svg, { Path, Rect } from "react-native-svg";
 import Slider from "../slider/Slider";
 import DesignerPageNavComponent from "./DesignerPageNav";
 import BlueButton from "../../components/Component/Buttons/BlueButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default class DesignerPageTwoComponent extends React.Component {
@@ -26,23 +27,90 @@ export default class DesignerPageTwoComponent extends React.Component {
 
       categorySelect: false,
 
+      praizvaditelSelect: false,
+
+      getPraizvaditel: [],
+
+      getPraizvaditelMap: [
+        {
+          proizvodtel_name: '',
+          proizvodtel_id: '0',
+          proizvoditel_price: '0',
+          drobdown_is_open: false
+        },
+        {
+          proizvodtel_name: '',
+          proizvodtel_id: '0',
+          proizvoditel_price: '0',
+          drobdown_is_open: false
+        },
+      ],
+
+      praizvaditel_name: '',
+
       urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
       valid_error: false,
 
       categoryItems: [],
 
       phone: '',
+      phone_error: false,
       name: '',
+      name_error: false,
       dubl_phone: '',
       dubl_name: '',
       city: '',
+      city_error: false,
       category_id: '',
       category_name: '',
+      category_name_error: false,
       proizvaditel_info: [],
+      proizvaditel_info_error: false,
       // '2^just code^10000,5^dghhd^5000'
 
 
     }
+  }
+
+  setNewPraizvaditelPrice =  async (value, index) => {
+    let { getPraizvaditelMap } = this.state;
+    getPraizvaditelMap[index].proizvoditel_price = value;
+
+    await this.setState({
+      getPraizvaditelMap: getPraizvaditelMap
+    })
+
+
+    console.log(getPraizvaditelMap, 'getPraizvaditelMap')
+
+  }
+
+  setNewPraizvaditelNameAndId = async (item, index) => {
+
+    let { getPraizvaditelMap } = this.state;
+
+    getPraizvaditelMap[index].proizvodtel_name = item.company_name;
+    getPraizvaditelMap[index].proizvodtel_id = item.id;
+    getPraizvaditelMap[index].drobdown_is_open = !getPraizvaditelMap[index].drobdown_is_open;
+
+
+    await this.setState({
+      praizvaditel_name: item.company_name,
+      getPraizvaditelMap: getPraizvaditelMap
+    })
+
+  }
+
+  toggleProizvoditelDropdown = async (index) => {
+
+    let { getPraizvaditelMap } = this.state;
+
+    getPraizvaditelMap[index].drobdown_is_open = !getPraizvaditelMap[index].drobdown_is_open;
+   
+    await this.setState({
+      getPraizvaditelMap: getPraizvaditelMap
+    })
+
   }
 
 
@@ -101,19 +169,22 @@ export default class DesignerPageTwoComponent extends React.Component {
   }
 
 
-  DesignerAddBook = () => {
+  DesignerAddBook = async () => {
     let myHeaders = new Headers();
-    myHeaders.append("Authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiYzQyZmFhNGZlNDA0OTM5ODkzN2EzZDQzYmY5ZjYzZmYzN2E1MzM3ODkyYTUyNjNjOTMyM2FlYmRmODMzYjgwZTNhMTBmODU0NjZjZDdjMjkiLCJpYXQiOjE2NjU0MDM5MzAuNjYyMTU4LCJuYmYiOjE2NjU0MDM5MzAuNjYyMTY2LCJleHAiOjE2OTY5Mzk5MzAuNjU0MzY5LCJzdWIiOiI3OSIsInNjb3BlcyI6W119.XwipiJIsm8hC-ZLQJPA_TeKKq5voUpfJfI5iOFd66Jz92YuWXH1x_8UaF6pdfoYJT9LjifonMamYqSfIHA_KLxQSKkMc3_7E85StKwmGzlHbGe1taukklO25OpQxwXf2qy8fx2nYEcTrO7hVq29bCTqc0oxaD8UcJ3TYidXOaQfgieyC6fRJk8xDD_55bUhevBeLIS2Zf6X2WDBdRGAUV9x3GuXMXFQvBrrQ5H0_h_whT84tJNXbOv5yNn5pFhlrnWFheksvO2xe7rSgovd_a0tUYpNQszuFyhX7VjfY2c1CTGckTpwr14HfF3A0UzzRSnXs0c3SqsYl58DzVIbywdL2Am3kN9nJleg6-xvuDtYTdNWOT35I-RsWRpv91mpZYucBCatO5vpgjinQAB6xcLQS3-vOyfJdNucBDKzgDN9Ja4bLjUXN7WOQWaTDX3RP1gXG3fXHWAGJrER6LYp9zJGxZjU1_auX-xaMoGhNujvAh430U2Sdq1gAXUfcFlG7ChYoFi4XwSs7o2LpVF2jf0SBA-eaD5nT9a2ZeUzI8W8AQ_Me51k1AiUwgtYxFUa7NxbbkiTmonUtPq2F3v_hn3IoPgIGXHTsa3v24Cwlj5UxO7iEV72-jvm_9_GOnujxi728P8ByDYgCtxxdCRcig7Nb1Q24BZDj9_-_gQkwgaI");
+    let userToken = await AsyncStorage.getItem('userToken')
+    let AuthStr = "Bearer " + userToken
+    myHeaders.append("Authorization", AuthStr);
+
 
     let formdata = new FormData();
-    formdata.append("phone", "0930735884");
-    formdata.append("name", "asfd");
-    formdata.append("dubl_phone", "98769846341");
-    formdata.append("dubl_name", "sghdnlkjsan");
-    formdata.append("city", "erevan");
-    formdata.append("category_id", "1");
-    formdata.append("category_name", "Жилая мебель");
-    formdata.append("proizvaditel_info[]", "2^just code^10000,5^dghhd^5000");
+    formdata.append("phone", this.state.phone);
+    formdata.append("name", this.state.name);
+    formdata.append("dubl_phone", this.state.dubl_phone);
+    formdata.append("dubl_name", this.state.dubl_name);
+    formdata.append("city", this.state.city);
+    formdata.append("category_id", this.state.category_id);
+    formdata.append("category_name", this.state.category_name);
+    formdata.append("proizvaditel_info[]", this.state.proizvaditel_info);
 
     let requestOptions = {
       method: 'POST',
@@ -123,8 +194,41 @@ export default class DesignerPageTwoComponent extends React.Component {
     };
 
     fetch("http://80.78.246.59/Refectio/public/api/DesignerAddBook", requestOptions)
-      .then(response => response.text())
+      .then(response => response.json())
       .then(result => console.log(result))
+      .catch(error => console.log('error', error));
+  }
+
+  sendCategoryId = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken')
+    let AuthStr = "Bearer " + userToken
+    myHeaders.append("Authorization", AuthStr);
+
+    let formdata = new FormData();
+    formdata.append("category_id", this.state.category_id);
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/CetegoryForBroneProizvoditel", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        // console.log(result)
+
+        let result_dat = []
+        for (let i = 0; i < result.data.length; i++) {
+          result_dat.push(result.data[i][0]);
+        }
+        this.setState({ getPraizvaditel: result_dat })
+
+        console.log(result_dat, 'result_dat');
+
+      })
       .catch(error => console.log('error', error));
   }
 
@@ -285,8 +389,8 @@ export default class DesignerPageTwoComponent extends React.Component {
                   Забронировать клиента
                 </Text>
 
-                <ScrollView>
-                  <View style={{ paddingHorizontal: 25 }}>
+                <ScrollView showsVerticalScrollIndicator={true}  >
+                  <View style={{ paddingHorizontal: 25, marginBottom: 30 }}>
 
                     <View>
                       <Text
@@ -296,7 +400,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                           fontSize: 15,
                           marginTop: 27,
                           marginBottom: 5
-                        }, this.state.made_in_error ? { color: 'red' } : { color: '#5B5B5B' }]}
+                        }, this.state.phone_error ? { color: 'red' } : { color: '#5B5B5B' }]}
                       >
                         *Номер телефона
                       </Text>
@@ -307,21 +411,22 @@ export default class DesignerPageTwoComponent extends React.Component {
                           padding: 10,
                           width: '100%',
                           borderRadius: 5,
-                        }, this.state.made_in_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
-                        value={this.state.made_in}
-                        onChangeText={(value) => { this.setState({ made_in: value }) }}
+                        }, this.state.phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+                        value={this.state.phone}
+                        onChangeText={(value) => { this.setState({ phone: value }) }}
                       />
                     </View>
 
                     <View>
                       <Text
-                        style={[{
+                        style={{
                           fontFamily: 'Poppins_500Medium',
                           lineHeight: 23,
                           fontSize: 15,
                           marginTop: 27,
-                          marginBottom: 5
-                        }, this.state.made_in_error ? { color: 'red' } : { color: '#5B5B5B' }]}
+                          marginBottom: 5,
+                          color: '#5B5B5B'
+                        }}
                       >
                         Доп. номер телефона (необязательно)
                       </Text>
@@ -333,8 +438,8 @@ export default class DesignerPageTwoComponent extends React.Component {
                           width: '100%',
                           borderRadius: 5,
                         }, this.state.made_in_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
-                        value={this.state.made_in}
-                        onChangeText={(value) => { this.setState({ made_in: value }) }}
+                        value={this.state.dubl_phone}
+                        onChangeText={(value) => { this.setState({ dubl_phone: value }) }}
                       />
                     </View>
 
@@ -346,7 +451,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                           fontSize: 15,
                           marginTop: 27,
                           marginBottom: 5
-                        }, this.state.made_in_error ? { color: 'red' } : { color: '#5B5B5B' }]}
+                        }, this.state.name_error ? { color: 'red' } : { color: '#5B5B5B' }]}
                       >
                         *ФИО
                       </Text>
@@ -357,34 +462,36 @@ export default class DesignerPageTwoComponent extends React.Component {
                           padding: 10,
                           width: '100%',
                           borderRadius: 5,
-                        }, this.state.made_in_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
-                        value={this.state.made_in}
-                        onChangeText={(value) => { this.setState({ made_in: value }) }}
+                        }, this.state.name_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+                        value={this.state.name}
+                        onChangeText={(value) => { this.setState({ name: value }) }}
                       />
                     </View>
 
                     <View>
                       <Text
-                        style={[{
+                        style={{
                           fontFamily: 'Poppins_500Medium',
                           lineHeight: 23,
                           fontSize: 15,
                           marginTop: 27,
-                          marginBottom: 5
-                        }, this.state.made_in_error ? { color: 'red' } : { color: '#5B5B5B' }]}
+                          marginBottom: 5,
+                          color: '#5B5B5B'
+                        }}
                       >
                         Доп. ФИО(необязательно)
                       </Text>
                       <TextInput
                         underlineColorAndroid="transparent"
-                        style={[{
+                        style={{
                           borderWidth: 1,
                           padding: 10,
                           width: '100%',
                           borderRadius: 5,
-                        }, this.state.made_in_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
-                        value={this.state.made_in}
-                        onChangeText={(value) => { this.setState({ made_in: value }) }}
+                          borderColor: '#F5F5F5'
+                        }}
+                        value={this.state.dubl_name}
+                        onChangeText={(value) => { this.setState({ dubl_name: value }) }}
                       />
                     </View>
 
@@ -396,7 +503,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                           fontSize: 15,
                           marginTop: 27,
                           marginBottom: 5
-                        }, this.state.made_in_error ? { color: 'red' } : { color: '#5B5B5B' }]}
+                        }, this.state.city_error ? { color: 'red' } : { color: '#5B5B5B' }]}
                       >
                         *Город
                       </Text>
@@ -407,9 +514,9 @@ export default class DesignerPageTwoComponent extends React.Component {
                           padding: 10,
                           width: '100%',
                           borderRadius: 5,
-                        }, this.state.made_in_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
-                        value={this.state.made_in}
-                        onChangeText={(value) => { this.setState({ made_in: value }) }}
+                        }, this.state.city_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+                        value={this.state.city}
+                        onChangeText={(value) => { this.setState({ city: value }) }}
                       />
                     </View>
 
@@ -422,23 +529,23 @@ export default class DesignerPageTwoComponent extends React.Component {
                         position: 'relative',
                         // marginTop: 9,
                       }}>
-                      <Text style={{
+                      <Text style={[{
                         fontFamily: 'Poppins_500Medium',
                         lineHeight: 23,
                         fontSize: 15,
                         marginTop: 27,
                         marginBottom: 5,
-                      }}>
+                      }, this.state.category_name_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
                         Категория продукта
                       </Text>
                       <TouchableOpacity
-                        style={{
+                        style={[{
                           borderWidth: 1,
                           padding: 10,
                           width: '100%',
                           borderRadius: 5,
                           position: 'relative',
-                        }}
+                        }, this.state.category_name_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                         onPress={() => this.setState({ categorySelect: !this.state.categorySelect })}
                       >
                         <Text
@@ -465,10 +572,8 @@ export default class DesignerPageTwoComponent extends React.Component {
 
                         </View>
                       </TouchableOpacity>
-                      <View
-                        style={this.state.categorySelect ? styles.categorySelectActive : styles.categorySelect}>
+                      <View style={this.state.categorySelect ? styles.categorySelectActive : styles.categorySelect}>
                         <ScrollView nestedScrollEnabled={true} >
-                          {console.log(this.state.categorySelect)}
                           {
                             this.state.categoryItems.map((item, index) => {
                               return (
@@ -479,8 +584,13 @@ export default class DesignerPageTwoComponent extends React.Component {
                                     justifyContent: 'center',
                                     textAlign: 'left',
                                   }}
-                                  onPress={() => {
-                                    this.setState({ category_name: item.name })
+                                  onPress={async () => {
+                                    await this.setState({
+                                      category_id: item.id,
+                                      category_name: item.name,
+                                      categorySelect: false
+                                    })
+                                    await this.sendCategoryId()
                                   }}
                                 >
                                   <Text style={{ textAlign: 'left', paddingVertical: 7, fontFamily: 'Poppins_500Medium', borderBottomWidth: 1, borderBottomColor: '#F5F5F5' }}>
@@ -493,6 +603,128 @@ export default class DesignerPageTwoComponent extends React.Component {
                         </ScrollView>
                       </View>
                     </View>
+
+
+                    {/* change manufacturer start */}
+                    {
+                      this.state.getPraizvaditel.length > 0 && this.state.getPraizvaditelMap.map((element, ind) => {
+                        return (
+
+                          <View>
+
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                           
+
+                              <View key={ind} style={{ position: 'relative', width: '80%' }}>
+
+                                <Text style={[{ fontFamily: 'Poppins_500Medium', lineHeight: 23, fontSize: 15, marginTop: 27, marginBottom: 5, }, this.state.proizvaditel_info_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
+                                  Прозводитель
+                                </Text>
+
+                                <TouchableOpacity
+                                  style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, position: 'relative', }, this.state.proizvaditel_info_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+                                  onPress={() => {
+
+                                    this.toggleProizvoditelDropdown(ind);
+
+                                    // this.setState({ 
+                                    //   praizvaditelSelect: !this.state.praizvaditelSelect
+                                    // })
+                                    
+                                  }}
+                                >
+                                  <Text style={{ height: 25, width: '100%', borderRadius: 5, fontFamily: 'Poppins_500Medium', color: '#5B5B5B', }}>
+                                    {element.proizvodtel_name}
+                                  </Text>
+
+                                  <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
+                                    {!element.drobdown_is_open &&
+                                      <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                      </Svg>
+                                    }
+                                    {element.drobdown_is_open &&
+                                      <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                      </Svg>
+                                    }
+
+                                  </View>
+                                </TouchableOpacity>
+                                <View style={element.drobdown_is_open ? styles.categorySelectActive : styles.categorySelect}>
+                                  <ScrollView nestedScrollEnabled={true} >
+                                    {
+                                      this.state.getPraizvaditel.map((item, index) => {
+                                        return (
+                                          <TouchableOpacity
+                                            key={index}
+                                            style={{
+                                              width: '100%',
+                                              justifyContent: 'center',
+                                              textAlign: 'left',
+                                            }}
+                                            onPress={() => {
+
+                                              this.setNewPraizvaditelNameAndId(item, ind)
+                                            }}
+                                          >
+                                            <Text style={{ textAlign: 'left', paddingVertical: 7, fontFamily: 'Poppins_500Medium', borderBottomWidth: 1, borderBottomColor: '#F5F5F5' }}>
+                                              {item.company_name}
+                                            </Text>
+                                          </TouchableOpacity>
+                                        )
+                                      })
+                                    }
+                                  </ScrollView>
+                                </View>
+                              </View>
+
+                              {this.state.getPraizvaditelMap.length - 1 == ind ?
+
+                                <TouchableOpacity>
+                                  <Text>+</Text>
+                                </TouchableOpacity>
+
+                                :
+
+
+                                <TouchableOpacity>
+                                  <Text>-</Text>
+                                </TouchableOpacity>
+                              }
+
+                            </View>
+
+
+                            <TextInput
+                              underlineColorAndroid="transparent"
+                              style={{
+                                borderWidth: 1,
+                                padding: 10,
+                                width: '100%',
+                                borderRadius: 5,
+                                borderColor: '#F5F5F5'
+                              }}
+
+                              value={element.proizvoditel_price}
+                              onChangeText={(value) => { 
+                                
+                                this.setNewPraizvaditelPrice(value, ind)
+                                 
+                              }}
+                            />
+
+
+
+                          </View>
+
+
+                        )
+                      })
+                    }
+                    {/* change manufacturer end */}
+
+
                   </View>
 
                 </ScrollView>

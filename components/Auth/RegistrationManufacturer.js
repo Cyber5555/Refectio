@@ -93,6 +93,7 @@ export default class RegistrationManufacturerComponent extends Component {
           percent: ''
         },
       ],
+      procentArrayToString: [],
 
       valid_error: false
     }
@@ -136,7 +137,7 @@ export default class RegistrationManufacturerComponent extends Component {
   }
 
 
-  savePercont = () => {
+  savePercont = async () => {
     let { procentArray } = this.state;
 
     let result = [];
@@ -153,19 +154,24 @@ export default class RegistrationManufacturerComponent extends Component {
       result.push(resultString)
     }
 
+
+    
     if (valid_error) {
 
-      this.setState({
+      await this.setState({
         valid_error: true
       })
     }
     else {
-      this.setState({
-        valid_error: false
+      await this.setState({
+        valid_error: false,
+        procentArrayToString: result
       })
     }
     console.log(result);
   }
+
+
 
   changeTo = (value, index) => {
     let { procentArray } = this.state;
@@ -354,6 +360,9 @@ export default class RegistrationManufacturerComponent extends Component {
 
 
   getMainApi = async () => {
+
+    await this.savePercont();
+
     const myHeaders = new Headers();
 
     const {
@@ -391,7 +400,7 @@ export default class RegistrationManufacturerComponent extends Component {
     }
     console.log(new_sales_city);
 
-    this.savePercont()
+
 
     this.form_data.append("company_name", company_name);
     this.form_data.append("phone", phone);
@@ -407,9 +416,12 @@ export default class RegistrationManufacturerComponent extends Component {
     this.form_data.append("show_room", show_room);
     this.form_data.append("sales_city[]", new_sales_city);
     this.form_data.append("product_category[]", new_product_category);
-    this.form_data.append("percent_bonus[]", this.procentVall);
+    this.form_data.append("percent_bonus[]", this.state.procentArrayToString);
 
-    console.log(this.form_data);
+    console.log(this.form_data, 'this.form_datathis.form_data');
+
+
+
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,
@@ -420,7 +432,8 @@ export default class RegistrationManufacturerComponent extends Component {
     fetch("http://80.78.246.59/Refectio/public/api/RegisterManufacturerUser", requestOptions)
       .then(response => response.json())
       .then(res => {
-        // console.log(this.form_data);
+        console.log(res);
+
         if (res.success === false && res.message == 'Validation errors') {
 
           if (res.data.hasOwnProperty('company_name')) {
@@ -537,15 +550,25 @@ export default class RegistrationManufacturerComponent extends Component {
           // console.log(res, 'res');
           return false;
 
+        } else if (res.success === false && res.message[0] == 'phone arledy exist') {
+          
+          this.setState({
+            phone_error: true
+          })
+
+          console.log(res.data, 'phone arledy exist')
+
+          return false
+
         } else {
+
+
+          console.log(res.data, 'res.data')
 
           this.props.navigation.navigate('ConfirmTelScreen', {
             params: res.data.token
           })
-          // console.log(this.state.accessToken,'this.state.accessToken');
-          // redirect kodi ej
 
-          // console.log(res, 'res');
         }
       })
       .catch(error => console.log(error, 'error'))
@@ -561,7 +584,7 @@ export default class RegistrationManufacturerComponent extends Component {
   goToRegistredScreen = () => {
     this.props.navigation.navigate('RegisteredScreen')
   }
- 
+
 
 
   render() {
@@ -1112,7 +1135,7 @@ export default class RegistrationManufacturerComponent extends Component {
                           </Text>
 
 
-                          
+
 
                         </TouchableOpacity>
                       )
@@ -1432,6 +1455,7 @@ export default class RegistrationManufacturerComponent extends Component {
                           keyboardType="number-pad"
                           maxLength={2}
                           value={item.percent}
+                          style={{ width: '100%', height: '100%' }}
                           onChangeText={async (value) => {
                             // await this.setState({ proccccc: value })
                             console.log(value)
@@ -1439,7 +1463,7 @@ export default class RegistrationManufacturerComponent extends Component {
 
                           }}
                         />
-                        <Text>%</Text>
+                        <Text style={{ position: 'absolute', right: 0 }}>%</Text>
                       </View>
                     </View>
                   )
@@ -1571,9 +1595,8 @@ export default class RegistrationManufacturerComponent extends Component {
                 style={{
                   marginVertical: 25
                 }}
-                onPress={() => {
-                  this.savePercont()
-                  this.getMainApi()
+                onPress={async () => {
+                  await this.getMainApi()
                 }}
               >
                 <BlueButton
