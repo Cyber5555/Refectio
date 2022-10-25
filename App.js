@@ -32,6 +32,9 @@ import AddProductComponent from './components/Customer/AddProduct';
 import ModalComponent from './components/Ghost/Modal';
 import EditPhoneNumberConfirmComponent from './components/Auth/EditPhoneNumberConfirm';
 import EditPasswordCustomerCompnent from './components/Auth/EditPaswordCustomer';
+import EditPhoneNumberDesignerComponent from './components/Auth/EditPhoneNumberDesigner';
+import EditPhoneNumberDesignerConfirmComponent from './components/Auth/EditPhoneNumberDesignerConfirm';
+import EditPasswordDesignerCompnent from './components/Auth/EditPaswordDesigner';
 
 
 
@@ -109,7 +112,22 @@ function EditPhoneNumberConfirm({ route, navigation }) {
   const { params } = route.params
 
   return (
-    <EditPhoneNumberConfirmComponent phoneNumb={params} navigation={navigation} />
+    <EditPhoneNumberConfirmComponen phoneNumb={params} navigation={navigation} />
+  );
+}
+
+function EditPhoneNumberDesigner({ navigation }) {
+  return (
+    <EditPhoneNumberDesignerComponent navigation={navigation} />
+  );
+}
+
+function EditPhoneNumberDesignerConfirm({ route, navigation }) {
+
+  const { params } = route.params
+
+  return (
+    <EditPhoneNumberDesignerConfirmComponent phoneNumb={params} navigation={navigation} />
   );
 }
 
@@ -436,18 +454,24 @@ export default function App() {
                     tabBarStyle: { display: 'none' }
                   })}
                 />
-                <Tab.Screen name="EditPhoneNumber" component={EditPhoneNumberComponent}
+                <Tab.Screen name="EditPhoneNumberDesigner" component={EditPhoneNumberDesignerComponent}
                   options={({ route }) => ({
                     tabBarButton: () => null,
                     tabBarStyle: { display: 'none' }
                   })}
                 />
-                <Tab.Screen name="EditPhoneNumberConfirm" component={EditPhoneNumberConfirmComponent}
+                <Tab.Screen name="EditPhoneNumberDesignerConfirm" component={EditPhoneNumberDesignerConfirm}
                   options={({ route }) => ({
                     tabBarButton: () => null,
                     tabBarStyle: { display: 'none' }
                   })}
                 />
+                 <Tab.Screen name="EditPasswordDesigner" component={EditPasswordDesignerCompnent}
+                    options={({ route }) => ({
+                      tabBarButton: () => null,
+                      tabBarStyle: { display: 'none' }
+                    })}
+                  />
               </Tab.Navigator>
             ) :
 

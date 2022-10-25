@@ -13,7 +13,7 @@ export default class DesignerPageTwoComponent extends React.Component {
     this.state = {
       RewardModal: false,
 
-      bronyModal: true,
+      bronyModal: false,
 
       changed: '',
       sOpenCityDropDown: false,
@@ -34,14 +34,8 @@ export default class DesignerPageTwoComponent extends React.Component {
       getPraizvaditelMap: [
         {
           proizvodtel_name: '',
-          proizvodtel_id: '0',
-          proizvoditel_price: '0',
-          drobdown_is_open: false
-        },
-        {
-          proizvodtel_name: '',
-          proizvodtel_id: '0',
-          proizvoditel_price: '0',
+          proizvodtel_id: '',
+          proizvoditel_price: '',
           drobdown_is_open: false
         },
       ],
@@ -207,6 +201,13 @@ export default class DesignerPageTwoComponent extends React.Component {
     let AuthStr = "Bearer " + userToken
     myHeaders.append("Authorization", AuthStr);
 
+    const { getPraizvaditelMap } = this.state
+
+    let result_praizvaditel_map = []
+    for (let i = 0; i < getPraizvaditelMap.length; i++) {
+      result_praizvaditel_map.push(getPraizvaditelMap[i].proizvodtel_id +'^'+ getPraizvaditelMap[i].proizvodtel_name +'^'+ getPraizvaditelMap[i].proizvoditel_price)
+    }
+
 
     let formdata = new FormData();
     formdata.append("phone", this.state.phone);
@@ -216,7 +217,7 @@ export default class DesignerPageTwoComponent extends React.Component {
     formdata.append("city", this.state.city);
     formdata.append("category_id", this.state.category_id);
     formdata.append("category_name", this.state.category_name);
-    formdata.append("proizvaditel_info[]", this.state.proizvaditel_info);
+    formdata.append("proizvaditel_info[]", result_praizvaditel_map);
 
     let requestOptions = {
       method: 'POST',
@@ -387,6 +388,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                       </Text>
                       <TextInput
                         underlineColorAndroid="transparent"
+                        keyboardType="phone-pad"
                         style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, }, this.state.phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                         value={this.state.phone}
                         onChangeText={(value) => { this.setState({ phone: value }) }}
@@ -399,6 +401,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                       </Text>
                       <TextInput
                         underlineColorAndroid="transparent"
+                        keyboardType="phone-pad"
                         style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, }, this.state.made_in_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                         value={this.state.dubl_phone}
                         onChangeText={(value) => { this.setState({ dubl_phone: value }) }}
@@ -546,7 +549,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                       this.state.getPraizvaditel.length > 0 && this.state.getPraizvaditelMap.map((element, ind) => {
                         return (
 
-                          <View>
+                          <View key={ind}>
 
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' }}>
 
@@ -658,6 +661,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
                             <TextInput
                               underlineColorAndroid="transparent"
+                              keyboardType="number-pad"
                               style={{
                                 borderWidth: 1,
                                 padding: 10,
@@ -679,7 +683,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                     }
                     {/* change manufacturer end */}
 
-                    <TouchableOpacity style={{ marginTop: 50, marginBottom: 54 }}>
+                    <TouchableOpacity style={{ marginTop: 50, marginBottom: 54 }} onPress={() => this.DesignerAddBook()}>
                       <BlueButton name='Забронировать' />
                     </TouchableOpacity>
                   </View>
@@ -964,12 +968,11 @@ export default class DesignerPageTwoComponent extends React.Component {
             </View>
           </ScrollView>
         </View >
-        <DesignerPageNavComponent navigation={this.props.navigation} />
+        <DesignerPageNavComponent active_page={''} navigation={this.props.navigation} />
       </SafeAreaView >
     )
   }
 }
-
 const styles = StyleSheet.create({
   main: {
     flex: 1,

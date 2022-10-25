@@ -1707,7 +1707,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     params: this.state.id
                   })
                 }}
-
                 style={{
                   width: 165,
                   height: 38,

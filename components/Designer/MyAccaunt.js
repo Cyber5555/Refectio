@@ -4,6 +4,7 @@ import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import { AuthContext } from "../AuthContext/context";
 import BlueButton from "../Component/Buttons/BlueButton";
 import DesignerPageNavComponent from "./DesignerPageNav";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default class MyAccauntComponent extends React.Component {
   constructor(props) {
@@ -12,12 +13,29 @@ export default class MyAccauntComponent extends React.Component {
       keyboardOpen: false,
       VipiskaModal: false,
 
+      phone: '',
+      name: '',
+
+      chcngeName: '',
+      chcngeNameModal: true
     }
   }
 
   static contextType = AuthContext
 
   componentDidMount() {
+
+    const { navigation } = this.props;
+    this.getAuthUserProfile()
+
+
+    this.focusListener = navigation.addListener("focus", () => {
+
+      this.getAuthUserProfile()
+
+    });
+
+
     this.keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       this._keyboardDidShow,
@@ -50,10 +68,32 @@ export default class MyAccauntComponent extends React.Component {
 
   }
 
-
-  goToDesignerMain = () => {
-    this.props.navigation.navigate('DesignerPage')
+  getAuthUserProfile = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken');
+    let AuthStr = 'Bearer ' + userToken;
+    myHeaders.append("Authorization", AuthStr);
+    myHeaders.append("Content-Type", "multipart/form-data");
+    await fetch('http://80.78.246.59/Refectio/public/api/AuthUserProfile', {
+      method: 'GET',
+      headers: myHeaders
+    })
+      .then(response => response.json())
+      .then(res => {
+        console.log(res);
+        this.setState({
+          phone: res.data[0].phone,
+          name: res.data[0].name,
+        })
+        console.log(this.state.logo);
+      })
   }
+
+  chcngeName = async () => {
+
+  }
+
+
 
   render() {
     return (
@@ -66,7 +106,7 @@ export default class MyAccauntComponent extends React.Component {
               left: 15,
               zIndex: 1
             }}
-            onPress={() => this.goToDesignerMain()}
+            onPress={() => this.props.navigation.navigate('DesignerPage')}
           >
             <ArrowGrayComponent />
           </TouchableOpacity>
@@ -79,6 +119,7 @@ export default class MyAccauntComponent extends React.Component {
             }}>
             Мой профиль
           </Text>
+
           <Modal visible={this.state.VipiskaModal}>
             <ImageBackground
               source={require('../../assets/image/blurBg.png')}
@@ -157,37 +198,68 @@ export default class MyAccauntComponent extends React.Component {
           </Modal>
 
 
+          <Modal visible={this.state.chcngeNameModal}>
+            <ImageBackground source={require('../../assets/image/blurBg.png')} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <View style={{ width: '90%', height: 300, backgroundColor: '#fff', borderRadius: 20, position: 'relative' }}>
+                <TouchableOpacity style={{ position: 'absolute', right: 18, top: 18 }}>
+                  <Image
+                    source={require('../../assets/image/ixs.png')}
+                    style={{ width: 22.5, height: 22.5, }}
+                  />
+                </TouchableOpacity>
+
+                <View style={{ marginTop: 70, marginLeft: 25 }}>
+
+                  <Text style={{ fontFamily: 'Poppins_500Medium', }}>Номер телефона</Text> 
+                  <TextInput
+                    style={{
+                      marginTop: 7,
+                      width: '90%',
+                      height: 50,
+                      borderWidth: 1,
+                      borderColor: '#F5F5F5',
+                      borderRadius: 6,
+                      padding: 10,
+                    }}
+                    placeholder={this.state.name}
+                  />
+                </View>
+              </View>
+            </ImageBackground>
+          </Modal>
 
 
           <ScrollView style={{ flex: 1, position: 'relative' }}>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 27, }}>
-              <Text style={{
-                fontSize: 20,
-                fontFamily: 'Poppins_500Medium',
-              }}>
-                Сергей Смирнов
-              </Text>
-              <Image
-                source={require('../../assets/image/ep_edit.png')}
-                style={{
-                  width: 22,
-                  height: 22
-                }}
-              />
-            </View>
-
-            <View style={{ marginTop: 27 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
-                <Text style={{ fontFamily: 'Poppins_500Medium', }}>Номер телефона</Text>
+              <Text style={{ fontSize: 20, fontFamily: 'Poppins_500Medium', }}>{this.state.name}</Text>
+              <TouchableOpacity onPress={() => this.chcngeName()}>
                 <Image
                   source={require('../../assets/image/ep_edit.png')}
                   style={{
                     width: 22,
-                    height: 22,
-                    marginLeft: 6.28
+                    height: 22
                   }}
                 />
+              </TouchableOpacity>
+            </View>
+
+
+            <View style={{ marginTop: 27 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                <Text style={{ fontFamily: 'Poppins_500Medium', }}>Номер телефона</Text>
+                <TouchableOpacity onPress={() => {
+                  this.props.navigation.navigate('EditPhoneNumberDesigner')
+                }}>
+                  <Image
+                    source={require('../../assets/image/ep_edit.png')}
+                    style={{
+                      width: 22,
+                      height: 22,
+                      marginLeft: 6.28
+                    }}
+                  />
+                </TouchableOpacity>
               </View>
               <TextInput
                 style={{
@@ -200,21 +272,23 @@ export default class MyAccauntComponent extends React.Component {
                   padding: 10,
                 }}
                 keyboardType="phone-pad"
-                placeholder="+7 (909) 099-99-99"
+                placeholder={this.state.phone}
               />
             </View>
 
             <View style={{ marginTop: 12 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                 <Text style={{ fontFamily: 'Poppins_500Medium', }}>Пароль</Text>
-                <Image
-                  source={require('../../assets/image/ep_edit.png')}
-                  style={{
-                    width: 22,
-                    height: 22,
-                    marginLeft: 25.86
-                  }}
-                />
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('EditPasswordDesigner')}>
+                  <Image
+                    source={require('../../assets/image/ep_edit.png')}
+                    style={{
+                      width: 22,
+                      height: 22,
+                      marginLeft: 25.86
+                    }}
+                  />
+                </TouchableOpacity>
               </View>
 
               <TextInput
@@ -228,7 +302,8 @@ export default class MyAccauntComponent extends React.Component {
                   padding: 10,
                 }}
                 secureTextEntry={true}
-                placeholder="**********"
+                placeholder="*************"
+                editable={false}
               />
             </View>
 
