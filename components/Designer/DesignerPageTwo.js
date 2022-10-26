@@ -1,11 +1,10 @@
 import React, { Component } from "react";
-import { SafeAreaView, View, Image, Text, Modal, TouchableOpacity, TextInput, ScrollView, StyleSheet, ImageBackground, Pressable } from "react-native";
+import { SafeAreaView, View, Image, Text, Modal, TouchableOpacity, TextInput, ScrollView, StyleSheet, ImageBackground, Linking } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
 import Slider from "../slider/Slider";
 import DesignerPageNavComponent from "./DesignerPageNav";
 import BlueButton from "../../components/Component/Buttons/BlueButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as Linking from 'expo-linking';
 
 
 export default class DesignerPageTwoComponent extends React.Component {
@@ -65,7 +64,7 @@ export default class DesignerPageTwoComponent extends React.Component {
       favoriteBool: false,
     }
   }
-  initialUrl = Linking.getInitialURL('https://api.whatsapp.com/send/?phone=%2B79162939496&text&type=phone_number&app_absent=0');
+
 
   setNewPraizvaditelPrice = async (value, index) => {
     let { getPraizvaditelMap } = this.state;
@@ -74,10 +73,6 @@ export default class DesignerPageTwoComponent extends React.Component {
     await this.setState({
       getPraizvaditelMap: getPraizvaditelMap
     })
-
-
-    console.log(getPraizvaditelMap, 'getPraizvaditelMap')
-
   }
 
 
@@ -88,10 +83,6 @@ export default class DesignerPageTwoComponent extends React.Component {
     await this.setState({
       getPraizvaditelMap: getPraizvaditelMap
     })
-
-
-    console.log(getPraizvaditelMap, 'getPraizvaditelMap')
-
   }
 
   addPraizvaditelPrice = async (index) => {
@@ -106,9 +97,6 @@ export default class DesignerPageTwoComponent extends React.Component {
     await this.setState({
       getPraizvaditelMap: getPraizvaditelMap
     })
-
-
-    console.log(getPraizvaditelMap, 'getPraizvaditelMap')
 
   }
 
@@ -158,7 +146,6 @@ export default class DesignerPageTwoComponent extends React.Component {
     })
       .then(response => response.json())
       .then(res => {
-        console.log(res);
         this.setState({
           user: res.data.user,
           user_bonus_for_designer: res.data.user_bonus_for_designer,
@@ -245,8 +232,6 @@ export default class DesignerPageTwoComponent extends React.Component {
     fetch("http://80.78.246.59/Refectio/public/api/CetegoryForBroneProizvoditel", requestOptions)
       .then(response => response.json())
       .then(result => {
-        // console.log(result)
-
         let result_dat = []
         for (let i = 0; i < result.data.length; i++) {
           result_dat.push(result.data[i][0]);
@@ -280,7 +265,6 @@ export default class DesignerPageTwoComponent extends React.Component {
       fetch("http://80.78.246.59/Refectio/public/api/addtoFavorit", requestOptions)
         .then(response => response.json())
         .then(result => {
-          console.log(result)
           this.setState({ favoriteBool: false })
         })
         .catch(error => console.log('error', error));
@@ -289,7 +273,6 @@ export default class DesignerPageTwoComponent extends React.Component {
       fetch("http://80.78.246.59/Refectio/public/api/deleteFavoritProizvoditel", requestOptions)
         .then(response => response.json())
         .then(result => {
-          console.log(result)
           this.setState({ favoriteBool: true })
         })
         .catch(error => console.log('error', error));
@@ -975,11 +958,10 @@ export default class DesignerPageTwoComponent extends React.Component {
                     }} />
                   <Text style={styles.infoText}>Вознаграждение</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.info, { borderRightWidth: 2, borderRightColor: '#EEEEEE' }]} onPress={() => this.initialUrl} >
+                <TouchableOpacity style={[styles.info, { borderRightWidth: 2, borderRightColor: '#EEEEEE' }]} onPress={() => { Linking.openURL('https://api.whatsapp.com/send/?phone=%2B79162939496&text&type=phone_number&app_absent=0') }}>
                   <Image
                     source={require('../../assets/image/clarity_ruble-line.png')}
-                    style={{ width: 30, height: 30, resizeMode: 'contain', }}
-
+                    style={{ width: 30, height: 30, resizeMode: 'contain' }}
                   />
                   <Text style={styles.infoText}>Запрос{'\n'}стоимости</Text>
                 </TouchableOpacity>
@@ -1013,9 +995,9 @@ export default class DesignerPageTwoComponent extends React.Component {
               </View>
               {
                 this.state.products.map((item, index) => {
-                  <Slider slid={item.product_image} />
                   return (
                     <View key={index} style={{ marginTop: 18 }}>
+                      <Slider slid={item.product_image} />
                       <Text style={{ fontFamily: 'Raleway_700Bold', fontSize: 13, marginTop: 6 }}>{item.name}</Text>
                       <Text style={styles.zakazInfo}>Фасады : {item.facades}</Text>
                       <Text style={styles.zakazInfo}>Корпус: {item.frame}</Text>

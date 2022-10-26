@@ -80,14 +80,12 @@ export default class MyAccauntComponent extends React.Component {
     })
       .then(response => response.json())
       .then(res => {
-        console.log(res);
         this.setState({
           phone: res.data[0].phone,
           chcngeName: res.data[0].name,
           chcngeSurname: res.data[0].surname,
 
         })
-        console.log(this.state.logo);
       })
   }
 
@@ -113,7 +111,6 @@ export default class MyAccauntComponent extends React.Component {
     fetch("http://80.78.246.59/Refectio/public/api/UpdateProfileNameSurnameDesigner", requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result);
         if (result.status === true) {
           this.setState({
             chcngeName: '',

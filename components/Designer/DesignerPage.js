@@ -32,8 +32,6 @@ export default class CustomerMainPageComponent extends React.Component {
     })
       .then(response => response.json())
       .then(res => {
-
-        // console.log(res.data.data.data, 'res.data.data.data')
         let data = res.data.data;
         let new_data_result = [];
 
@@ -49,10 +47,6 @@ export default class CustomerMainPageComponent extends React.Component {
           data[i].images = product_image;
 
         }
-
-        // console.log(data, 'res.data.data.data');
-
-
         this.setState({
           getAllProducts: data
         })
@@ -163,7 +157,6 @@ export default class CustomerMainPageComponent extends React.Component {
           logo: res.data[0].logo,
           name: res.data[0].name,
         })
-        console.log(this.state.logo);
       })
   }
 
@@ -228,7 +221,6 @@ export default class CustomerMainPageComponent extends React.Component {
                   <View key={index} style={styles.campaign} >
                     <TouchableOpacity
                       onPress={async () => {
-                        console.log(item.id, 'before navigation');
                         this.props.navigation.navigate('DesignerPageTwo', {
                           params: item.id
                         })
