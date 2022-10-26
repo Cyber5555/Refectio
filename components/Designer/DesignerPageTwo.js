@@ -5,6 +5,7 @@ import Slider from "../slider/Slider";
 import DesignerPageNavComponent from "./DesignerPageNav";
 import BlueButton from "../../components/Component/Buttons/BlueButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Linking from 'expo-linking';
 
 
 export default class DesignerPageTwoComponent extends React.Component {
@@ -60,11 +61,11 @@ export default class DesignerPageTwoComponent extends React.Component {
       category_name_error: false,
       proizvaditel_info: [],
       proizvaditel_info_error: false,
-      // '2^just code^10000,5^dghhd^5000'
 
-
+      favoriteBool: false,
     }
   }
+  initialUrl = Linking.getInitialURL('https://api.whatsapp.com/send/?phone=%2B79162939496&text&type=phone_number&app_absent=0');
 
   setNewPraizvaditelPrice = async (value, index) => {
     let { getPraizvaditelMap } = this.state;
@@ -140,42 +141,31 @@ export default class DesignerPageTwoComponent extends React.Component {
   }
 
 
-  componentDidMount() {
-    const { navigation } = this.props;
-    this.getObjectData()
-    this.getCategory()
-    this.focusListener = navigation.addListener("focus", () => {
-      this.getCategory()
-
-      this.getObjectData()
-
-    });
-  }
-
-  componentWillUnmount() {
-    // Remove the event listener
-    if (this.focusListener) {
-      this.focusListener();
-      console.log(' END')
-    }
-  }
 
   // stexic sharunakel
 
 
   getObjectData = async () => {
     let userID = this.props.user_id
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken')
+    let AuthStr = "Bearer " + userToken
+    myHeaders.append("Authorization", AuthStr);
+
     await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=2', {
-      method: 'GET'
+      method: 'GET',
+      headers: myHeaders
     })
       .then(response => response.json())
       .then(res => {
+        console.log(res);
         this.setState({
           user: res.data.user,
           user_bonus_for_designer: res.data.user_bonus_for_designer,
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
           products: res.data.products,
+          favoriteBool: res.data.Favorit_button
         })
       })
   }
@@ -205,7 +195,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
     let result_praizvaditel_map = []
     for (let i = 0; i < getPraizvaditelMap.length; i++) {
-      result_praizvaditel_map.push(getPraizvaditelMap[i].proizvodtel_id +'^'+ getPraizvaditelMap[i].proizvodtel_name +'^'+ getPraizvaditelMap[i].proizvoditel_price)
+      result_praizvaditel_map.push(getPraizvaditelMap[i].proizvodtel_id + '^' + getPraizvaditelMap[i].proizvodtel_name + '^' + getPraizvaditelMap[i].proizvoditel_price)
     }
 
 
@@ -228,7 +218,11 @@ export default class DesignerPageTwoComponent extends React.Component {
 
     fetch("http://80.78.246.59/Refectio/public/api/DesignerAddBook", requestOptions)
       .then(response => response.json())
-      .then(result => console.log(result))
+      .then(result => {
+        if (result.status === true && result.message[0] == 'created') {
+          this.setState({ bronyModal: false })
+        }
+      })
       .catch(error => console.log('error', error));
   }
 
@@ -259,10 +253,69 @@ export default class DesignerPageTwoComponent extends React.Component {
         }
         this.setState({ getPraizvaditel: result_dat })
 
-        console.log(result_dat, 'result_dat');
-
       })
       .catch(error => console.log('error', error));
+  }
+
+
+  favorite = async () => {
+    let userID = this.props.user_id
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken')
+    let AuthStr = "Bearer " + userToken
+    myHeaders.append("Authorization", AuthStr);
+
+    let formdata = new FormData();
+    formdata.append("user_id", userID);
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+
+    if (this.state.favoriteBool == true) {
+      fetch("http://80.78.246.59/Refectio/public/api/addtoFavorit", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+          console.log(result)
+          this.setState({ favoriteBool: false })
+        })
+        .catch(error => console.log('error', error));
+    }
+    else if (this.state.favoriteBool == false) {
+      fetch("http://80.78.246.59/Refectio/public/api/deleteFavoritProizvoditel", requestOptions)
+        .then(response => response.json())
+        .then(result => {
+          console.log(result)
+          this.setState({ favoriteBool: true })
+        })
+        .catch(error => console.log('error', error));
+    }
+  }
+
+
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    this.getObjectData()
+    this.getCategory()
+    this.focusListener = navigation.addListener("focus", () => {
+      this.getCategory()
+
+      this.getObjectData()
+
+    });
+  }
+
+  componentWillUnmount() {
+    // Remove the event listener
+    if (this.focusListener) {
+      this.focusListener();
+      console.log(' END')
+    }
   }
 
   render() {
@@ -781,15 +834,21 @@ export default class DesignerPageTwoComponent extends React.Component {
                             }
                           </View>
                         </View>
-                        <TouchableOpacity>
-                          <Image
-                            source={require('../../assets/image/heartHast.png')}
-                            style={{
-                              width: 24,
-                              height: 21.43,
-                              tintColor: '#333333',
-                              marginTop: 5,
-                            }} />
+                        <TouchableOpacity onPress={() => this.favorite()}>
+                          {
+                            this.state.favoriteBool == true &&
+                            <Image
+                              source={require('../../assets/image/heartHast.png')}
+                              style={{ width: 24, height: 21.43, tintColor: '#333333', marginTop: 5, }}
+                            />
+                          }
+                          {this.state.favoriteBool == false &&
+                            < Image
+                              source={require('../../assets/image/heartSev.png')}
+                              style={{ width: 24, height: 21.43, tintColor: '#333333', marginTop: 5, }}
+                            />
+                          }
+
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -916,12 +975,14 @@ export default class DesignerPageTwoComponent extends React.Component {
                     }} />
                   <Text style={styles.infoText}>Вознаграждение</Text>
                 </TouchableOpacity>
-                <View style={[styles.info, { borderRightWidth: 2, borderRightColor: '#EEEEEE' }]}>
+                <TouchableOpacity style={[styles.info, { borderRightWidth: 2, borderRightColor: '#EEEEEE' }]} onPress={() => this.initialUrl} >
                   <Image
                     source={require('../../assets/image/clarity_ruble-line.png')}
-                    style={{ width: 30, height: 30, resizeMode: 'contain', }} />
+                    style={{ width: 30, height: 30, resizeMode: 'contain', }}
+
+                  />
                   <Text style={styles.infoText}>Запрос{'\n'}стоимости</Text>
-                </View>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.info} onPress={() => this.setState({ bronyModal: true })}>
                   <Image
                     source={require('../../assets/image/pcichka.png')}
