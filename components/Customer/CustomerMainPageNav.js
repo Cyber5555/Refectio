@@ -11,35 +11,35 @@ export default class CustomerMainPageNavComponent extends React.Component {
         { images: require('../../assets/image/broni.png'), text: 'Брони', change: 'CustomerMyBroni', id: 4 },
         { images: require('../../assets/image/carbon_user-avatar.png'), text: 'Профиль', change: 'CustomerMyAccaunt', id: 5 }
       ],
-      active: 0
+      // active: 0
     }
   }
 
-  componentDidMount = () => {
+  // componentDidMount = () => {
 
-    const { navigation } = this.props;
+  //   const { navigation } = this.props;
 
-    this.focusListener = navigation.addListener("focus", () => {
+  //   this.focusListener = navigation.addListener("focus", () => {
 
-      console.log(this.state.active, 'active');
+  //     console.log(this.state.active, 'active');
 
-    });
+  //   });
 
 
-  }
+  // }
 
-  componentWillUnmount() {
+  // componentWillUnmount() {
 
-    // Remove the event listener
+  //   // Remove the event listener
 
-    if (this.focusListener) {
-      this.focusListener();
-      console.log('Bum END')
-    }
+  //   if (this.focusListener) {
+  //     this.focusListener();
+  //     console.log('Bum END')
+  //   }
 
-    // this.focusListener();
+  //   // this.focusListener();
 
-  }
+  // }
 
   goToPages = (e) => {
     this.props.navigation.navigate(e)

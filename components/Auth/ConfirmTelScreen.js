@@ -26,21 +26,234 @@ export default class ConfirmTelScreenComponent extends Component {
       sendAgainTime: 10,
       phone: null,
       phone_veryfi_code: null,
-      button: false,
     };
   }
 
+  // routes = navigation.getState()?.routes;
+  // console.log(routes, 'route');
+  // prevRoute = routes[routes.length - 2];
+  // console.log(prevRoute.name);
+
+
+  sendPhoneCode = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken')
+    let AouthStr = "Bearer " + userToken
+    myHeaders.append("Content-Type", "multipart/form-data");
+    myHeaders.append("Authorization", AouthStr);
+
+
+
+    let formdata = new FormData();
+    formdata.append("code", this.state.code);
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    await fetch("http://80.78.246.59/Refectio/public/api/updatePhoneNumberProizvoditel", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        if (result.status === true) {
+
+
+          this.setState({
+            error_code: false,
+            modalVisible: true,
+            pin1: '',
+            pin2: '',
+            pin3: '',
+            pin4: '',
+          })
+
+
+        }
+        else if (result.status === false) {
+
+          if (result.hasOwnProperty('message')) {
+
+            if (result.message == 'code required') {
+              this.setState({
+                error_code: true,
+                error_code_text: 'Код обязателен для заполнения!',
+                pin1: '',
+                pin2: '',
+                pin3: '',
+                pin4: '',
+              })
+              this.pin1Ref.current.focus()
+            } else if (result.message == 'wrong verification code') {
+              this.setState({
+                error_code: true,
+                error_code_text: 'Не верный код!',
+                pin1: '',
+                pin2: '',
+                pin3: '',
+                pin4: '',
+              })
+              this.pin1Ref.current.focus()
+            }
+            setTimeout(() => {
+              this.setState({
+                error_code_text: '',
+                error_code: false
+              })
+            }, 3000)
+          }
+
+
+
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
+
+  goToCustomerPage = async () => {
+
+    clearInterval(this.interval);
+    await this.setState({
+      timerMinut: 1,
+      timerBool: true,
+      timerSecond: 60,
+      modalVisible: false
+    })
+
+    this.props.navigation.navigate('CustomerMyAccaunt');
+  }
+
+  printTimer = () => {
+
+    let timeer_second = this.state.timerSecond;
+    let timer_minute = this.state.timerMinut;
+    let time_result = '';
+
+    if (timer_minute == 0) {
+      time_result = '00:';
+
+      let sec = '';
+      if (timeer_second > 0 && timeer_second < 10) {
+        sec = '0' + timeer_second
+      } else if (timeer_second > 10) {
+        sec = timeer_second
+      }
+
+      time_result = time_result + sec;
+
+    } else {
+
+      time_result = '01:00';
+
+    }
+
+    return time_result;
+
+  }
+
+  timer = () => {
+
+    this.interval = setInterval(() => {
+
+      console.log(this.state.timerSecond)
+      if (this.state.timerSecond == 0) {
+
+        clearInterval(this.interval);
+
+        this.setState({
+          timerMinut: 1,
+          timerBool: true,
+          timerSecond: 60
+        })
+
+        console.log('STOP')
+
+        return false;
+      }
+
+      this.setState({
+        timerMinut: 0,
+        timerSecond: this.state.timerSecond - 1
+      })
+
+    }, 1000)
+  }
+
+  updateCodeSend = async () => {
+    if (this.state.timerBool == true) {
+      let myHeaders = new Headers();
+      let userToken = await AsyncStorage.getItem('userToken')
+      let AouthStr = "Bearer " + userToken;
+
+      myHeaders.append("Content-Type", "multipart/form-data");
+      myHeaders.append("Authorization", AouthStr);
+
+      let requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: this.props.phoneNumb,
+        redirect: 'follow'
+      };
+      console.log(this.props.phoneNumb);
+      await fetch('http://80.78.246.59/Refectio/public/api/updateCodeIntestTable', requestOptions)
+        .then(response => response.json())
+        .then(result => {
+
+
+          if (result.status) {
+
+            this.setState({
+              timerBool: false
+            })
+
+            clearInterval(this.interval)
+            this.timer()
+
+          }
+
+          console.log(result)
+        })
+    }
+  }
 
 
   componentDidMount() {
-    const { navigation } = this.props;
+
+    const { navigation } = this.props
+
+    clearInterval(this.interval);
+
+    this.callToPhone()
+    // this.timer()
 
     this.focusListener = navigation.addListener("focus", () => {
 
+      console.log(this.props.phoneNumb, 'hamarrrrrrr');
+      clearInterval(this.interval);
+      this.timer()
+      // this.timer()
       this.callToPhone()
+
 
     });
   }
+
+  goToBack = async () => {
+    clearInterval(this.interval);
+    await this.setState({
+      timerMinut: 1,
+      timerBool: true,
+      timerSecond: 60,
+      modalVisible: false
+    })
+    this.props.navigation.navigate('')
+  }
+
+
+
+
 
   componentWillUnmount() {
     // Remove the event listener
@@ -56,7 +269,7 @@ export default class ConfirmTelScreenComponent extends Component {
   callToPhone = async () => {
     let token = this.props.token
 
-    let AuthStr = `Bearer ${token}`;
+    let AuthStr = "Bearer " + token;
     let myHeaders = new Headers();
     myHeaders.append("Authorization", AuthStr);
 
@@ -68,7 +281,7 @@ export default class ConfirmTelScreenComponent extends Component {
 
 
 
-    fetch("http://80.78.246.59/Refectio/public/api/sendCallUser", requestOptions)
+    await fetch("http://80.78.246.59/Refectio/public/api/sendCallUser", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result, 'zangggggg');
@@ -76,7 +289,7 @@ export default class ConfirmTelScreenComponent extends Component {
       .catch(error => console.log('error', error));
 
 
-    console.log(token, 'phoneeeeee')
+    console.log(AuthStr)
 
   }
 
@@ -105,7 +318,7 @@ export default class ConfirmTelScreenComponent extends Component {
       .then(result => {
         console.log(result)
         if (result.status === true) {
-          this.setState({ button: true })
+          this.setState({ modalVisible: true })
         }
       })
       .catch(error => console.log('error', error));
@@ -125,8 +338,7 @@ export default class ConfirmTelScreenComponent extends Component {
         style={{
           backgroundColor: 'white',
           flex: 1,
-        }}
-      >
+        }}>
         <View style={{ flex: 1, paddingHorizontal: 25 }}>
           <Modal
             visible={this.state.modalVisible}>
@@ -162,7 +374,7 @@ export default class ConfirmTelScreenComponent extends Component {
           </Modal>
 
           <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('RegisteredUserScreen')}
+            onPress={() => { this.goToBack() }}
             style={{
               position: 'absolute',
               top: 18.29,
@@ -307,9 +519,6 @@ export default class ConfirmTelScreenComponent extends Component {
                   phone_veryfi_code: pin1 + pin2 + pin3 + pin4
                 })
                 this.sendVerifyCode()
-                if (this.state.button) {
-                  this.setState({ modalVisible: true })
-                }
               }}
             >
               <BlueButton name="Подтвердить" />

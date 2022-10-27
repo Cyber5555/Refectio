@@ -1,19 +1,24 @@
 import React, { Component } from "react";
-import { SafeAreaView, Keyboard, View, Image, Text, ImageBackground, TouchableOpacity, TextInput, ScrollView, StyleSheet, Modal } from "react-native";
+import { SafeAreaView, Keyboard, View, Image, Text, ImageBackground, TouchableOpacity, TextInput, ScrollView, StyleSheet, Modal, } from "react-native";
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import { AuthContext } from "../AuthContext/context";
 import BlueButton from "../Component/Buttons/BlueButton";
 import DesignerPageNavComponent from "./DesignerPageNav";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as ImagePicker from 'expo-image-picker';
 
 export default class MyAccauntComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       keyboardOpen: false,
-      VipiskaModal: false,
+     
 
       phone: '',
+
+      diplom_photo: '',
+
+      urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
 
       chcngeName: '',
       chcngeSurname: '',
@@ -80,11 +85,12 @@ export default class MyAccauntComponent extends React.Component {
     })
       .then(response => response.json())
       .then(res => {
+        console.log(res);
         this.setState({
           phone: res.data[0].phone,
           chcngeName: res.data[0].name,
           chcngeSurname: res.data[0].surname,
-
+          diplom_photo: res.data[0].diplom_photo
         })
       })
   }
@@ -123,6 +129,51 @@ export default class MyAccauntComponent extends React.Component {
   }
 
 
+  pickImage = async () => {
+    let form_data = new FormData()
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+    if (!result.cancelled) {
+      this.setState({ diplom_photo: result.uri });
+    }
+    // let res = result.uri.split('.')
+    // let type = res[res.length - 1]
+
+    await form_data.append("diplom_photo", {
+      uri: result.uri,
+      type: 'image/jpg',
+      name: 'photo.jpg',
+    });
+
+
+
+
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken')
+    let AuthStr = "Bearer " + userToken
+    myHeaders.append("Authorization", AuthStr);
+
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: form_data,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/UpdateProfileDiplomDesigner", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+      })
+      .catch(error => console.log('error', error));
+
+  };
+
 
   render() {
     return (
@@ -149,83 +200,7 @@ export default class MyAccauntComponent extends React.Component {
             Мой профиль
           </Text>
 
-          <Modal visible={this.state.VipiskaModal}>
-            <ImageBackground
-              source={require('../../assets/image/blurBg.png')}
-              style={{
-                width: '100%',
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              <View
-                style={{
-                  width: '90%',
-                  height: 389,
-                  backgroundColor: '#fff',
-                  borderRadius: 20,
-                  position: 'relative',
-
-                }}>
-
-                <TouchableOpacity
-                  style={{
-                    position: 'absolute',
-                    width: 22.5,
-                    height: 22.5,
-                    right: 21.75,
-                    top: 21.75,
-                  }}
-                  onPress={() => this.setState({ VipiskaModal: false })}>
-                  <Image
-                    source={require('../../assets/image/ixs.png')}
-                    style={{
-                      width: '100%',
-                      height: '100%'
-                    }}
-                  />
-                </TouchableOpacity>
-                <Text
-                  style={{
-                    color: '#2D9EFB',
-                    fontSize: 26,
-                    marginTop: 83,
-                    textAlign: 'center',
-                    fontFamily: 'Poppins_600SemiBold',
-                  }}>
-                  Вы хотите скачать{'\n'}выписку
-                </Text>
-                <View style={[styles.Vipiska, { marginTop: 80 }]}>
-                  <TouchableOpacity>
-                    <BlueButton name='Подтвердить' />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={{
-                      width: 285,
-                      height: 44,
-                      borderWidth: 3,
-                      borderColor: '#B5D8FE',
-                      borderRadius: 20,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      marginTop: 12
-                    }}>
-                    <Text
-                      style={{
-                        color: '#B5D8FE',
-                        fontSize: 18,
-                        fontFamily: 'Poppins_700Bold',
-                      }}>
-                      Отменить
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
-              </View>
-
-            </ImageBackground>
-          </Modal>
-
+         
 
           <Modal visible={this.state.chcngeNameModal}>
             <ImageBackground source={require('../../assets/image/blurBg.png')} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -363,7 +338,7 @@ export default class MyAccauntComponent extends React.Component {
             <View style={{ marginTop: 20 }}>
               <Text style={{ fontFamily: 'Poppins_500Medium', }}>Фото диплома/сертификата</Text>
               <Image
-                source={require('../../assets/image/certificat.png')}
+                source={{ uri: this.state.urlImage + this.state.diplom_photo }}
                 style={{
                   width: 70,
                   height: 70,
@@ -381,8 +356,10 @@ export default class MyAccauntComponent extends React.Component {
                   justifyContent: 'center',
                   marginTop: 16,
                 }}
-                onPress={() => this.setState({ VipiskaModal: true })}
-              >
+                onPress={() => {
+                  
+                  this.pickImage()
+                }}>
                 <Text
                   style={{
                     fontSize: 18,
@@ -444,8 +421,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     position: 'relative'
   },
-  Vipiska: {
-    marginHorizontal: 20,
-    alignItems: 'center',
-  },
+  
 })

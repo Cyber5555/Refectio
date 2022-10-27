@@ -57,7 +57,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
   getObjectData = async () => {
     let userID = this.props.userID
-    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=2', {
+    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=100', {
       method: 'GET'
     })
       .then(response => response.json())
@@ -75,120 +75,123 @@ export default class DesignerPageTwoComponent extends React.Component {
 
 
 
-  removeInputRow = () => {
+  // removeInputRow = () => {
 
-    let { procentArray } = this.state;
+  //   let { procentArray } = this.state;
 
-    console.log(procentArray, '1')
-    procentArray.pop();
+  //   console.log(procentArray, '1')
+  //   procentArray.pop();
 
-    this.setState({
-      procentArray: procentArray
-    })
-    console.log(procentArray, '2')
-  }
-
-
-  addInputRow = () => {
-
-    let { procentArray } = this.state;
-
-    procentArray.push({
-      to: '',
-      from: '',
-      percent: ''
-    })
-    console.log(procentArray, 'procentArray avel')
-    let newProcentArray = procentArray;
-
-    this.setState({
-      procentArray: newProcentArray
-    })
-
-    console.log(newProcentArray, 'newProcentArray avel')
-  }
+  //   this.setState({
+  //     procentArray: procentArray
+  //   })
+  //   console.log(procentArray, '2')
+  // }
 
 
-  savePercont = () => {
-    let { procentArray } = this.state;
+  // addInputRow = () => {
 
-    let result = [];
-    let valid_error = false;
+  //   let { procentArray } = this.state;
 
-    for (let i = 0; i < procentArray.length; i++) {
+  //   procentArray.push({
+  //     to: '',
+  //     from: '',
+  //     percent: ''
+  //   })
+  //   console.log(procentArray, 'procentArray avel')
+  //   let newProcentArray = procentArray;
 
-      if (procentArray[i].to == '' || procentArray[i].from == '' || procentArray[i].percent == '') {
-        valid_error = true;
-        break;
-      }
+  //   this.setState({
+  //     procentArray: newProcentArray
+  //   })
 
-      let resultString = procentArray[i].to + '^' + procentArray[i].from + '^' + procentArray[i].percent
-      result.push(resultString)
-    }
-
-    if (valid_error) {
-
-      this.setState({
-        valid_error: true
-      })
-
-      setTimeout(() => {
-        this.setState({
-          valid_error: false
-        })
-
-      }, 2000)
-
-    } else {
+  //   console.log(newProcentArray, 'newProcentArray avel')
+  // }
 
 
-      // stex grvuma apin
+  // savePercont = () => {
+  //   let { procentArray } = this.state;
+
+  //   let result = [];
+  //   let valid_error = false;
+
+  //   for (let i = 0; i < procentArray.length; i++) {
+
+  //     if (procentArray[i].to == '' || procentArray[i].from == '' || procentArray[i].percent == '') {
+  //       valid_error = true;
+  //       break;
+  //     }
+
+  //     let resultString = procentArray[i].to + '^' + procentArray[i].from + '^' + procentArray[i].percent
+  //     result.push(resultString)
+  //   }
+
+  //   if (valid_error) {
+
+  //     this.setState({
+  //       valid_error: true
+  //     })
+
+  //     setTimeout(() => {
+  //       this.setState({
+  //         valid_error: false
+  //       })
+
+  //     }, 2000)
+
+  //   } else {
 
 
-      // result
+  //     // stex grvuma apin
+
+
+  //     // result
 
 
 
 
-    }
+  //   }
 
-    console.log(result);
-  }
+  //   console.log(result);
+  // }
 
-  changeTo = (value, index) => {
-    let { procentArray } = this.state;
-    procentArray[index].to = value;
+  // changeTo = (value, index) => {
+  //   let { procentArray } = this.state;
+  //   procentArray[index].to = value;
 
-    this.setState({
-      procentArray: procentArray
-    })
-  }
-
-
-  changeFrom = (value, index) => {
-    let { procentArray } = this.state;
-    procentArray[index].from = value;
-
-    this.setState({
-      procentArray: procentArray
-    })
-  }
+  //   this.setState({
+  //     procentArray: procentArray
+  //   })
+  // }
 
 
-  changePercent = (value, index) => {
-    let { procentArray } = this.state;
-    procentArray[index].percent = value;
+  // changeFrom = (value, index) => {
+  //   let { procentArray } = this.state;
+  //   procentArray[index].from = value;
 
-    this.setState({
-      procentArray: procentArray
-    })
-  }
+  //   this.setState({
+  //     procentArray: procentArray
+  //   })
+  // }
+
+
+  // changePercent = (value, index) => {
+  //   let { procentArray } = this.state;
+  //   procentArray[index].percent = value;
+
+  //   this.setState({
+  //     procentArray: procentArray
+  //   })
+  // }
 
   render() {
     return (
       <SafeAreaView style={{ flex: 1, }}>
         <View style={styles.main}>
-          <Modal visible={this.state.RewardModal}>
+
+
+
+          {/* <Modal visible={this.state.RewardModal}>
             <ImageBackground
               source={require('../../assets/image/blurBg.png')}
               style={{
@@ -326,7 +329,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
                   <View View style={{ flexDirection: "row", justifyContent: 'flex-end' }}>
 
-                    {/* jnjel */}
+                  
 
                     {this.state.procentArray.length > 1 &&
                       <TouchableOpacity
@@ -341,7 +344,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
 
 
-                    {/* avelacnel */}
+                   
 
 
 
@@ -354,7 +357,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                     </TouchableOpacity>
 
 
-                    {/* kojak  */}
+         
 
                   </View >
                 </View >
@@ -366,9 +369,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                 </TouchableOpacity>
               </View>
             </ImageBackground>
-          </Modal>
-
-          {console.log(this.state.user)}
+          </Modal> */}
 
           <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 15 }}>
             <View style={styles.campaign}>
@@ -457,7 +458,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                             }
                           </View>
                         </View>
-                        <TouchableOpacity>
+                        {/* <TouchableOpacity>
                           <Image
                             source={require('../../assets/image/heartHast.png')}
                             style={{
@@ -466,7 +467,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                               tintColor: '#333333',
                               marginTop: 5,
                             }} />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                       </View>
                     </View>
                   )
@@ -550,7 +551,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                             Шоурум
                           </Text>
                           <View>
-                            {item.show_room == 'Нет' &&
+                            {item.show_room == null &&
                               <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <Rect x="0.2" y="0.2" width="19.6" height="19.6" rx="3.8" stroke="#52A8EF" stroke-width="0.4" />
                               </Svg>
@@ -584,7 +585,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                 marginBottom: 19,
                 zIndex: -1
               }}>
-                <TouchableOpacity
+                <View
                   style={[
                     styles.info,
                     {
@@ -600,7 +601,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                       resizeMode: 'contain',
                     }} />
                   <Text style={styles.infoText}>Вознаграждение</Text>
-                </TouchableOpacity>
+                </View>
                 <View style={[styles.info, { borderRightWidth: 2, borderRightColor: '#EEEEEE' }]}>
                   <Image
                     source={require('../../assets/image/clarity_ruble-line.png')}
@@ -645,9 +646,9 @@ export default class DesignerPageTwoComponent extends React.Component {
               </View>
               {
                 this.state.products.map((item, index) => {
-                  <Slider slid={item.product_image} />
                   return (
                     <View key={index} style={{ marginTop: 18 }}>
+                      <Slider slid={item.product_image} />
                       <Text style={{ fontFamily: 'Raleway_700Bold', fontSize: 13, marginTop: 6 }}>{item.name}</Text>
                       <Text style={styles.zakazInfo}>Фасады : {item.facades}</Text>
                       <Text style={styles.zakazInfo}>Корпус: {item.frame}</Text>

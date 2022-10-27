@@ -62,6 +62,8 @@ export default class DesignerPageTwoComponent extends React.Component {
       proizvaditel_info_error: false,
 
       favoriteBool: false,
+
+      VipiskaModal: false,
     }
   }
 
@@ -305,6 +307,84 @@ export default class DesignerPageTwoComponent extends React.Component {
     return (
       <SafeAreaView style={{ flex: 1, }}>
         <View style={styles.main}>
+
+          <Modal visible={this.state.VipiskaModal}>
+            <ImageBackground
+              source={require('../../assets/image/blurBg.png')}
+              style={{
+                width: '100%',
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <View
+                style={{
+                  width: '90%',
+                  height: 389,
+                  backgroundColor: '#fff',
+                  borderRadius: 20,
+                  position: 'relative',
+
+                }}>
+
+                <TouchableOpacity
+                  style={{
+                    position: 'absolute',
+                    width: 22.5,
+                    height: 22.5,
+                    right: 21.75,
+                    top: 21.75,
+                  }}
+                  onPress={() => this.setState({ VipiskaModal: false })}>
+                  <Image
+                    source={require('../../assets/image/ixs.png')}
+                    style={{
+                      width: '100%',
+                      height: '100%'
+                    }}
+                  />
+                </TouchableOpacity>
+                <Text
+                  style={{
+                    color: '#2D9EFB',
+                    fontSize: 26,
+                    marginTop: 83,
+                    textAlign: 'center',
+                    fontFamily: 'Poppins_600SemiBold',
+                  }}>
+                  Вы хотите скачать{'\n'}выписку
+                </Text>
+                <View style={[styles.Vipiska, { marginTop: 80 }]}>
+                  <TouchableOpacity>
+                    <BlueButton name='Подтвердить' />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      width: 285,
+                      height: 44,
+                      borderWidth: 3,
+                      borderColor: '#B5D8FE',
+                      borderRadius: 20,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      marginTop: 12
+                    }}>
+                    <Text
+                      style={{
+                        color: '#B5D8FE',
+                        fontSize: 18,
+                        fontFamily: 'Poppins_700Bold',
+                      }}>
+                      Отменить
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+
+              </View>
+
+            </ImageBackground>
+          </Modal>
+
 
 
           <Modal visible={this.state.RewardModal}>
@@ -805,7 +885,9 @@ export default class DesignerPageTwoComponent extends React.Component {
 
                             {
                               item.extract !== null &&
-                              <TouchableOpacity>
+                              <TouchableOpacity onPress={() => {
+                                this.setState({ VipiskaModal: true })
+                              }}>
                                 <Image
                                   source={require('../../assets/image/sidebar.png')}
                                   style={{
@@ -1172,6 +1254,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '100%',
     zIndex: 100
-  }
+  },
+  Vipiska: {
+    marginHorizontal: 20,
+    alignItems: 'center',
+  },
 
 })

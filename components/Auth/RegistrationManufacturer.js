@@ -563,6 +563,7 @@ export default class RegistrationManufacturerComponent extends Component {
         } else {
 
 
+            
           console.log(res.data, 'res.data')
 
           this.props.navigation.navigate('ConfirmTelScreen', {
