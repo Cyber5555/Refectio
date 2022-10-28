@@ -2,9 +2,12 @@ import React, { Component } from "react";
 import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Modal } from "react-native";
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import Svg, { Path, Rect } from "react-native-svg";
-import BlueButton from "../Component/Buttons/BlueButton";
+import BlueButton from "../Component/Buttons/BlueButton"
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default class ForgetPasswordTelComponent extends Component {
+
+let timer = null
+export default class ForgetPasswordTelComponent extends React.Component {
   constructor(props) {
     super(props)
 
@@ -19,41 +22,252 @@ export default class ForgetPasswordTelComponent extends Component {
       pin2: "",
       pin3: "",
       pin4: "",
-      modalVisible: false,
-      wrongVerificationMessage: false,
-      sendBan: false,
-      sendAgainTime: 10,
+
+      code: '',
+      error_code: false,
+      error_code_text: '',
+      timerMinut: 1,
+      timerSecond: 60,
+      timerBool: false,
+
+
     };
-  }
-  goToForgetPassword = () => {
-    this.props.navigation.navigate('ForgetPassword');
+
+    let interval = null;
   }
 
-  goToNewPassword = () => {
-    this.props.navigation.navigate('NewPassword');
+  sendPhoneCode = async () => {
+    let myHeaders = new Headers();
+
+    myHeaders.append("Content-Type", "multipart/form-data");
+    await AsyncStorage.setItem('phoneCode', this.state.code)
+
+
+    let formdata = new FormData();
+    formdata.append("forgot_password_code", this.state.code);
+ 
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    await fetch("http://80.78.246.59/Refectio/public/api/resetpasswordcode", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result);
+        if (result.status === true) {
+
+
+          this.setState({
+            error_code: false,
+            pin1: '',
+            pin2: '',
+            pin3: '',
+            pin4: '',
+          })
+          this.props.navigation.navigate('NewPassword')
+
+        }
+        else if (result.status === false) {
+
+          if (result.hasOwnProperty('message')) {
+
+            if (result.message == 'code required') {
+              this.setState({
+                error_code: true,
+                error_code_text: 'Код обязателен для заполнения!',
+                pin1: '',
+                pin2: '',
+                pin3: '',
+                pin4: '',
+              })
+              this.pin1Ref.current.focus()
+            } else if (result.message == 'wrong verification code') {
+              this.setState({
+                error_code: true,
+                error_code_text: 'Не верный код!',
+                pin1: '',
+                pin2: '',
+                pin3: '',
+                pin4: '',
+              })
+              this.pin1Ref.current.focus()
+            }
+            setTimeout(() => {
+              this.setState({
+                error_code_text: '',
+                error_code: false
+              })
+            }, 3000)
+          }
+
+
+
+        }
+      })
+      .catch(error => console.log('error', error));
   }
+
+
+  printTimer = () => {
+
+    let timeer_second = this.state.timerSecond;
+    let timer_minute = this.state.timerMinut;
+    let time_result = '';
+
+    if (timer_minute == 0) {
+      time_result = '00:';
+
+      let sec = '';
+      if (timeer_second > 0 && timeer_second < 10) {
+        sec = '0' + timeer_second
+      } else if (timeer_second > 10) {
+        sec = timeer_second
+      }
+
+      time_result = time_result + sec;
+
+    } else {
+
+      time_result = '01:00';
+
+    }
+
+    return time_result;
+
+  }
+
+  timer = () => {
+
+    this.interval = setInterval(() => {
+
+      console.log(this.state.timerSecond)
+      if (this.state.timerSecond == 0) {
+
+        clearInterval(this.interval);
+
+        this.setState({
+          timerMinut: 1,
+          timerBool: true,
+          timerSecond: 60
+        })
+
+        console.log('STOP')
+
+        return false;
+      }
+
+      this.setState({
+        timerMinut: 0,
+        timerSecond: this.state.timerSecond - 1
+      })
+
+    }, 1000)
+  }
+
+  updateCodeSend = async () => {
+    console.log(this.state.timerBool);
+    if (this.state.timerBool === true) {
+      let myHeaders = new Headers();
+      let storagePhone = await AsyncStorage.getItem('phone')
+      myHeaders.append("Content-Type", "multipart/form-data");
+
+      let formdata = new FormData()
+      formdata.append("phone", storagePhone);
+
+      let requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow'
+      };
+      console.log(storagePhone);
+      await fetch('http://80.78.246.59/Refectio/public/api/sendcodeforphone', requestOptions)
+        .then(response => response.json())
+        .then(async result => {
+          console.log(result);
+          if (result.status) {
+
+            await this.setState({
+              timerBool: true
+            })
+
+            clearInterval(this.interval)
+            this.timer()
+
+          }
+
+          console.log(result)
+        })
+    }
+  }
+
+
+  componentDidMount() {
+
+    const { navigation } = this.props
+
+    clearInterval(this.interval);
+
+    // this.timer()
+
+    this.focusListener = navigation.addListener("focus", () => {
+      let storagePhone = AsyncStorage.getItem('phone')
+
+      console.log(storagePhone, 'hamarrrrrrr');
+      clearInterval(this.interval);
+      this.timer()
+      // this.timer()
+
+    });
+  }
+
+  goToBack = async () => {
+    clearInterval(this.interval);
+    await this.setState({
+      timerMinut: 1,
+      timerBool: false,
+      timerSecond: 60,
+    })
+    this.props.navigation.navigate('ForgetPassword')
+  }
+
   render() {
     const { pin1, pin2, pin3, pin4, } = this.state
     return (
-      <SafeAreaView style={{ backgroundColor: 'white', flex: 1, }}>
+      <SafeAreaView
+        style={{
+          backgroundColor: 'white',
+          flex: 1,
+        }}
+      >
         <View style={{ flex: 1, paddingHorizontal: 25 }}>
+
           <TouchableOpacity
-            style={{ position: 'absolute', left: 15, top: 40 }}
-            onPress={() => this.goToForgetPassword()}>
+            onPress={() => { this.goToBack() }}
+            style={{
+              position: 'absolute',
+              top: 18.29,
+              left: 15,
+              zIndex: 100,
+            }}>
             <ArrowGrayComponent />
           </TouchableOpacity>
-
 
           <View>
             <View
               style={{
-                marginTop: 102
+                marginTop: 86
               }}>
               <Text
                 style={{
                   fontSize: 26,
                   color: '#2D9EFB',
                   fontFamily: 'Poppins_500Medium',
+                  lineHeight: 30
                 }}>
                 Восстановление{'\n'}аккаунта
               </Text>
@@ -63,14 +277,27 @@ export default class ForgetPasswordTelComponent extends Component {
               <Text
                 style={{
                   color: '#52A8EF',
-                  marginTop: 52,
+                  marginTop: 25,
                   lineHeight: 17.61,
-                  fontFamily: 'Poppins_400Regular',
+                  fontFamily: 'Raleway_500Medium'
                 }}>
-                Мы отправим 4-х значный код на ваш номер{'\n'}
-                телефона для подтверждения личности
+                Мы отправим 4-х значный код на ваш номер{'\n'}для подтверждения личности
               </Text>
             </View>
+
+            <View>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  marginTop: 16,
+                  color: '#2D9EFB',
+                  fontSize: 15,
+                }}>
+
+                {this.printTimer()}
+              </Text>
+            </View>
+
             <View style={styles.confirmView}>
               <TextInput
                 ref={this.pin1Ref}
@@ -139,7 +366,18 @@ export default class ForgetPasswordTelComponent extends Component {
               />
 
             </View>
-            <View>
+
+
+            {this.state.error_code === true &&
+              <View>
+                <Text style={{ paddingLeft: 25, color: 'red' }}>
+                  {this.state.error_code_text}
+                </Text>
+              </View>
+            }
+            <TouchableOpacity activeOpacity={0.6} onPress={async () => {
+              await this.updateCodeSend()
+            }}>
               <Text
                 style={{
                   fontSize: 14,
@@ -149,17 +387,26 @@ export default class ForgetPasswordTelComponent extends Component {
                   textDecorationLine: 'underline',
                   textDecorationStyle: 'solid',
                   textDecorationColor: '#B5D8FE',
-                  fontFamily: 'Raleway_500Medium',
+                  fontFamily: 'Raleway_500Medium'
                 }}>
                 Отправить код повторно
               </Text>
-            </View>
-            <TouchableOpacity
-              style={{ marginTop: 35, alignSelf: 'center' }}
-              onPress={() => { this.goToNewPassword() }}
-            >
-              <BlueButton name="Подтвердить" />
             </TouchableOpacity>
+            <View
+              style={{
+                alignItems: 'center',
+                marginTop: 36
+              }}>
+              <TouchableOpacity
+                onPress={async () => {
+                  await this.setState({ code: pin1 + pin2 + pin3 + pin4 })
+
+                  await this.sendPhoneCode()
+                }}
+              >
+                <BlueButton name="Подтвердить" />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </SafeAreaView>
@@ -180,7 +427,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 26,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 52
+    marginTop: 16
   },
   modalVisible: {
     flex: 1,

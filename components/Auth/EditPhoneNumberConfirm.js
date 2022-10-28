@@ -423,13 +423,6 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
             }
             <TouchableOpacity activeOpacity={0.6} onPress={async () => {
               this.updateCodeSend()
-              // if (this.state.timerBool == true) {
-              //   this.setState({
-              //     timerBool: false,
-              //     timerMinut: 1,
-              //     timerSecond: 60,
-              //   })
-              // }
             }}>
               <Text
                 style={{

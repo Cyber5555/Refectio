@@ -581,7 +581,7 @@ export default function App() {
                         tabBarStyle: { display: 'none' }
                       })}
                     />
-                    <Tab.Screen name="Login" component={LoginScreenComponent}
+                    <Tab.Screen name="LoginScreen" component={LoginScreenComponent}
                       options={({ route }) => ({
                         tabBarButton: () => null,
                         tabBarStyle: { display: 'none' }

@@ -3,6 +3,7 @@ import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import Svg, { Path, Rect } from "react-native-svg";
 import BlueButton from "../Component/Buttons/BlueButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default class ConfirmTelScreenComponent extends Component {
@@ -26,6 +27,13 @@ export default class ConfirmTelScreenComponent extends Component {
       sendAgainTime: 10,
       phone: null,
       phone_veryfi_code: null,
+
+      error_code: false,
+      error_code_text: '',
+      timerMinut: 1,
+      timerSecond: 60,
+      timerBool: false,
+
     };
   }
 
@@ -35,26 +43,29 @@ export default class ConfirmTelScreenComponent extends Component {
   // console.log(prevRoute.name);
 
 
+
+
   sendPhoneCode = async () => {
+    let token = this.props.token
+
+    let AuthStr = `Bearer ${token}`;
     let myHeaders = new Headers();
-    let userToken = await AsyncStorage.getItem('userToken')
-    let AouthStr = "Bearer " + userToken
-    myHeaders.append("Content-Type", "multipart/form-data");
-    myHeaders.append("Authorization", AouthStr);
+    myHeaders.append("Authorization", AuthStr);
 
 
+    const { phone_veryfi_code } = this.state
 
-    let formdata = new FormData();
-    formdata.append("code", this.state.code);
+    var formdata = new FormData();
+    formdata.append("phone_veryfi_code", phone_veryfi_code);
 
-    let requestOptions = {
+    let requestVerify = {
       method: 'POST',
       headers: myHeaders,
       body: formdata,
       redirect: 'follow'
     };
 
-    await fetch("http://80.78.246.59/Refectio/public/api/updatePhoneNumberProizvoditel", requestOptions)
+    await fetch("http://80.78.246.59/Refectio/public/api/updateveryficode", requestVerify)
       .then(response => response.json())
       .then(result => {
         console.log(result);
@@ -183,21 +194,20 @@ export default class ConfirmTelScreenComponent extends Component {
 
   updateCodeSend = async () => {
     if (this.state.timerBool == true) {
-      let myHeaders = new Headers();
-      let userToken = await AsyncStorage.getItem('userToken')
-      let AouthStr = "Bearer " + userToken;
+      let token = this.props.token
 
-      myHeaders.append("Content-Type", "multipart/form-data");
-      myHeaders.append("Authorization", AouthStr);
+      let AuthStr = "Bearer " + token;
+      let myHeaders = new Headers();
+      myHeaders.append("Authorization", AuthStr);
 
       let requestOptions = {
         method: 'POST',
         headers: myHeaders,
-        body: this.props.phoneNumb,
         redirect: 'follow'
       };
+
       console.log(this.props.phoneNumb);
-      await fetch('http://80.78.246.59/Refectio/public/api/updateCodeIntestTable', requestOptions)
+      await fetch('http://80.78.246.59/Refectio/public/api/sendCallUser', requestOptions)
         .then(response => response.json())
         .then(result => {
 
@@ -225,7 +235,7 @@ export default class ConfirmTelScreenComponent extends Component {
 
     clearInterval(this.interval);
 
-    this.callToPhone()
+    this.updateCodeSend()
     // this.timer()
 
     this.focusListener = navigation.addListener("focus", () => {
@@ -234,7 +244,7 @@ export default class ConfirmTelScreenComponent extends Component {
       clearInterval(this.interval);
       this.timer()
       // this.timer()
-      this.callToPhone()
+      this.updateCodeSend()
 
 
     });
@@ -248,7 +258,7 @@ export default class ConfirmTelScreenComponent extends Component {
       timerSecond: 60,
       modalVisible: false
     })
-    this.props.navigation.navigate('')
+    this.props.navigation.navigate('RegisteredScreen')
   }
 
 
@@ -289,47 +299,13 @@ export default class ConfirmTelScreenComponent extends Component {
       .catch(error => console.log('error', error));
 
 
-    console.log(AuthStr)
+    // console.log(AuthStr)
 
   }
 
-  sendVerifyCode = async () => {
-    let token = this.props.token
-
-    let AuthStr = `Bearer ${token}`;
-    let myHeaders = new Headers();
-    myHeaders.append("Authorization", AuthStr);
-
-
-    const { phone_veryfi_code } = this.state
-
-    var formdata = new FormData();
-    formdata.append("phone_veryfi_code", phone_veryfi_code);
-
-    let requestVerify = {
-      method: 'POST',
-      headers: myHeaders,
-      body: formdata,
-      redirect: 'follow'
-    };
-
-    fetch("http://80.78.246.59/Refectio/public/api/updateveryficode", requestVerify)
-      .then(response => response.json())
-      .then(result => {
-        console.log(result)
-        if (result.status === true) {
-          this.setState({ modalVisible: true })
-        }
-      })
-      .catch(error => console.log('error', error));
-
-    console.log(requestVerify);
-    console.log(token);
-  }
 
   goToDesignerPage = async () => {
-    await this.setState({ modalVisible: false })
-    this.props.navigation.navigate('LoginScreen')
+
   }
   render() {
     const { pin1, pin2, pin3, pin4, } = this.state
@@ -367,7 +343,10 @@ export default class ConfirmTelScreenComponent extends Component {
                 style={{
                   marginTop: 170
                 }}
-                onPress={() => { this.goToDesignerPage() }}>
+                onPress={async () => {
+                  await this.props.navigation.navigate('LoginScreen')
+                  await this.setState({ modalVisible: false })
+                }}>
                 <BlueButton name="Войти" />
               </TouchableOpacity>
             </View>
@@ -421,7 +400,7 @@ export default class ConfirmTelScreenComponent extends Component {
                 fontSize: 15,
                 fontFamily: 'Raleway_500Medium'
               }}>
-              01:00
+              {this.printTimer()}
             </Text>
           </View>
 
@@ -493,7 +472,9 @@ export default class ConfirmTelScreenComponent extends Component {
             />
 
           </View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => {
+            this.updateCodeSend()
+          }}>
             <Text
               style={{
                 fontSize: 14,
@@ -518,7 +499,7 @@ export default class ConfirmTelScreenComponent extends Component {
                 await this.setState({
                   phone_veryfi_code: pin1 + pin2 + pin3 + pin4
                 })
-                this.sendVerifyCode()
+                this.sendPhoneCode()
               }}
             >
               <BlueButton name="Подтвердить" />

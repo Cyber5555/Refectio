@@ -12,7 +12,9 @@ export default class MyAccauntComponent extends React.Component {
     super(props)
     this.state = {
       keyboardOpen: false,
-     
+
+      role_id: '',
+      userToken: '',
 
       phone: '',
 
@@ -27,6 +29,43 @@ export default class MyAccauntComponent extends React.Component {
   }
 
   static contextType = AuthContext
+
+
+  logouth = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken');
+    let userRole = await AsyncStorage.getItem('userRole');
+    let AuthStr = 'Bearer ' + userToken;
+    myHeaders.append("Authorization", AuthStr);
+
+    // await this.setState({
+    //   userToken: userToken,
+    //   role_id: 
+    // })
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/UserLogout", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result, 'jnjel')
+        if (result.status === true) {
+          let foundUser = {
+            userToken: userToken,
+            userRole: userRole
+          }
+          this.context.signOut(foundUser);
+
+        }
+
+      })
+      .catch(error => console.log('error', error));
+  }
+
 
   componentDidMount() {
 
@@ -200,7 +239,7 @@ export default class MyAccauntComponent extends React.Component {
             Мой профиль
           </Text>
 
-         
+
 
           <Modal visible={this.state.chcngeNameModal}>
             <ImageBackground source={require('../../assets/image/blurBg.png')} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -357,7 +396,7 @@ export default class MyAccauntComponent extends React.Component {
                   marginTop: 16,
                 }}
                 onPress={() => {
-                  
+
                   this.pickImage()
                 }}>
                 <Text
@@ -375,11 +414,7 @@ export default class MyAccauntComponent extends React.Component {
 
             <TouchableOpacity
               onPress={async () => {
-                let foundUser = {
-                  userToken: this.state.userToken,
-                  userRole: this.state.role_id
-                }
-                this.context.signOut(foundUser);
+                await this.logouth()
               }}
 
               style={{
@@ -421,5 +456,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     position: 'relative'
   },
-  
+
 })

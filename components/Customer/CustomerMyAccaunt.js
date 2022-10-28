@@ -47,8 +47,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
       editModalInn: false,
 
 
-      role_id: '',
-      userToken: '',
+     
 
       made_in: '',
 
@@ -240,8 +239,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
           id: res.data[0].id,
           inn: res.data[0].individual_number,
           strana: res.data[0].made_in,
-          userToken: userToken,
-          role_id: res.data[0].role_id,
           phone: res.data[0].phone,
           procentArray: res.data[0].user_pracient_for_designer,
           categoryArray: res.data[0].user_category_product,
@@ -668,6 +665,42 @@ export default class CustomerMyAccauntComponent extends React.Component {
       .then(result => console.log(result))
       .catch(error => console.log('error', error));
   };
+
+
+  logouth = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken');
+    let userRole = await AsyncStorage.getItem('userRole');
+    let AuthStr = 'Bearer ' + userToken;
+    myHeaders.append("Authorization", AuthStr);
+
+    // await this.setState({
+    //   userToken: userToken,
+    //   role_id: 
+    // })
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/UserLogout", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result, 'jnjel')
+        if (result.status === true) {
+          let foundUser = {
+            userToken: userToken,
+            userRole: userRole
+          }
+          this.context.signOut(foundUser);
+
+        }
+
+      })
+      .catch(error => console.log('error', error));
+  }
 
   render() {
     return (
@@ -2111,11 +2144,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
             <TouchableOpacity
               onPress={async () => {
-                let foundUser = {
-                  userToken: this.state.userToken,
-                  userRole: this.state.role_id
-                }
-                this.context.signOut(foundUser);
+                await this.logouth()
               }}
 
               style={{

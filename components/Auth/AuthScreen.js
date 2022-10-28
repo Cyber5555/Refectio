@@ -9,7 +9,7 @@ export default class AuthScreenComponent extends Component {
   }
 
   goToLogin = () => {
-    this.props.navigation.navigate('Login')
+    this.props.navigation.navigate('LoginScreen')
   }
 
   goToRegistered = () => {

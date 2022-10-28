@@ -13,7 +13,7 @@ export default class ModalComponent extends Component {
   }
 
   goToLogin = () => {
-    this.props.navigation.navigate('Login')
+    this.props.navigation.navigate('LoginScreen')
   }
 
   goToRegistered = () => {

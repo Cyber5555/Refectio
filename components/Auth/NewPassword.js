@@ -3,6 +3,7 @@ import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import Svg, { Path, Rect } from "react-native-svg";
 import BlueButton from "../Component/Buttons/BlueButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default class NewPasswordComponent extends Component {
   constructor(props) {
@@ -13,6 +14,9 @@ export default class NewPasswordComponent extends Component {
       repeatPassword: true,
       achq: require('../../assets/image/achq.png'),
       achqBac: require('../../assets/image/achq-bac.png'),
+
+      new_password: '',
+      new_password_confirm: ''
     }
 
   }
@@ -21,11 +25,44 @@ export default class NewPasswordComponent extends Component {
   }
 
   goToLogin = () => {
-    this.props.navigation.navigate('Login');
+    this.props.navigation.navigate('LoginScreen');
     this.setState({ modalVisible: false })
   }
 
 
+  updatePassword = async () => {
+    let phone = await AsyncStorage.getItem('phone')
+    let code = await AsyncStorage.getItem('phoneCode')
+
+    let formdata = new FormData();
+    formdata.append("phone", phone);
+    formdata.append("forgot_password_code", code);
+    formdata.append("password", this.state.new_password);
+    formdata.append("password_confirmation", this.state.new_password_confirm);
+
+    let requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/updatepasswordforgot", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result)
+        if (result.success === true) {
+          this.setState({
+            modalVisible: true,
+            new_password: '',
+            new_password_confirm: ''
+          })
+        }
+        else if(result.success === false) {
+          alert()
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
 
   render() {
     return (
@@ -121,6 +158,8 @@ export default class NewPasswordComponent extends Component {
                 width: '100%',
                 borderRadius: 5,
               }}
+              value={this.state.new_password}
+              onChangeText={(text) => this.setState({ new_password: text })}
             />
 
             <TouchableOpacity style={{ position: 'absolute', right: 10, bottom: 10, }}
@@ -160,6 +199,8 @@ export default class NewPasswordComponent extends Component {
                 width: '100%',
                 borderRadius: 5,
               }}
+              value={this.state.new_password_confirm}
+              onChangeText={(text) => this.setState({ new_password_confirm: text })}
             />
 
             <TouchableOpacity style={{ position: 'absolute', right: 10, bottom: 10, }}
@@ -181,7 +222,9 @@ export default class NewPasswordComponent extends Component {
               marginTop: 100
             }}>
             <TouchableOpacity
-              onPress={() => { this.setState({ modalVisible: true }) }}
+              onPress={() => {
+                this.updatePassword()
+              }}
             >
               <BlueButton name='Подтвердить' />
             </TouchableOpacity>
