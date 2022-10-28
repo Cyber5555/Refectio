@@ -6,7 +6,7 @@ const width = Dimensions.get('window').width - 25
 
 
 
-export default React.memo(function Slider(props) {
+export default function Slider(props) {
   let urlImage = 'http://80.78.246.59/Refectio/storage/app/uploads/';
   const [imgActive, setInmageActive] = useState(0)
   const [img, setImg] = useState([])
@@ -65,7 +65,7 @@ export default React.memo(function Slider(props) {
     </View>
   )
 
-})
+}
 
 
 

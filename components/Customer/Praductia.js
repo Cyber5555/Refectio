@@ -79,8 +79,12 @@ export default class PraductiaComponent extends React.Component {
 
   getObjectData = async () => {
     let userID = this.props.id
+    
     const { limit_without_cat } = this.state
     console.log(userID, 'useridddd');
+
+    this.setState({active: null})
+
     await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=' + limit_without_cat, {
       method: 'GET'
     })
@@ -231,7 +235,7 @@ export default class PraductiaComponent extends React.Component {
     }
 
     // this.focusListener();
-
+    
   }
 
 

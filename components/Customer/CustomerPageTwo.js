@@ -4,6 +4,7 @@ import Svg, { Path, Rect } from "react-native-svg";
 import Slider from "../slider/Slider";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
 import BlueButton from "../../components/Component/Buttons/BlueButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default class DesignerPageTwoComponent extends React.Component {
@@ -14,7 +15,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
       changed: '',
       sOpenCityDropDown: false,
-      active: 0,
+      active: null,
 
       user: [],
       user_bonus_for_designer: [],
@@ -39,10 +40,13 @@ export default class DesignerPageTwoComponent extends React.Component {
   componentDidMount() {
     const { navigation } = this.props;
     this.getObjectData()
+    this.setState({ active: null })
 
     this.focusListener = navigation.addListener("focus", () => {
 
       this.getObjectData()
+      this.setState({ active: null })
+
 
     });
   }
@@ -73,7 +77,67 @@ export default class DesignerPageTwoComponent extends React.Component {
   }
 
 
+  updateProduct = async (category_name) => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken')
+    myHeaders.append("Authorization", "Bearer " + userToken);
 
+    console.log("Bearer " + userToken, 'userToken');
+
+    let formdata = new FormData();
+    formdata.append("category_name", category_name);
+
+    let requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/GetcategoryOneuserprduct", requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        console.log(res, 'GetcategoryOneuserprduct');
+
+        if (res.status === false) {
+
+          this.setState({
+            products: [],
+            show_plus_button: false
+          })
+
+          return false;
+        }
+
+        let data = res.data.data;
+        let new_data_result = [];
+
+        for (let i = 0; i < data.length; i++) {
+
+          if (data[i].product_image.length < 1) {
+            data[i].images = [];
+            continue;
+          }
+
+          let product_image = data[i].product_image;
+
+          data[i].images = product_image;
+        }
+
+
+        this.setState({
+          // user: data,
+          user_bonus_for_designer: res.data.data.user_bonus_for_designer,
+          // user_category_for_product: res.data.user_category_for_product,
+          // city_for_sales_user: res.data.data.city_for_sales_user,
+          products: data,
+          show_plus_button: false
+        })
+      })
+      .catch(error => console.log('error', error));
+
+
+  }
 
   // removeInputRow = () => {
 
@@ -634,10 +698,20 @@ export default class DesignerPageTwoComponent extends React.Component {
                       return (
                         <TouchableOpacity
                           key={index}
-                          onPress={() => this.setState({ active: index })}
-                          style={this.state.active == index ? styles.categoryButtonActive : styles.categoryButton}
+                          onPress={async () => {
+                            if (index !== this.state.active) {
+                              await this.updateProduct(item.category_name)
+                              this.setState({ active: index })
+                            }
+                            else if (index == this.state.active) {
+                              this.getObjectData()
+                              this.setState({ active: null })
+                            }
+                          }}
+                          style={this.state.active === index ? styles.categoryButtonActive : styles.categoryButton}
                         >
-                          <Text style={this.state.active == index ? styles.categoriesNameActive : styles.categoriesName}>{item.category_name}</Text>
+                          <Text style={this.state.active === index ? styles.categoriesNameActive : styles.categoriesName}>{item.category_name}</Text>
+
                         </TouchableOpacity>
                       )
                     })
