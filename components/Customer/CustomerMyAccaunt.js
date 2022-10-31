@@ -47,7 +47,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
       editModalInn: false,
 
 
-     
+
 
       made_in: '',
 
@@ -136,7 +136,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
       .then(result => {
         if (result.status === true) {
           this.getAuthUserProfile()
-          this.setState({ gorodModal: false })
+          this.setState({
+            gorodModal: false,
+            gorodFilter: false,
+            oblostFilter: false
+          })
         }
       })
       .catch(error => console.log('error', error));
@@ -205,10 +209,13 @@ export default class CustomerMyAccauntComponent extends React.Component {
     };
     fetch("http://80.78.246.59/Refectio/public/api/UpdateCategoryProizvoditel", requestOptions)
       .then(response => response.json())
-      .then(result => {
+      .then(async result => {
         if (result.status === true) {
           this.getAuthUserProfile()
-          this.setState({ categoryModal: false })
+          await this.setState({
+            categoryModal: false,
+            categoryFilter: false
+          })
         }
       })
       .catch(error => console.log('error', error));
@@ -1109,7 +1116,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                         marginRight: 12
 
                       }}
-                      onPress={() => !this.state.categoryFilter ? this.setState({ categoryFilter: true }) : this.setState({ categoryFilter: false })}
+                      onPress={() => this.setState({ categoryFilter: !this.state.categoryFilter })}
                     >
                       <Text style={{ color: "#000", fontFamily: 'Poppins_500Medium', }}>Категории</Text>
                       <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
@@ -1428,7 +1435,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                         value={this.state.teleg}
                         onChangeText={(text) => this.setState({ teleg: text })} />
 
-                      <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }}  onPress={() => this.editTeleg()}>
+                      <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }} onPress={() => this.editTeleg()}>
                         <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, color: '#2D9EFB' }}>Сохранить</Text>
                       </TouchableOpacity>
                     </View>
@@ -1692,7 +1699,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 >
                   Пароль
                 </Text>
-                <TouchableOpacity onPress={()=> this.props.navigation.navigate('EditPasswordCustomer')}>
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('EditPasswordCustomer')}>
                   <Image
                     source={require('../../assets/image/ep_edit.png')}
                     style={{

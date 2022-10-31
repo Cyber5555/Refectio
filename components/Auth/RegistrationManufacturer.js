@@ -107,13 +107,11 @@ export default class RegistrationManufacturerComponent extends Component {
 
     let { procentArray } = this.state;
 
-    console.log(procentArray, '1')
     procentArray.pop();
 
     this.setState({
       procentArray: procentArray
     })
-    console.log(procentArray, '2')
   }
 
 
@@ -126,14 +124,11 @@ export default class RegistrationManufacturerComponent extends Component {
       from: '',
       percent: ''
     })
-    console.log(procentArray, 'procentArray avel')
     let newProcentArray = procentArray;
 
     this.setState({
       procentArray: newProcentArray
     })
-
-    console.log(newProcentArray, 'newProcentArray avel')
   }
 
 
@@ -155,7 +150,7 @@ export default class RegistrationManufacturerComponent extends Component {
     }
 
 
-    
+
     if (valid_error) {
 
       await this.setState({
@@ -168,7 +163,6 @@ export default class RegistrationManufacturerComponent extends Component {
         procentArrayToString: result
       })
     }
-    console.log(result);
   }
 
 
@@ -217,7 +211,6 @@ export default class RegistrationManufacturerComponent extends Component {
       this.setState({ count: this.state.count + 1 });
     }
     await this.setState({ product_category: filterSort })
-    // console.log(this.state.product_category, 'this.state.product_category')
   }
 
   verifyCategory = (items) => {
@@ -234,7 +227,6 @@ export default class RegistrationManufacturerComponent extends Component {
       this.setState({ count: this.state.count - 1 });
     }
     this.setState({ product_category: filterSort })
-    // console.log(filterSort);
   }
 
   gorod = async (items, ids) => {
@@ -250,7 +242,6 @@ export default class RegistrationManufacturerComponent extends Component {
       this.setState({ countCity: this.state.countCity + 1 });
     }
     await this.setState({ sales_city: filterSort })
-    console.log(this.state.sales_city, 'this.state.sales_city')
   }
 
   verifyGorod = (items) => {
@@ -267,7 +258,6 @@ export default class RegistrationManufacturerComponent extends Component {
       this.setState({ countCity: this.state.countCity - 1 });
     }
     this.setState({ sales_city: filterSort })
-    console.log(filterSort);
   }
 
 
@@ -284,7 +274,6 @@ export default class RegistrationManufacturerComponent extends Component {
       this.setState({ count: this.state.count + 1 });
     }
     await this.setState({ product_category: filterSort })
-    // console.log(this.state.product_category, 'this.state.product_category')
   }
 
   procentRemove = (items) => {
@@ -301,7 +290,7 @@ export default class RegistrationManufacturerComponent extends Component {
       this.setState({ count: this.state.count - 1 });
     }
     this.setState({ product_category: filterSort })
-    // console.log(filterSort);
+
   }
 
 
@@ -314,7 +303,6 @@ export default class RegistrationManufacturerComponent extends Component {
       .then(response => response.json())
       .then((res) => {
         this.setState({ regionItems: res.data.region })
-        // console.log(this.state.regionItems);
       })
       .catch(error => error, 'error')
   }
@@ -327,7 +315,6 @@ export default class RegistrationManufacturerComponent extends Component {
       .then(response => response.json())
       .then((res) => {
         this.setState({ getProductCategory: res.data.city })
-        // console.log(this.state.getProductCategory);
       })
       .catch(error => error, 'error')
   }
@@ -389,7 +376,7 @@ export default class RegistrationManufacturerComponent extends Component {
       let category = product_category[i].id + '^' + product_category[i].name
       new_product_category.push(category)
     }
-    console.log(new_product_category);
+
 
 
 
@@ -398,7 +385,7 @@ export default class RegistrationManufacturerComponent extends Component {
       let city = sales_city[i].id + '^' + sales_city[i].name
       new_sales_city.push(city)
     }
-    console.log(new_sales_city);
+
 
 
 
@@ -432,7 +419,6 @@ export default class RegistrationManufacturerComponent extends Component {
     fetch("http://80.78.246.59/Refectio/public/api/RegisterManufacturerUser", requestOptions)
       .then(response => response.json())
       .then(res => {
-        console.log(res);
 
         if (res.success === false && res.message == 'Validation errors') {
 
@@ -547,24 +533,21 @@ export default class RegistrationManufacturerComponent extends Component {
           }
 
 
-          // console.log(res, 'res');
           return false;
 
         } else if (res.success === false && res.message[0] == 'phone arledy exist') {
-          
+
           this.setState({
             phone_error: true
           })
 
-          console.log(res.data, 'phone arledy exist')
 
           return false
 
         } else {
 
 
-            
-          console.log(res.data, 'res.data')
+
 
           this.props.navigation.navigate('ConfirmTelScreen', {
             params: res.data.token
@@ -691,6 +674,7 @@ export default class RegistrationManufacturerComponent extends Component {
               <TextInput
                 underlineColorAndroid="transparent"
                 keyboardType="phone-pad"
+                maxLength={12}
                 style={[{
                   borderWidth: 1,
                   padding: 10,
@@ -1093,20 +1077,20 @@ export default class RegistrationManufacturerComponent extends Component {
                 style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, position: 'relative', },
                 this.state.sales_city_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }
                 ]}
-                onPress={() => !this.state.sOpenCityDropDown2 ? this.setState({ sOpenCityDropDown2: true }) : this.setState({ sOpenCityDropDown2: false })}
+                onPress={() => this.setState({ sOpenCityDropDown3: !this.state.sOpenCityDropDown3 })}
               >
                 <Text style={{ padding: 5, width: '100%', borderRadius: 5, color: '#5B5B5B' }}>
                   указанное количество {this.state.countCity}
                 </Text>
                 <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
                   {
-                    !this.state.sOpenCityDropDown1 &&
+                    !this.state.sOpenCityDropDown3 &&
                     <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </Svg>
                   }
                   {
-                    this.state.sOpenCityDropDown1 &&
+                    this.state.sOpenCityDropDown3 &&
                     <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </Svg>
@@ -1115,7 +1099,7 @@ export default class RegistrationManufacturerComponent extends Component {
                 </View>
               </TouchableOpacity>
               <View
-                style={this.state.sOpenCityDropDown2 ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
+                style={this.state.sOpenCityDropDown3 ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
                 <ScrollView nestedScrollEnabled={true} >
                   {
                     this.state.cityItems.map((item, index) => {
@@ -1417,8 +1401,6 @@ export default class RegistrationManufacturerComponent extends Component {
 
                           // await this.setState({ attttttt: value })
                           this.changeTo(value, index)
-                          console.log(value)
-
                         }}
                       />
 
@@ -1436,8 +1418,6 @@ export default class RegistrationManufacturerComponent extends Component {
                         style={styles.procentInput}
                         value={item.from}
                         onChangeText={async (value) => {
-                          // await this.setState({ doooooo: value })
-                          console.log(value)
                           this.changeFrom(value, index)
                         }}
 
@@ -1458,10 +1438,7 @@ export default class RegistrationManufacturerComponent extends Component {
                           value={item.percent}
                           style={{ width: '100%', height: '100%' }}
                           onChangeText={async (value) => {
-                            // await this.setState({ proccccc: value })
-                            console.log(value)
                             this.changePercent(value, index)
-
                           }}
                         />
                         <Text style={{ position: 'absolute', right: 0 }}>%</Text>

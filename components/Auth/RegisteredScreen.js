@@ -28,7 +28,7 @@ export default class RegisteredScreenComponent extends Component {
             source={require('../../assets/image/Refectio.png')}
             style={{
               width: '95%',
-              height: 120,
+              height: 125,
               resizeMode: 'contain',
               alignSelf: 'flex-end',
               marginTop: '5%',

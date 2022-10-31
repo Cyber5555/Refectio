@@ -295,6 +295,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
     let formdata = new FormData();
     formdata.append("category_name", category_name);
+    formdata.append("user_id", userID);
 
     let requestOptions = {
       method: 'POST',
@@ -303,7 +304,7 @@ export default class DesignerPageTwoComponent extends React.Component {
       redirect: 'follow'
     };
 
-    fetch("http://80.78.246.59/Refectio/public/api/GetcategoryOneuserprduct", requestOptions)
+    fetch("http://80.78.246.59/Refectio/public/api/filtergetOneProizvoditel", requestOptions)
       .then(response => response.json())
       .then(res => {
         console.log(res, 'GetcategoryOneuserprduct');
@@ -335,11 +336,11 @@ export default class DesignerPageTwoComponent extends React.Component {
 
 
         this.setState({
-          // user: data,
-          user_bonus_for_designer: res.data.data.user_bonus_for_designer,
-          // user_category_for_product: res.data.user_category_for_product,
-          // city_for_sales_user: res.data.data.city_for_sales_user,
-          products: data,
+          user: data.user,
+          user_bonus_for_designer: res.data.user_bonus_for_designer,
+          user_category_for_product: res.data.user_category_for_product,
+          city_for_sales_user: res.data.city_for_sales_user,
+          products: data.products,
           show_plus_button: false
         })
       })
@@ -348,17 +349,17 @@ export default class DesignerPageTwoComponent extends React.Component {
 
   }
 
-  
+
 
 
   componentDidMount() {
     const { navigation } = this.props;
     this.getObjectData()
     this.getCategory()
-    this.setState({active: null})
+    this.setState({ active: null })
     this.focusListener = navigation.addListener("focus", () => {
       this.getCategory()
-      this.setState({active: null})
+      this.setState({ active: null })
       this.getObjectData()
 
     });
