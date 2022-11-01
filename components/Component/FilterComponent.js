@@ -10,20 +10,21 @@ export default class FilterComponent extends React.Component {
     this.state = {
       filter: true,
       view1: [
-        { companyLogo: require('../../assets/image/category1.png'), filterName: 'Прихожые', size: 10, lineHeight: 12.9, id: 1 },
+        { companyLogo: require('../../assets/image/category7.png'), filterName: 'Жилая мебель', size: 7, lineHeight: 9.03, id: 1 },
         { companyLogo: require('../../assets/image/category2.png'), filterName: 'Кухни', size: 10, lineHeight: 12.9, id: 2 },
-        { companyLogo: require('../../assets/image/category3.png'), filterName: 'Мебель для\nванной', size: 7, lineHeight: 9.03, id: 3 },
-        { companyLogo: require('../../assets/image/category4.png'), filterName: 'Межкомнатные\nперегородки', size: 7, lineHeight: 9.03, id: 4 },
-        { companyLogo: require('../../assets/image/category5.png'), filterName: 'Гардеробные', size: 8, lineHeight: 10.32, id: 5 },
-        { companyLogo: require('../../assets/image/category6.png'), filterName: 'Детские', size: 10, lineHeight: 12.9, id: 6 },
-        { companyLogo: require('../../assets/image/category7.png'), filterName: 'Мебель для\nспальни', size: 7, lineHeight: 9.03, id: 7 },
-        { companyLogo: require('../../assets/image/category8.png'), filterName: 'Кабинеты', size: 10, lineHeight: 12.9, id: 8 },
-        { companyLogo: require('../../assets/image/category9.png'), filterName: 'Гостиные', size: 10, lineHeight: 12.9, id: 9 }
+        { companyLogo: require('../../assets/image/category1.png'), filterName: 'Прихожые', size: 10, lineHeight: 12.9, id: 3 },
+        { companyLogo: require('../../assets/image/category3.png'), filterName: 'Мебель для\nванной', size: 7, lineHeight: 9.03, id: 4 },
+        { companyLogo: require('../../assets/image/category7.png'), filterName: 'Мебель для\nспальни', size: 7, lineHeight: 9.03, id: 5 },
+        { companyLogo: require('../../assets/image/category5.png'), filterName: 'Гардеробные', size: 8, lineHeight: 10.32, id: 6 },
+        { companyLogo: require('../../assets/image/category9.png'), filterName: 'Гостиные', size: 10, lineHeight: 12.9, id: 7 },
+        { companyLogo: require('../../assets/image/category6.png'), filterName: 'Детские', size: 10, lineHeight: 12.9, id: 8 },
+        { companyLogo: require('../../assets/image/category8.png'), filterName: 'Кабинеты', size: 10, lineHeight: 12.9, id: 9 },
+        { companyLogo: require('../../assets/image/category4.png'), filterName: 'Межкомнатные\nперегородки', size: 7, lineHeight: 9.03, id: 10 },
       ],
       view2: [
-        { companyLogo: require('../../assets/image/category10.png'), filterName: 'Островные\nпавильоны', size: 8, lineHeight: 9.03, id: 10 },
-        { companyLogo: require('../../assets/image/category11.png'), filterName: 'Выставочные\nстенды', size: 8, lineHeight: 9.03, id: 11 },
+        { companyLogo: require('../../assets/image/category10.png'), filterName: 'Островные\nпавильоны', size: 8, lineHeight: 9.03, id: 11 },
         { companyLogo: require('../../assets/image/category12.png'), filterName: 'Зоны\nресепшн', size: 8, lineHeight: 9.03, id: 12 },
+        { companyLogo: require('../../assets/image/category11.png'), filterName: 'Выставочные\nстенды', size: 8, lineHeight: 9.03, id: 13 },
       ],
       rubli: [
         { icon: require('../../assets/image/rubli1.png'), size: 32, id: 1 },
@@ -43,7 +44,16 @@ export default class FilterComponent extends React.Component {
       ],
       rubliActive: 0,
       filterSortBy: [],
-      strana: 0
+      strana: 0,
+
+
+
+
+      meshok: '',
+      category_name: '',
+      city_name: [],
+      made_in: '',
+      show_room: ''
     }
   }
 
@@ -80,6 +90,24 @@ export default class FilterComponent extends React.Component {
   getFilterData = async () => {
 
     // call to api
+
+    let formdata = new FormData();
+    formdata.append("meshok", this.state.meshok); //Ценовая категория
+    formdata.append("category_name", this.state.category_name); //Категории
+    formdata.append("city_name", this.state.city_name); // Город
+    formdata.append("made_in", this.state.made_in); // Страна произволства
+    formdata.append("show_room", this.state.show_room);
+
+    let requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    await fetch("http://80.78.246.59/Refectio/public/api/filterProizvoditel", requestOptions)
+      .then(response => response.json())
+      .then(result => console.log(result))
+      .catch(error => console.log('error', error));
 
 
     this.props.handler(view);
@@ -119,7 +147,7 @@ export default class FilterComponent extends React.Component {
                         <Image
                           source={item.icon}
                           style={{ width: item.size, height: 17 }}
-                          // resizeMode="center"
+                        // resizeMode="center"
                         />
 
 
@@ -149,7 +177,8 @@ export default class FilterComponent extends React.Component {
                         flexDirection: 'row',
                         width: '100%',
                         flexWrap: 'wrap',
-                        justifyContent: 'space-between',
+                        justifyContent: 'flex-start',
+                        
                       }}>
                       {
                         this.state.view1.map((item, index) => {

@@ -206,7 +206,6 @@ export default class ConfirmTelScreenComponent extends Component {
         redirect: 'follow'
       };
 
-      console.log(this.props.phoneNumb);
       await fetch('http://80.78.246.59/Refectio/public/api/sendCallUser', requestOptions)
         .then(response => response.json())
         .then(result => {
@@ -236,15 +235,13 @@ export default class ConfirmTelScreenComponent extends Component {
     clearInterval(this.interval);
 
     this.updateCodeSend()
-    // this.timer()
 
     this.focusListener = navigation.addListener("focus", () => {
+      this.updateCodeSend()
+      
 
-      console.log(this.props.phoneNumb, 'hamarrrrrrr');
       clearInterval(this.interval);
       this.timer()
-      // this.timer()
-      this.updateCodeSend()
 
 
     });

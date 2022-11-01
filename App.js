@@ -137,9 +137,12 @@ function EditPasswordCustomer({ navigation }) {
   );
 }
 
-function GhostPageTwo({ navigation }) {
+function GhostPageTwoFunc({route, navigation }) {
+
+  const {params} = route.params
+
   return (
-    <GhostPageTwoComponent navigation={navigation} />
+    <GhostPageTwoComponent user_id={params} navigation={navigation} />
   );
 }
 function DesignerPageTwo({ route, navigation }) {
@@ -617,7 +620,7 @@ export default function App() {
                         tabBarStyle: { display: 'none' }
                       })}
                     />
-                    <Tab.Screen name="GhostPageTwo" component={GhostPageTwoComponent}
+                    <Tab.Screen name="GhostPageTwo" component={GhostPageTwoFunc}
                       options={({ route }) => ({
                         tabBarButton: () => null,
                         tabBarStyle: { display: 'none' }

@@ -1256,6 +1256,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                   underlineColorAndroid="transparent"
                   placeholder={this.state.inn}
                   keyboardType={'number-pad'}
+                  maxLength={12}
                   style={{
                     borderWidth: 1,
                     borderColor: '#F5F5F5',

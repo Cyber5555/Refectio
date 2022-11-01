@@ -320,6 +320,7 @@ export default class GhostPageComponent extends React.Component {
                         this.props.navigation.navigate('GhostPageTwo', {
                           params: item.id
                         })
+                        console.log(item.id, 'itemmmmmmmmmmmmmmmm');
                       }}>
                       <View style={styles.infoCompanyMain}>
                         <Image
@@ -342,9 +343,17 @@ export default class GhostPageComponent extends React.Component {
                               }}>
                               {item.company_name}
                             </Text>
-                            <View style={{ flexDirection: 'row' }}>
-                              {[...new Array(Number(count))].map((value, i) => <Image key={i} source={require('../../assets/image/meshok.png')} style={{ width: 15, height: 20.5, marginRight: 3 }} />)}
-                            </View>
+
+                            {
+                              count == null ?
+                                <View style={{ width: 15, height: 20.5 }}>
+                                </View>
+                                :
+                                <View style={{ flexDirection: 'row' }}>
+                                  {[...new Array(Number(count))].map((value, i) => <Image key={i} source={require('../../assets/image/meshok.png')} style={{ width: 15, height: 20.5, marginRight: 3 }} />)}
+                                </View>
+                            }
+
                           </View>
 
 
@@ -386,7 +395,8 @@ export default class GhostPageComponent extends React.Component {
             }
           </ScrollView>
         </View >
-        {this.state.keyboardOpen === false &&
+        {
+          this.state.keyboardOpen === false &&
           <GhostNavComponent active_page={'Главная'} navigation={this.props.navigation} />
         }
       </SafeAreaView >
