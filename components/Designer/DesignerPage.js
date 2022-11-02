@@ -22,7 +22,7 @@ export default class CustomerMainPageComponent extends React.Component {
 
 
     this.handler = this.handler.bind(this)
-    this.closeFilter = this.closeFilter.bind(this)
+    this.resetFilterData = this.resetFilterData.bind(this)
   }
 
 
@@ -57,20 +57,87 @@ export default class CustomerMainPageComponent extends React.Component {
 
 
 
-  handler(data) {
+  handler(filter_data) {
 
-    console.log('click to handler', data);
+    console.log('click to handler', filter_data);
 
-    this.setState({
-      view: data
-    })
+    let meshok = filter_data.meshok;
+    let category_name = filter_data.category_name.length > 0 ? filter_data.category_name.join(',') : '';
+    let made_in_result = filter_data.made_in_result.length > 0 ? filter_data.made_in_result.join(',') : '';
+    let city_name = filter_data.city_name
+    let show_room = filter_data.show_room
+
+
+    let formdata = new FormData();
+    formdata.append("meshok", meshok); //Ценовая категория
+    formdata.append("category_name", category_name); //Категории
+    formdata.append("city_name", city_name); // Город
+    formdata.append("made_in", made_in_result); // Страна произволства
+    formdata.append("show_room", show_room);
+
+    let requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/filterProizvoditel", requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        console.log(res, 'filterProizvoditel');
+
+        if (!res.status) {
+          this.setState({
+            getAllProducts: [],
+            filter: false
+          })
+
+          return false;
+        }
+        let data = res.data.user.data;
+        let new_data_result = [];
+        console.log(res);
+        for (let i = 0; i < data.length; i++) {
+
+          if (data[i].user_product_limit1.length < 1) {
+            data[i].images = [];
+            continue;
+          }
+
+          let product_image = data[i].user_product_limit1[0].product_image;
+
+          data[i].images = product_image;
+
+        }
+
+        // console.log(data, 'res.data.data.data');
+
+
+        this.setState({
+          getAllProducts: data,
+          filter: false
+        })
+      })
+      .catch(error => console.log('error', error));
+
+
+
+    // this.setState({
+    //   filter: false
+    // })
   }
 
-  closeFilter = async () => {
+  resetFilterData = async () => {
+
+
+    this.getProductsFunction();
     await this.setState({
       filter: false
     })
-    console.log('click to closeFilter');
+    console.log('click to resetFilterData');
   }
 
   modalState = async () => {
@@ -168,7 +235,7 @@ export default class CustomerMainPageComponent extends React.Component {
 
           {this.state.filter &&
 
-            <FilterComponent handler={this.handler} closeFilter={this.closeFilter} />
+            <FilterComponent handler={this.handler} resetFilterData={this.resetFilterData} />
 
           }
           <View style={styles.nameCompanyParent}>
@@ -213,6 +280,9 @@ export default class CustomerMainPageComponent extends React.Component {
             </TouchableOpacity>
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
+            {this.state.getAllProducts.length == 0 &&
+              <Text style={{ fontSize: 20, marginTop: 50, textAlign: 'center' }}>Данных не найдено</Text>
+            }
             {
               this.state.getAllProducts.map((item, index) => {
                 let count = item.meshok

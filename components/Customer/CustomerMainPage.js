@@ -18,12 +18,15 @@ export default class CustomerMainPageComponent extends React.Component {
       urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
       countMeshok: 0,
       logo: '',
-      name: ''
+      name: '',
+
+      searchUser: '',
+      searchUserButton: false
     }
 
 
     this.handler = this.handler.bind(this)
-    this.closeFilter = this.closeFilter.bind(this)
+    this.resetFilterData = this.resetFilterData.bind(this)
   }
 
 
@@ -37,7 +40,7 @@ export default class CustomerMainPageComponent extends React.Component {
         // console.log(res.data.data.data, 'res.data.data.data')
         let data = res.data.data;
         let new_data_result = [];
-
+        // console.log(res);
         for (let i = 0; i < data.length; i++) {
 
           if (data[i].user_product_limit1.length < 1) {
@@ -62,22 +65,130 @@ export default class CustomerMainPageComponent extends React.Component {
       .catch(error => console.log('error', error));
   }
 
+  searchUser = async () => {
+    let formdata = new FormData();
+    formdata.append("company_name", this.state.searchUser);
+
+    let requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/searchProizvoditel", requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        console.log(res)
+        if (res.status === true) {
+          let data = res.data.user.data;
+          let new_data_result = [];
+          // console.log(res);
+          for (let i = 0; i < data.length; i++) {
+
+            if (data[i].user_product_limit1.length < 1) {
+              data[i].images = [];
+              continue;
+            }
+
+            let product_image = data[i].user_product_limit1[0].product_image;
+
+            data[i].images = product_image;
+
+          }
+
+          // console.log(data, 'res.data.data.data');
 
 
-  handler(data) {
-
-    console.log('click to handler', data);
-
-    this.setState({
-      view: data
-    })
+          this.setState({
+            getAllProducts: data
+          })
+        }
+      })
+      .catch(error => console.log('error', error));
   }
 
-  closeFilter = async () => {
+
+  handler(filter_data) {
+
+    console.log('click to handler', filter_data);
+
+    let meshok = filter_data.meshok;
+    let category_name = filter_data.category_name.length > 0 ? filter_data.category_name.join(',') : '';
+    let made_in_result = filter_data.made_in_result.length > 0 ? filter_data.made_in_result.join(',') : '';
+    let city_name = filter_data.city_name
+    let show_room = filter_data.show_room
+
+
+    let formdata = new FormData();
+    formdata.append("meshok", meshok); //Ценовая категория
+    formdata.append("category_name", category_name); //Категории
+    formdata.append("city_name", city_name); // Город
+    formdata.append("made_in", made_in_result); // Страна произволства
+    formdata.append("show_room", show_room);
+
+    let requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow',
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/filterProizvoditel", requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        console.log(res, 'filterProizvoditel');
+
+        if (!res.status) {
+          this.setState({
+            getAllProducts: [],
+            filter: false
+          })
+
+          return false;
+        }
+        let data = res.data.user.data;
+        let new_data_result = [];
+        console.log(res);
+        for (let i = 0; i < data.length; i++) {
+
+          if (data[i].user_product_limit1.length < 1) {
+            data[i].images = [];
+            continue;
+          }
+
+          let product_image = data[i].user_product_limit1[0].product_image;
+
+          data[i].images = product_image;
+
+        }
+
+        // console.log(data, 'res.data.data.data');
+
+
+        this.setState({
+          getAllProducts: data,
+          filter: false
+        })
+      })
+      .catch(error => console.log('error', error));
+
+
+
+    // this.setState({
+    //   filter: false
+    // })
+  }
+
+  resetFilterData = async () => {
+
+
+    this.getProductsFunction();
     await this.setState({
       filter: false
     })
-    console.log('click to closeFilter');
+    console.log('click to resetFilterData');
   }
 
   modalState = async () => {
@@ -170,7 +281,7 @@ export default class CustomerMainPageComponent extends React.Component {
 
           {this.state.filter &&
 
-            <FilterComponent handler={this.handler} closeFilter={this.closeFilter} />
+            <FilterComponent handler={this.handler} resetFilterData={this.resetFilterData} />
 
           }
           <View style={styles.nameCompanyParent}>
@@ -192,10 +303,14 @@ export default class CustomerMainPageComponent extends React.Component {
           </View>
 
           <View style={styles.searchParent}>
-            <Svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <Path d="M15.7656 14.6895L10.6934 9.61719C11.4805 8.59961 11.9063 7.35547 11.9063 6.04688C11.9063 4.48047 11.2949 3.01172 10.1895 1.9043C9.08398 0.796875 7.61133 0.1875 6.04688 0.1875C4.48242 0.1875 3.00977 0.798828 1.9043 1.9043C0.796875 3.00977 0.1875 4.48047 0.1875 6.04688C0.1875 7.61133 0.798828 9.08398 1.9043 10.1895C3.00977 11.2969 4.48047 11.9063 6.04688 11.9063C7.35547 11.9063 8.59766 11.4805 9.61524 10.6953L14.6875 15.7656C14.7024 15.7805 14.72 15.7923 14.7395 15.8004C14.7589 15.8084 14.7797 15.8126 14.8008 15.8126C14.8218 15.8126 14.8427 15.8084 14.8621 15.8004C14.8815 15.7923 14.8992 15.7805 14.9141 15.7656L15.7656 14.916C15.7805 14.9011 15.7923 14.8835 15.8004 14.864C15.8084 14.8446 15.8126 14.8238 15.8126 14.8027C15.8126 14.7817 15.8084 14.7609 15.8004 14.7414C15.7923 14.722 15.7805 14.7043 15.7656 14.6895ZM9.14063 9.14063C8.3125 9.9668 7.21484 10.4219 6.04688 10.4219C4.87891 10.4219 3.78125 9.9668 2.95313 9.14063C2.12695 8.3125 1.67188 7.21484 1.67188 6.04688C1.67188 4.87891 2.12695 3.7793 2.95313 2.95313C3.78125 2.12695 4.87891 1.67188 6.04688 1.67188C7.21484 1.67188 8.31445 2.125 9.14063 2.95313C9.9668 3.78125 10.4219 4.87891 10.4219 6.04688C10.4219 7.21484 9.9668 8.31445 9.14063 9.14063Z" fill="black" />
-            </Svg>
+            <TouchableOpacity onPress={() => this.searchUser()}>
+              <Svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <Path d="M15.7656 14.6895L10.6934 9.61719C11.4805 8.59961 11.9063 7.35547 11.9063 6.04688C11.9063 4.48047 11.2949 3.01172 10.1895 1.9043C9.08398 0.796875 7.61133 0.1875 6.04688 0.1875C4.48242 0.1875 3.00977 0.798828 1.9043 1.9043C0.796875 3.00977 0.1875 4.48047 0.1875 6.04688C0.1875 7.61133 0.798828 9.08398 1.9043 10.1895C3.00977 11.2969 4.48047 11.9063 6.04688 11.9063C7.35547 11.9063 8.59766 11.4805 9.61524 10.6953L14.6875 15.7656C14.7024 15.7805 14.72 15.7923 14.7395 15.8004C14.7589 15.8084 14.7797 15.8126 14.8008 15.8126C14.8218 15.8126 14.8427 15.8084 14.8621 15.8004C14.8815 15.7923 14.8992 15.7805 14.9141 15.7656L15.7656 14.916C15.7805 14.9011 15.7923 14.8835 15.8004 14.864C15.8084 14.8446 15.8126 14.8238 15.8126 14.8027C15.8126 14.7817 15.8084 14.7609 15.8004 14.7414C15.7923 14.722 15.7805 14.7043 15.7656 14.6895ZM9.14063 9.14063C8.3125 9.9668 7.21484 10.4219 6.04688 10.4219C4.87891 10.4219 3.78125 9.9668 2.95313 9.14063C2.12695 8.3125 1.67188 7.21484 1.67188 6.04688C1.67188 4.87891 2.12695 3.7793 2.95313 2.95313C3.78125 2.12695 4.87891 1.67188 6.04688 1.67188C7.21484 1.67188 8.31445 2.125 9.14063 2.95313C9.9668 3.78125 10.4219 4.87891 10.4219 6.04688C10.4219 7.21484 9.9668 8.31445 9.14063 9.14063Z" fill="black" />
+              </Svg>
+            </TouchableOpacity>
             <TextInput
+              placeholder="Поиск"
+              placeholderTextColor="#000"
               style={{
                 width: '85%',
                 height: '90%',
@@ -204,8 +319,7 @@ export default class CustomerMainPageComponent extends React.Component {
                 color: '#000',
                 fontSize: 15,
               }}
-              placeholder="Поиск"
-              placeholderTextColor="#000"
+              onChangeText={(text) => this.setState({ searchUser: text })}
             />
             <TouchableOpacity
               onPress={() => this.modalState()}>
@@ -215,6 +329,11 @@ export default class CustomerMainPageComponent extends React.Component {
             </TouchableOpacity>
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
+
+            {this.state.getAllProducts.length == 0 &&
+              <Text style={{ fontSize: 20, marginTop: 50, textAlign: 'center' }}>Данных не найдено</Text>
+            }
+
             {
               this.state.getAllProducts.map((item, index) => {
                 let count = item.meshok

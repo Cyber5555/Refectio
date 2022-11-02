@@ -49,7 +49,10 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
 
 
+      made_in_array: [],
+      made_in_select: false,
       made_in: '',
+      made_in_error: false,
 
       individual_number: '',
 
@@ -167,6 +170,25 @@ export default class CustomerMyAccauntComponent extends React.Component {
       .catch(error => console.log('error', error));
   }
 
+  getCountry = async () => {
+    await this.setState({ editModal: true })
+
+
+    let requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    await fetch("http://80.78.246.59/Refectio/public/api/GetCountry", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result)
+        this.setState({ made_in_array: result.data })
+      })
+      .catch(error => console.log('error', error));
+  }
+
+
   updateCategory = async () => {
     let categoryArraySort = this.state.categoryArray
 
@@ -277,7 +299,14 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
     await fetch("http://80.78.246.59/Refectio/public/api/updateManeInProizvoditel", requestOptions)
       .then(response => response.json())
-      .then(result => result)
+      .then(result => {
+        if (result.status === true) {
+          this.setState({
+            editModal: false,
+            strana: this.state.made_in
+          })
+        }
+      })
       .catch(error => console.log('error', error));
   }
 
@@ -437,11 +466,9 @@ export default class CustomerMyAccauntComponent extends React.Component {
     const { navigation } = this.props;
     this.getAuthUserProfile()
 
-
     this.focusListener = navigation.addListener("focus", () => {
 
       this.getAuthUserProfile()
-
 
     });
 
@@ -1183,44 +1210,90 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
           <Modal visible={this.state.editModal}>
             <ImageBackground style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} source={require('../../assets/image/blurBg.png')}>
-              <View style={{ width: '90%', height: 300, borderRadius: 20, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
+              <View style={{ width: '90%', height: 400, borderRadius: 20, paddingHorizontal: 25, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center', position: 'relative' }}>
                 <TouchableOpacity style={{ position: 'absolute', right: 18, top: 18, }} onPress={() => this.setState({ editModal: false })}>
                   <Image source={require('../../assets/image/ixs.png')} style={{ width: 22.5, height: 22.5, }} />
                 </TouchableOpacity>
-                <View style={{
-                  flexDirection: 'row',
-                  marginTop: 30,
-                  width: '90%'
-                }}>
-                  <Text
-                    style={{
-                      fontFamily: 'Poppins_500Medium',
-                      lineHeight: 23,
-                      fontSize: 16,
-                      color: '#5B5B5B',
-                      marginBottom: 5,
-                      textAlign: 'left',
-                    }}
-                  >
+                <View
+                  style={{
+                    position: 'relative',
+                    width: '100%'
+                  }}>
+                  <Text style={[{
+                    fontFamily: 'Poppins_500Medium',
+                    lineHeight: 23,
+                    fontSize: 15,
+                    marginTop: 27,
+                    marginBottom: 5,
+                  }, this.state.made_in_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
                     Страна производства
                   </Text>
+                  <TouchableOpacity
+                    style={[{
+                      borderWidth: 1,
+                      padding: 10,
+                      width: '100%',
+                      borderRadius: 5,
+                      position: 'relative',
+                    }, this.state.made_in_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+                    onPress={() => this.setState({ made_in_select: !this.state.made_in_select })}
+                  >
+                    <Text
+                      style={{
+                        padding: 5,
+                        width: '100%',
+                        borderRadius: 5,
+                        color: '#5B5B5B',
+                      }}>
+                      {this.state.made_in == '' ? 'Выберите страну' : this.state.made_in}
+                    </Text>
+                    <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
+                      {!this.state.made_in_select &&
+                        <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </Svg>
+                      }
+                      {this.state.made_in_select &&
+                        <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </Svg>
+                      }
+                    </View>
+                  </TouchableOpacity>
+                  <View
+                    style={this.state.made_in_select ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
+                    <ScrollView nestedScrollEnabled={true} >
+                      {
+                        this.state.made_in_array.map((item, index) => {
+                          return (
+                            <TouchableOpacity
+                              key={index}
+                              style={{
+                                width: '100%',
+                                justifyContent: 'center',
+                                textAlign: 'left',
+                              }}
+                              onPress={async () => {
+                                await this.setState({
+                                  made_in: item.nicename,
+                                  made_in_select: false
+                                })
+                              }}
+                            >
+                              <Text style={[{ textAlign: 'left', paddingVertical: 7, fontFamily: 'Poppins_500Medium', borderBottomWidth: 1, borderBottomColor: '#F5F5F5' },
+                              ]}>
+                                {item.nicename}
+                              </Text>
+                            </TouchableOpacity>
+                          )
+
+                        })
+                      }
+                    </ScrollView>
+                  </View>
                 </View>
-                <TextInput
-                  underlineColorAndroid="transparent"
-                  placeholder={'Италия'}
-                  style={{
-                    borderWidth: 1,
-                    borderColor: '#F5F5F5',
-                    padding: 10,
-                    width: '90%',
-                    borderRadius: 5,
-                  }}
-                  value={this.state.made_in}
-                  onChangeText={(text) => this.setState({ made_in: text })}
-                />
                 <TouchableOpacity style={{ marginTop: 50 }} onPress={async () => {
                   await this.sendMadeIn()
-                  this.setState({ editModal: false })
                 }}>
                   <BlueButton name='Сохранить' />
                 </TouchableOpacity>
@@ -1571,7 +1644,9 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 >
                   Страна производства
                 </Text>
-                <TouchableOpacity onPress={() => this.setState({ editModal: true })}>
+                <TouchableOpacity onPress={() => {
+                  this.getCountry()
+                }}>
                   <Image
                     source={require('../../assets/image/ep_edit.png')}
                     style={{
@@ -2200,11 +2275,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   sOpenCityDropDown: {
-    width: '80%',
+    width: '100%',
     height: 0,
   },
   sOpenCityDropDownActive: {
-    width: '80%',
+    width: '100%',
     height: 120,
     elevation: 2,
     borderColor: '#F5F5F5',
