@@ -234,11 +234,11 @@ export default class ConfirmTelScreenComponent extends Component {
 
     clearInterval(this.interval);
 
-    this.updateCodeSend()
+    this.callToPhone()
 
     this.focusListener = navigation.addListener("focus", () => {
-      this.updateCodeSend()
       
+      this.callToPhone()
 
       clearInterval(this.interval);
       this.timer()

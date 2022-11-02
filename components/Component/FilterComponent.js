@@ -42,7 +42,7 @@ export default class FilterComponent extends React.Component {
         { items: 'Chine', value: 5 },
         { items: 'Armenia', value: 6 }
       ],
-      rubliActive: 0,
+      rubliActive: null,
       filterSortBy: [],
       strana: 0,
 
@@ -141,7 +141,20 @@ export default class FilterComponent extends React.Component {
                   this.state.rubli.map((item, index) => {
                     return (
                       <TouchableOpacity
-                        onPress={() => this.setState({ rubliActive: index })}
+                        onPress={async () => {
+                          if (index !== this.state.rubliActive) {
+                            this.setState({
+                              rubliActive: index,
+                              meshok: item.id
+                            })
+                          }
+                          else if (index == this.state.rubliActive) {
+                            this.setState({
+                              rubliActive: null,
+                              meshok: null
+                            })
+                          }
+                        }}
                         key={item.id}
                         style={this.state.rubliActive == index ? styles.rubliActive : styles.rubli}>
                         <Image
@@ -178,7 +191,7 @@ export default class FilterComponent extends React.Component {
                         width: '100%',
                         flexWrap: 'wrap',
                         justifyContent: 'flex-start',
-                        
+
                       }}>
                       {
                         this.state.view1.map((item, index) => {
@@ -189,7 +202,7 @@ export default class FilterComponent extends React.Component {
                               style={{
                                 paddingTop: 14,
                                 alignContent: 'center',
-                                width: '23%',
+                                width: '25%',
 
                               }}>
                               <TouchableOpacity
@@ -197,7 +210,7 @@ export default class FilterComponent extends React.Component {
                                   this.enterCheckBox(item.id)
                                 }}
                                 style={{
-                                  width: '100%',
+                                  width: '90%',
                                 }}>
                                 <Image
                                   source={item.companyLogo}

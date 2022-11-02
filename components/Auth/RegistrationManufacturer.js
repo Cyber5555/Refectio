@@ -55,6 +55,8 @@ export default class RegistrationManufacturerComponent extends Component {
       i_agree: false,
       i_agree_error: false,
 
+      made_in_array: [],
+      made_in_select: false,
       made_in: '',
       made_in_error: false,
 
@@ -344,6 +346,21 @@ export default class RegistrationManufacturerComponent extends Component {
     });
   };
 
+  getCountry = async () => {
+    let requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    await fetch("http://80.78.246.59/Refectio/public/api/GetCountry", requestOptions)
+      .then(response => response.json())
+      .then(result => {
+        console.log(result)
+        this.setState({ made_in_array: result.data })
+      })
+      .catch(error => console.log('error', error));
+  }
+
 
 
   getMainApi = async () => {
@@ -559,11 +576,32 @@ export default class RegistrationManufacturerComponent extends Component {
   }
 
 
-
-  componentDidMount = () => {
+  componentDidMount() {
+    const { navigation } = this.props;
     this.getRegionApi()
     this.getProductCategory()
+    this.getCountry()
+
+
+    this.focusListener = navigation.addListener("focus", () => {
+
+      this.getRegionApi()
+      this.getProductCategory()
+      this.getCountry()
+
+    });
   }
+
+  componentWillUnmount() {
+
+    if (this.focusListener) {
+      this.focusListener();
+      console.log(' END')
+    }
+  }
+
+
+
 
   goToRegistredScreen = () => {
     this.props.navigation.navigate('RegisteredScreen')
@@ -742,30 +780,86 @@ export default class RegistrationManufacturerComponent extends Component {
             </View>
 
 
-            <View>
-              <Text
-                style={[{
-                  fontFamily: 'Poppins_500Medium',
-                  lineHeight: 23,
-                  fontSize: 15,
-                  marginTop: 27,
-                  marginBottom: 5
-                }, this.state.made_in_error ? { color: 'red' } : { color: '#5B5B5B' }]}
-              >
+
+            <View
+              style={{
+                position: 'relative',
+                // marginTop: 9,
+              }}>
+              <Text style={[{
+                fontFamily: 'Poppins_500Medium',
+                lineHeight: 23,
+                fontSize: 15,
+                marginTop: 27,
+                marginBottom: 5,
+              }, this.state.made_in_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
                 Страна производства
               </Text>
-              <TextInput
-                underlineColorAndroid="transparent"
+              <TouchableOpacity
                 style={[{
                   borderWidth: 1,
                   padding: 10,
                   width: '100%',
                   borderRadius: 5,
+                  position: 'relative',
                 }, this.state.made_in_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
-                value={this.state.made_in}
-                onChangeText={(value) => { this.setState({ made_in: value }) }}
-              />
+                onPress={() => this.setState({ made_in_select: !this.state.made_in_select })}
+              >
+                <Text
+                  style={{
+                    padding: 5,
+                    width: '100%',
+                    borderRadius: 5,
+                    // fontFamily: 'Poppins_500Medium',
+                    color: '#5B5B5B'
+                  }}>
+                  {this.state.made_in}
+                </Text>
+                <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
+                  {!this.state.made_in_select &&
+                    <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </Svg>
+                  }
+                  {this.state.made_in_select &&
+                    <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </Svg>
+                  }
+
+                </View>
+              </TouchableOpacity>
+              <View
+                style={this.state.made_in_select ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
+                <ScrollView nestedScrollEnabled={true} >
+                  {
+                    this.state.made_in_array.map((item, index) => {
+                      return (
+                        <TouchableOpacity
+                          key={index}
+                          style={{
+                            width: '100%',
+                            justifyContent: 'center',
+                            textAlign: 'left',
+                          }}
+                          onPress={async () => {
+                            await this.setState({ made_in: item.nicename })
+                          }}
+                        >
+                          <Text style={[{ textAlign: 'left', paddingVertical: 7, fontFamily: 'Poppins_500Medium', borderBottomWidth: 1, borderBottomColor: '#F5F5F5' },
+                          ]}>
+                            {item.nicename}
+                          </Text>
+                        </TouchableOpacity>
+                      )
+
+                    })
+                  }
+                </ScrollView>
+              </View>
             </View>
+
+
 
             {/* categoryButtons start */}
             {
