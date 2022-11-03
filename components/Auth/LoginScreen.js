@@ -158,7 +158,7 @@ export default class LoginScreenComponent extends Component {
                     marginTop: 80
                   }}
                   onPress={() => this.setState({ moderacia: false })}>
-                  <BlueButton name="Подтвердить" />
+                  <BlueButton name="Закрыть" />
                 </TouchableOpacity>
               </View>
             </ImageBackground>

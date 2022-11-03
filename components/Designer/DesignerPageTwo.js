@@ -547,7 +547,7 @@ export default class DesignerPageTwoComponent extends React.Component {
           </Modal>
 
 
-          <Modal visible={this.state.bronyModal}>
+          {/* <Modal visible={this.state.bronyModal}>
             <ImageBackground
               source={require('../../assets/image/blurBg.png')}
               style={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', }}>
@@ -555,7 +555,9 @@ export default class DesignerPageTwoComponent extends React.Component {
 
                 <TouchableOpacity
                   style={{ position: 'absolute', width: 22.5, height: 22.5, right: 21.75, top: 21.75, }}
-                  onPress={() => this.setState({ bronyModal: false })}>
+                  onPress={() => {
+                    this.setState({ bronyModal: false })
+                  }}>
                   <Image
                     source={require('../../assets/image/ixs.png')}
                     style={{ width: '100%', height: '100%' }}
@@ -730,7 +732,6 @@ export default class DesignerPageTwoComponent extends React.Component {
                     </View>
 
 
-                    {/* change manufacturer start */}
                     {
                       this.state.getPraizvaditel.length > 0 && this.state.getPraizvaditelMap.map((element, ind) => {
                         return (
@@ -867,7 +868,6 @@ export default class DesignerPageTwoComponent extends React.Component {
                         )
                       })
                     }
-                    {/* change manufacturer end */}
 
                     <TouchableOpacity style={{ marginTop: 50, marginBottom: 54 }} onPress={() => this.DesignerAddBook()}>
                       <BlueButton name='Забронировать' />
@@ -877,7 +877,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                 </ScrollView>
               </View>
             </ImageBackground>
-          </Modal >
+          </Modal > */}
 
 
           <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 15 }}>
@@ -1117,7 +1117,12 @@ export default class DesignerPageTwoComponent extends React.Component {
                   />
                   <Text style={styles.infoText}>Запрос{'\n'}стоимости</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.info} onPress={() => this.setState({ bronyModal: true })}>
+                <TouchableOpacity
+                  style={styles.info}
+                // onPress={() => {
+                //   this.setState({ bronyModal: true })
+                // }}
+                >
                   <Image
                     source={require('../../assets/image/pcichka.png')}
                     style={{ width: 30, height: 30, resizeMode: 'contain', }} />

@@ -140,7 +140,10 @@ export default class GhostPageComponent extends React.Component {
       countMeshok: 0,
 
 
-      fontsLoaded: false
+      fontsLoaded: false,
+
+      searchUser: '',
+      searchUserButton: false
     }
 
 
@@ -150,6 +153,12 @@ export default class GhostPageComponent extends React.Component {
 
 
   getProductsFunction = async () => {
+    this.setState({
+      searchUserButton: false,
+      searchUser: ''
+    })
+
+
     await fetch('http://80.78.246.59/Refectio/public/api/GetAllProduct', {
       method: 'GET',
     })
@@ -219,7 +228,7 @@ export default class GhostPageComponent extends React.Component {
 
           return false;
         }
-        let data = res.data.user.data;
+        let data = res.data.user;
         let new_data_result = [];
         console.log(res);
         for (let i = 0; i < data.length; i++) {
@@ -267,6 +276,50 @@ export default class GhostPageComponent extends React.Component {
       filter: true
     })
   }
+
+  searchUser = async () => {
+    let formdata = new FormData();
+    formdata.append("company_name", this.state.searchUser);
+
+    let requestOptions = {
+      method: 'POST',
+      body: formdata,
+      redirect: 'follow'
+    };
+
+    fetch("http://80.78.246.59/Refectio/public/api/searchProizvoditel", requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        console.log(res)
+        if (res.status === true) {
+          let data = res.data.user;
+          let new_data_result = [];
+          // console.log(res);
+          for (let i = 0; i < data.length; i++) {
+
+            if (data[i].user_product_limit1.length < 1) {
+              data[i].images = [];
+              continue;
+            }
+
+            let product_image = data[i].user_product_limit1[0].product_image;
+
+            data[i].images = product_image;
+
+          }
+
+          // console.log(data, 'res.data.data.data');
+
+
+          this.setState({
+            getAllProducts: data,
+            searchUserButton: true
+          })
+        }
+      })
+      .catch(error => console.log('error', error));
+  }
+
 
 
   formImageData = new FormData()
@@ -352,10 +405,27 @@ export default class GhostPageComponent extends React.Component {
           }
 
           <View style={styles.searchParent}>
-            <Svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <Path d="M15.7656 14.6895L10.6934 9.61719C11.4805 8.59961 11.9063 7.35547 11.9063 6.04688C11.9063 4.48047 11.2949 3.01172 10.1895 1.9043C9.08398 0.796875 7.61133 0.1875 6.04688 0.1875C4.48242 0.1875 3.00977 0.798828 1.9043 1.9043C0.796875 3.00977 0.1875 4.48047 0.1875 6.04688C0.1875 7.61133 0.798828 9.08398 1.9043 10.1895C3.00977 11.2969 4.48047 11.9063 6.04688 11.9063C7.35547 11.9063 8.59766 11.4805 9.61524 10.6953L14.6875 15.7656C14.7024 15.7805 14.72 15.7923 14.7395 15.8004C14.7589 15.8084 14.7797 15.8126 14.8008 15.8126C14.8218 15.8126 14.8427 15.8084 14.8621 15.8004C14.8815 15.7923 14.8992 15.7805 14.9141 15.7656L15.7656 14.916C15.7805 14.9011 15.7923 14.8835 15.8004 14.864C15.8084 14.8446 15.8126 14.8238 15.8126 14.8027C15.8126 14.7817 15.8084 14.7609 15.8004 14.7414C15.7923 14.722 15.7805 14.7043 15.7656 14.6895ZM9.14063 9.14063C8.3125 9.9668 7.21484 10.4219 6.04688 10.4219C4.87891 10.4219 3.78125 9.9668 2.95313 9.14063C2.12695 8.3125 1.67188 7.21484 1.67188 6.04688C1.67188 4.87891 2.12695 3.7793 2.95313 2.95313C3.78125 2.12695 4.87891 1.67188 6.04688 1.67188C7.21484 1.67188 8.31445 2.125 9.14063 2.95313C9.9668 3.78125 10.4219 4.87891 10.4219 6.04688C10.4219 7.21484 9.9668 8.31445 9.14063 9.14063Z" fill="black" />
-            </Svg>
+            <TouchableOpacity onPress={() => {
+              if (this.state.searchUserButton === false && this.state.searchUser !== '') {
+                this.searchUser()
+              }
+              else {
+                this.getProductsFunction()
+              }
+            }}>
+              {this.state.searchUserButton ?
+                <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <Path d="M1.46343 2.89891C1.39564 2.83476 1.34186 2.7586 1.30518 2.67479C1.26849 2.59097 1.24961 2.50114 1.24961 2.41042C1.24961 2.31969 1.26849 2.22986 1.30518 2.14604C1.34186 2.06223 1.39564 1.98607 1.46343 1.92192C1.53122 1.85777 1.6117 1.80689 1.70027 1.77217C1.78885 1.73745 1.88378 1.71958 1.97965 1.71958C2.07552 1.71958 2.17045 1.73745 2.25902 1.77217C2.3476 1.80689 2.42808 1.85777 2.49587 1.92192L10 9.02439L17.5041 1.92192C17.5719 1.85777 17.6524 1.80689 17.741 1.77217C17.8295 1.73745 17.9245 1.71958 18.0204 1.71958C18.1162 1.71958 18.2112 1.73745 18.2997 1.77217C18.3883 1.80689 18.4688 1.85777 18.5366 1.92192C18.6044 1.98607 18.6581 2.06223 18.6948 2.14604C18.7315 2.22986 18.7504 2.31969 18.7504 2.41042C18.7504 2.50114 18.7315 2.59097 18.6948 2.67479C18.6581 2.7586 18.6044 2.83476 18.5366 2.89891L11.031 10L18.5366 17.1011C18.6044 17.1652 18.6581 17.2414 18.6948 17.3252C18.7315 17.409 18.7504 17.4989 18.7504 17.5896C18.7504 17.6803 18.7315 17.7701 18.6948 17.854C18.6581 17.9378 18.6044 18.0139 18.5366 18.0781C18.4688 18.1422 18.3883 18.1931 18.2997 18.2278C18.2112 18.2626 18.1162 18.2804 18.0204 18.2804C17.9245 18.2804 17.8295 18.2626 17.741 18.2278C17.6524 18.1931 17.5719 18.1422 17.5041 18.0781L10 10.9756L2.49587 18.0781C2.42808 18.1422 2.3476 18.1931 2.25902 18.2278C2.17045 18.2626 2.07552 18.2804 1.97965 18.2804C1.88378 18.2804 1.78885 18.2626 1.70027 18.2278C1.6117 18.1931 1.53122 18.1422 1.46343 18.0781C1.39564 18.0139 1.34186 17.9378 1.30518 17.854C1.26849 17.7701 1.24961 17.6803 1.24961 17.5896C1.24961 17.4989 1.26849 17.409 1.30518 17.3252C1.34186 17.2414 1.39564 17.1652 1.46343 17.1011L8.96902 10L1.46343 2.89891Z" fill="black" />
+                </Svg>
+                :
+                <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <Path d="M17.7656 16.6895L12.6934 11.6172C13.4805 10.5996 13.9063 9.35547 13.9063 8.04688C13.9063 6.48047 13.2949 5.01172 12.1895 3.9043C11.084 2.79687 9.61133 2.1875 8.04688 2.1875C6.48242 2.1875 5.00977 2.79883 3.9043 3.9043C2.79687 5.00977 2.1875 6.48047 2.1875 8.04688C2.1875 9.61133 2.79883 11.084 3.9043 12.1895C5.00977 13.2969 6.48047 13.9063 8.04688 13.9063C9.35547 13.9063 10.5977 13.4805 11.6152 12.6953L16.6875 17.7656C16.7024 17.7805 16.72 17.7923 16.7395 17.8004C16.7589 17.8084 16.7797 17.8126 16.8008 17.8126C16.8218 17.8126 16.8427 17.8084 16.8621 17.8004C16.8815 17.7923 16.8992 17.7805 16.9141 17.7656L17.7656 16.916C17.7805 16.9011 17.7923 16.8835 17.8004 16.864C17.8084 16.8446 17.8126 16.8238 17.8126 16.8027C17.8126 16.7817 17.8084 16.7609 17.8004 16.7414C17.7923 16.722 17.7805 16.7043 17.7656 16.6895V16.6895ZM11.1406 11.1406C10.3125 11.9668 9.21484 12.4219 8.04688 12.4219C6.87891 12.4219 5.78125 11.9668 4.95313 11.1406C4.12695 10.3125 3.67188 9.21484 3.67188 8.04688C3.67188 6.87891 4.12695 5.7793 4.95313 4.95313C5.78125 4.12695 6.87891 3.67188 8.04688 3.67188C9.21484 3.67188 10.3145 4.125 11.1406 4.95313C11.9668 5.78125 12.4219 6.87891 12.4219 8.04688C12.4219 9.21484 11.9668 10.3145 11.1406 11.1406Z" fill="black" />
+                </Svg>
+              }
+            </TouchableOpacity>
             <TextInput
+              placeholder="Поиск"
+              placeholderTextColor="#000"
               style={{
                 width: '85%',
                 height: '90%',
@@ -364,8 +434,8 @@ export default class GhostPageComponent extends React.Component {
                 color: '#000',
                 fontSize: 15,
               }}
-              placeholder="Поиск"
-              placeholderTextColor="#000"
+              value={this.state.searchUser}
+              onChangeText={(text) => this.setState({ searchUser: text })}
             />
             <TouchableOpacity
               onPress={() => this.modalState()}>

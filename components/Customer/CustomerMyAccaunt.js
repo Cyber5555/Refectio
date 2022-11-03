@@ -179,7 +179,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
       redirect: 'follow'
     };
 
-    await fetch("http://80.78.246.59/Refectio/public/api/GetCountry", requestOptions)
+    await fetch("http://80.78.246.59/Refectio/public/api/AllCountry", requestOptions)
       .then(response => response.json())
       .then(result => {
         console.log(result)

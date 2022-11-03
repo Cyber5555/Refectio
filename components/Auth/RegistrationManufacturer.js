@@ -352,11 +352,13 @@ export default class RegistrationManufacturerComponent extends Component {
       redirect: 'follow'
     };
 
-    await fetch("http://80.78.246.59/Refectio/public/api/GetCountry", requestOptions)
+    await fetch("http://80.78.246.59/Refectio/public/api/AllCountry", requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result)
-        this.setState({ made_in_array: result.data })
+        this.setState({
+          made_in_array: result.data,
+          made_in_select: true
+        })
       })
       .catch(error => console.log('error', error));
   }
@@ -422,7 +424,6 @@ export default class RegistrationManufacturerComponent extends Component {
     this.form_data.append("product_category[]", new_product_category);
     this.form_data.append("percent_bonus[]", this.state.procentArrayToString);
 
-    console.log(this.form_data, 'this.form_datathis.form_data');
 
 
 
@@ -436,7 +437,7 @@ export default class RegistrationManufacturerComponent extends Component {
     fetch("http://80.78.246.59/Refectio/public/api/RegisterManufacturerUser", requestOptions)
       .then(response => response.json())
       .then(res => {
-
+        console.log(res, 'registerrrrrr');
         if (res.success === false && res.message == 'Validation errors') {
 
           if (res.data.hasOwnProperty('company_name')) {
@@ -552,7 +553,7 @@ export default class RegistrationManufacturerComponent extends Component {
 
           return false;
 
-        } else if (res.success === false && res.message[0] == 'phone arledy exist') {
+        } else if (res.success === false && res.message == 'phone arledy exist') {
 
           this.setState({
             phone_error: true
@@ -561,7 +562,20 @@ export default class RegistrationManufacturerComponent extends Component {
 
           return false
 
-        } else {
+        }
+        
+
+        else if (res.status === false && res.message == 'user@ chi ancel hamari verifykacia') {
+
+        
+          this.props.navigation.navigate('ConfirmTelScreen', {
+            params: res.token
+          })
+
+          return false
+
+        }
+        else {
 
 
 
@@ -580,14 +594,13 @@ export default class RegistrationManufacturerComponent extends Component {
     const { navigation } = this.props;
     this.getRegionApi()
     this.getProductCategory()
-    this.getCountry()
+
 
 
     this.focusListener = navigation.addListener("focus", () => {
 
       this.getRegionApi()
       this.getProductCategory()
-      this.getCountry()
 
     });
   }
@@ -803,7 +816,14 @@ export default class RegistrationManufacturerComponent extends Component {
                   borderRadius: 5,
                   position: 'relative',
                 }, this.state.made_in_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
-                onPress={() => this.setState({ made_in_select: !this.state.made_in_select })}
+                onPress={() => {
+                  if (this.state.made_in_select === false) {
+                    this.getCountry()
+                  }
+                  else {
+                    this.setState({ made_in_select: false })
+                  }
+                }}
               >
                 <Text
                   style={{
@@ -843,7 +863,10 @@ export default class RegistrationManufacturerComponent extends Component {
                             textAlign: 'left',
                           }}
                           onPress={async () => {
-                            await this.setState({ made_in: item.nicename })
+                            await this.setState({
+                              made_in: item.nicename,
+                              made_in_select: false
+                            })
                           }}
                         >
                           <Text style={[{ textAlign: 'left', paddingVertical: 7, fontFamily: 'Poppins_500Medium', borderBottomWidth: 1, borderBottomColor: '#F5F5F5' },
