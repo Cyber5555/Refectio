@@ -563,11 +563,18 @@ export default class RegistrationManufacturerComponent extends Component {
           return false
 
         }
-        
+        else if (res.status === false && res.message == 'i_agree required true') {
+
+          this.setState({
+            i_agree_error: true
+          })
+
+
+        }
 
         else if (res.status === false && res.message == 'user@ chi ancel hamari verifykacia') {
 
-        
+
           this.props.navigation.navigate('ConfirmTelScreen', {
             params: res.token
           })
@@ -1646,18 +1653,24 @@ export default class RegistrationManufacturerComponent extends Component {
             <View style={styles.checkBox}>
               <TouchableOpacity style={{ marginRight: 10 }} onPress={() => { this.setState({ i_agree: !this.state.i_agree }) }}>
                 <View>
-                  {!this.state.i_agree &&
+                  {this.state.i_agree === false && this.state.i_agree_error === false &&
                     <Svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <Rect x="1" y="1" width="26" height="26" rx="3" stroke="#B5D8FE" stroke-width="2" />
                     </Svg>
 
                   }
-                  {this.state.i_agree &&
+                  {this.state.i_agree_error === true && this.state.i_agree !== true &&
+                    <Svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <Rect x="1" y="1" width="26" height="26" rx="3" stroke="red" stroke-width="2" />
+                    </Svg>
+                  }
+                  {this.state.i_agree === true &&
                     <Svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <Rect width="28" height="28" rx="4" fill="#B5D8FE" />
                       <Path d="M7 15L11.4118 20L22 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
                     </Svg>
                   }
+
                 </View>
               </TouchableOpacity>
               <Text

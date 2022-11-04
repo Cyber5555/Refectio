@@ -69,8 +69,7 @@ export default class RegistrationUserScreenComponent extends Component {
     if (!result.cancelled) {
       this.setState({ diplom_photo: result.uri });
     }
-    let res = result.uri.split('.')
-    let type = res[res.length - 1]
+
 
     this.form_data.append("diplom_photo", {
       uri: result.uri,
@@ -87,12 +86,10 @@ export default class RegistrationUserScreenComponent extends Component {
       quality: 1,
     });
 
-    console.log(result, 'img');
     if (!result.cancelled) {
       this.setState({ selfi_photo: result.uri });
     }
-    let res = result.uri.split('.')
-    let type = res[res.length - 1]
+
 
     this.form_data.append("selfi_photo", {
       uri: result.uri,
@@ -121,8 +118,8 @@ export default class RegistrationUserScreenComponent extends Component {
     this.form_data.append('phone', phone);
     this.form_data.append('password', password);
     this.form_data.append('password_confirmation', password_confirmation);
-    this.form_data.append('i_agree', i_agree);
     this.form_data.append('role_id', role_id);
+    this.form_data.append('i_agree', i_agree);
 
     var requestOptions = {
       method: 'POST',
@@ -134,6 +131,7 @@ export default class RegistrationUserScreenComponent extends Component {
     await fetch('http://80.78.246.59/Refectio/public/api/DizainerRegister', requestOptions,)
       .then(response => response.json())
       .then(res => {
+        console.log(res);
         if (res.success === false && res.message == 'Validation errors') {
           if (res.data.hasOwnProperty('name')) {
             this.setState({
@@ -185,30 +183,47 @@ export default class RegistrationUserScreenComponent extends Component {
             })
           }
 
-          // if (res.data.hasOwnProperty('i_agree')) {
-          //   this.setState({
-          //     i_agree_error: true
-          //   })
-          // } else {
-          //   this.setState({
-          //     i_agree_error: false
-          //   })
-          // }
-
           return false;
 
-        } else {
-              
+        }
+        else if (res.status === false && res.message == 'i_agree required true') {
+
+          this.setState({
+            i_agree_error: true
+          })
+
+
+        }
+        else if (res.success === false && res.message == 'phone arledy exist') {
+
+          this.setState({
+            phone_error: true
+          })
+
+
+          return false
+
+        }
+
+
+        else if (res.status === false && res.message == 'user@ chi ancel hamari verifykacia') {
+
+
+          this.props.navigation.navigate('ConfirmTelScreen', {
+            params: res.token
+          })
+
+          return false
+
+        }
+        else {
+
 
           this.props.navigation.navigate('ConfirmTelScreen', {
             params: res.data.token
           })
-          // console.log(this.state.accessToken,'this.state.accessToken');
-          // redirect kodi ej
 
         }
-        console.log(res, 'res');
-        // console.log(this.form_data);
       })
   }
 
@@ -359,11 +374,8 @@ export default class RegistrationUserScreenComponent extends Component {
                 value={this.state.phone}
                 onChangeText={(masked, unmasked, obfuscated) => {
                   this.setState({ phone: masked }); // you can use the unmasked value as well
-                  // console.log(masked); // (99) 99999-9999
-                  // console.log(unmasked); // 99999999999
-                  // console.log(obfuscated); // (99) 99999-9999 (there's no obfuscation on this mask example)
                 }}
-                // mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
+              // mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
               />
             </View>
 
@@ -465,7 +477,6 @@ export default class RegistrationUserScreenComponent extends Component {
               </TouchableOpacity>
               {this.state.diplom_photo == null &&
                 <>
-
                 </>
               }
               {this.state.diplom_photo &&
@@ -531,18 +542,24 @@ export default class RegistrationUserScreenComponent extends Component {
             <View style={styles.checkBox}>
               <TouchableOpacity style={{ marginRight: 10 }} onPress={() => { this.setState({ i_agree: !this.state.i_agree }) }}>
                 <View>
-                  {!this.state.i_agree &&
+                  {this.state.i_agree === false && this.state.i_agree_error === false &&
                     <Svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <Rect x="1" y="1" width="26" height="26" rx="3" stroke="#B5D8FE" stroke-width="2" />
                     </Svg>
 
                   }
-                  {this.state.i_agree &&
+                  {this.state.i_agree_error === true && this.state.i_agree !== true &&
+                    <Svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <Rect x="1" y="1" width="26" height="26" rx="3" stroke="red" stroke-width="2" />
+                    </Svg>
+                  }
+                  {this.state.i_agree === true &&
                     <Svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <Rect width="28" height="28" rx="4" fill="#B5D8FE" />
                       <Path d="M7 15L11.4118 20L22 7" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
                     </Svg>
                   }
+
                 </View>
               </TouchableOpacity>
               <Text
@@ -591,8 +608,8 @@ export default class RegistrationUserScreenComponent extends Component {
               </TouchableOpacity>
             </View>
           </View>
-        </ScrollView>
-      </SafeAreaView>
+        </ScrollView >
+      </SafeAreaView >
     )
   }
 }
