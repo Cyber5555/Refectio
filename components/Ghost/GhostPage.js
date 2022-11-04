@@ -143,7 +143,6 @@ export default class GhostPageComponent extends React.Component {
       fontsLoaded: false,
 
       searchUser: '',
-      searchUserButton: false
     }
 
 
@@ -154,8 +153,7 @@ export default class GhostPageComponent extends React.Component {
 
   getProductsFunction = async () => {
     this.setState({
-      searchUserButton: false,
-      searchUser: ''
+      searchUser: '',
     })
 
 
@@ -277,7 +275,10 @@ export default class GhostPageComponent extends React.Component {
     })
   }
 
-  searchUser = async () => {
+  searchUser = async (text) => {
+    await this.setState({ searchUser: text })
+
+
     let formdata = new FormData();
     formdata.append("company_name", this.state.searchUser);
 
@@ -287,7 +288,7 @@ export default class GhostPageComponent extends React.Component {
       redirect: 'follow'
     };
 
-    fetch("http://80.78.246.59/Refectio/public/api/searchProizvoditel", requestOptions)
+    await fetch("http://80.78.246.59/Refectio/public/api/searchProizvoditel", requestOptions)
       .then(response => response.json())
       .then(res => {
         console.log(res)
@@ -313,7 +314,11 @@ export default class GhostPageComponent extends React.Component {
 
           this.setState({
             getAllProducts: data,
-            searchUserButton: true
+          })
+        }
+        else if (res.status === false) {
+          this.setState({
+            getAllProducts: [],
           })
         }
       })
@@ -406,14 +411,9 @@ export default class GhostPageComponent extends React.Component {
 
           <View style={styles.searchParent}>
             <TouchableOpacity onPress={() => {
-              if (this.state.searchUserButton === false && this.state.searchUser !== '') {
-                this.searchUser()
-              }
-              else {
-                this.getProductsFunction()
-              }
+              this.getProductsFunction()
             }}>
-              {this.state.searchUserButton ?
+              {this.state.searchUser !== '' ?
                 <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <Path d="M1.46343 2.89891C1.39564 2.83476 1.34186 2.7586 1.30518 2.67479C1.26849 2.59097 1.24961 2.50114 1.24961 2.41042C1.24961 2.31969 1.26849 2.22986 1.30518 2.14604C1.34186 2.06223 1.39564 1.98607 1.46343 1.92192C1.53122 1.85777 1.6117 1.80689 1.70027 1.77217C1.78885 1.73745 1.88378 1.71958 1.97965 1.71958C2.07552 1.71958 2.17045 1.73745 2.25902 1.77217C2.3476 1.80689 2.42808 1.85777 2.49587 1.92192L10 9.02439L17.5041 1.92192C17.5719 1.85777 17.6524 1.80689 17.741 1.77217C17.8295 1.73745 17.9245 1.71958 18.0204 1.71958C18.1162 1.71958 18.2112 1.73745 18.2997 1.77217C18.3883 1.80689 18.4688 1.85777 18.5366 1.92192C18.6044 1.98607 18.6581 2.06223 18.6948 2.14604C18.7315 2.22986 18.7504 2.31969 18.7504 2.41042C18.7504 2.50114 18.7315 2.59097 18.6948 2.67479C18.6581 2.7586 18.6044 2.83476 18.5366 2.89891L11.031 10L18.5366 17.1011C18.6044 17.1652 18.6581 17.2414 18.6948 17.3252C18.7315 17.409 18.7504 17.4989 18.7504 17.5896C18.7504 17.6803 18.7315 17.7701 18.6948 17.854C18.6581 17.9378 18.6044 18.0139 18.5366 18.0781C18.4688 18.1422 18.3883 18.1931 18.2997 18.2278C18.2112 18.2626 18.1162 18.2804 18.0204 18.2804C17.9245 18.2804 17.8295 18.2626 17.741 18.2278C17.6524 18.1931 17.5719 18.1422 17.5041 18.0781L10 10.9756L2.49587 18.0781C2.42808 18.1422 2.3476 18.1931 2.25902 18.2278C2.17045 18.2626 2.07552 18.2804 1.97965 18.2804C1.88378 18.2804 1.78885 18.2626 1.70027 18.2278C1.6117 18.1931 1.53122 18.1422 1.46343 18.0781C1.39564 18.0139 1.34186 17.9378 1.30518 17.854C1.26849 17.7701 1.24961 17.6803 1.24961 17.5896C1.24961 17.4989 1.26849 17.409 1.30518 17.3252C1.34186 17.2414 1.39564 17.1652 1.46343 17.1011L8.96902 10L1.46343 2.89891Z" fill="black" />
                 </Svg>
@@ -435,7 +435,9 @@ export default class GhostPageComponent extends React.Component {
                 fontSize: 15,
               }}
               value={this.state.searchUser}
-              onChangeText={(text) => this.setState({ searchUser: text })}
+              onChangeText={(text) => {
+                this.searchUser(text)
+              }}
             />
             <TouchableOpacity
               onPress={() => this.modalState()}>
