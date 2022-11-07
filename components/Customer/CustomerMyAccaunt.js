@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import BlueButton from "../Component/Buttons/BlueButton";
 import { AuthContext } from '../AuthContext/context';
 import * as ImagePicker from 'expo-image-picker';
+import MaskInput from "react-native-mask-input";
 
 
 
@@ -26,8 +27,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
       category_empty_error: false,
       category_empty_error_text: '',
 
-      oblostArray: [],
-      oblostFilter: false,
 
       gorodModal: false,
       gorodArray: [],
@@ -80,18 +79,27 @@ export default class CustomerMyAccauntComponent extends React.Component {
   }
   static contextType = AuthContext
 
-  getRegionApi = async () => {
-    await fetch("http://80.78.246.59/Refectio/public/api/getregion", {
-      method: 'GET'
+  getCityApi = async () => {
+    this.setState({
+      gorodModal: true
     })
-      .then(response => response.json())
+
+    let requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    await fetch("http://80.78.246.59/Refectio/public/api/getCityApi", requestOptions)
+      .then((response) => (response.json()))
       .then((res) => {
-        this.setState({
-          oblostArray: res.data.region,
-          gorodModal: true
-        })
+        console.log(res);
+        if (res.status === true) {
+          this.setState({ sOpenCityDropDown3: !this.state.sOpenCityDropDown3 })
+        }
+        this.setState({ cityItems: res.data.city })
       })
-      .catch(error => error, 'error')
+
+
   }
 
   updatedCities = async () => {
@@ -142,7 +150,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
           this.setState({
             gorodModal: false,
             gorodFilter: false,
-            oblostFilter: false
           })
         }
       })
@@ -841,92 +848,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 </View>
 
 
-                {/* dropDown oblost start*/}
-
-                <View style={styles.gorodFilter}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      position: 'relative',
-                      alignItems: 'center',
-                    }}>
-                    <TouchableOpacity
-                      style={{
-                        borderWidth: 1,
-                        borderColor: '#F5F5F5',
-                        padding: 10,
-                        width: '100%',
-                        borderRadius: 6,
-                        position: 'relative',
-                        height: 45,
-                        marginRight: 12
-
-                      }}
-                      onPress={() => !this.state.oblostFilter ? this.setState({ oblostFilter: true }) : this.setState({ oblostFilter: false })}
-                    >
-                      <Text style={{ color: "#000", fontFamily: 'Poppins_500Medium', }}>Область</Text>
-                      <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
-                        {!this.state.oblostFilter &&
-                          <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                          </Svg>
-                        }
-                        {this.state.oblostFilter &&
-                          <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                          </Svg>
-                        }
-
-                      </View>
-                    </TouchableOpacity>
-
-                  </View>
-                  <View
-                    style={this.state.oblostFilter ? styles.setGorodFilterActive : styles.setGorodFilter}>
-                    <ScrollView nestedScrollEnabled={true} >
-                      {
-                        this.state.oblostArray.map((item, index) => {
-                          return (
-                            <TouchableOpacity
-                              key={index}
-                              style={{
-                                width: '100%',
-                                justifyContent: 'center',
-                                textAlign: 'left',
-                              }}
-                              onPress={() => {
-
-                                let formdata = new FormData();
-                                formdata.append("region_id", item.id);
-
-                                let requestOptions = {
-                                  method: 'POST',
-                                  body: formdata,
-                                  redirect: 'follow'
-                                };
-
-                                fetch("http://80.78.246.59/Refectio/public/api/getCity", requestOptions)
-                                  .then((response) => (response.json()))
-                                  .then((res) => this.setState({
-                                    cityItems: res.data.city,
-                                    oblostFilter: false
-                                  }))
-                              }}
-                            >
-                              <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
-                                {item.name}
-                              </Text>
-
-                            </TouchableOpacity>
-                          )
-                        })
-                      }
-                    </ScrollView>
-                  </View>
-                </View>
-
-                {/* dropDown oblost end */}
-
 
 
 
@@ -950,7 +871,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                         marginRight: 12
 
                       }}
-                      onPress={() => !this.state.gorodFilter ? this.setState({ gorodFilter: true }) : this.setState({ gorodFilter: false })}
+                      onPress={() => this.setState({ gorodFilter: !this.state.gorodFilter })}
                     >
                       <Text style={{ color: "#000", fontFamily: 'Poppins_500Medium', }}>Города</Text>
                       <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
@@ -1879,7 +1800,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    this.getRegionApi()
+                    this.getCityApi()
                   }}>
                   <Image
                     source={require('../../assets/image/ep_edit.png')}
@@ -1994,11 +1915,12 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
                         <Text style={styles.procentText}>От</Text>
 
-                        <TextInput
+                        <MaskInput
                           editable={false}
                           keyboardType={'number-pad'}
                           style={styles.procentInput}
                           value={item.start_price}
+                          mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                         />
 
                         <View style={styles.rubli}>
@@ -2009,12 +1931,13 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
                         <Text style={styles.procentText}>До</Text>
 
-                        <TextInput
+                        <MaskInput
                           maxLength={10}
                           keyboardType="number-pad"
                           style={styles.procentInput}
                           value={item.before_price}
                           editable={false}
+                          mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                         />
 
                         <View style={styles.rubli}>
@@ -2032,8 +1955,8 @@ export default class CustomerMyAccauntComponent extends React.Component {
                             value={item.percent}
                             editable={false}
                             style={{
-                              fontSize: 14,
-                              fontFamily: 'Poppins_500Medium',
+                              fontSize: 13,
+                              fontFamily: 'Poppins_400Regular',
                               color: '#888888',
                             }}
                           />
@@ -2124,13 +2047,22 @@ export default class CustomerMyAccauntComponent extends React.Component {
                             <Text style={styles.procentText}>От</Text>
 
                             <TextInput
+
+                            />
+
+                            <MaskInput
                               editable={index === 0 ? false : true}
+                              underlineColorAndroid="transparent"
+                              maxLength={10}
                               keyboardType={'number-pad'}
                               style={styles.procentInput}
+                              placeholder="5.000.000"
+                              placeholderTextColor={'#aaaaaa'}
                               value={item.start_price}
                               onChangeText={async (value) => {
                                 this.changeTo(value, index)
                               }}
+                              mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                             />
 
                             <View style={styles.rubli}>
@@ -2141,15 +2073,18 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
                             <Text style={styles.procentText}>До</Text>
 
-                            <TextInput
+                            <MaskInput
+                              underlineColorAndroid="transparent"
                               maxLength={10}
-                              keyboardType="number-pad"
+                              keyboardType={'number-pad'}
                               style={styles.procentInput}
+                              placeholder="5.000.000"
+                              placeholderTextColor={'#aaaaaa'}
                               value={item.before_price}
                               onChangeText={async (value) => {
                                 this.changeFrom(value, index)
                               }}
-
+                              mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                             />
 
                             <View style={styles.rubli}>
@@ -2165,6 +2100,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                                 keyboardType="number-pad"
                                 maxLength={2}
                                 value={item.percent}
+                                style={{color: '#888888', fontSize: 13}}
                                 onChangeText={async (value) => {
                                   this.changePercent(value, index)
 
@@ -2335,8 +2271,8 @@ const styles = StyleSheet.create({
     width: '22%',
     height: '100%',
     paddingLeft: 5,
-    fontSize: 14,
-    fontFamily: 'Poppins_500Medium',
+    fontSize: 13,
+    fontFamily: 'Poppins_400Regular',
     color: '#888888',
     marginRight: 10
   },

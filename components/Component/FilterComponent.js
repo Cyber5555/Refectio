@@ -27,10 +27,10 @@ export default class FilterComponent extends React.Component {
         { companyLogo: require('../../assets/image/category11.png'), category_name: 'Выставочные стенды', filterName: 'Выставочные\nстенды', size: 8, lineHeight: 9.03, id: 13 },
       ],
       rubli: [
-        { icon: require('../../assets/image/rubli1.png'), size: 32, id: 1 },
-        { icon: require('../../assets/image/rubli2.png'), size: 41, id: 2 },
-        { icon: require('../../assets/image/rubli3.png'), size: 52, id: 3 },
-        { icon: require('../../assets/image/rubli4.png'), size: 64, id: 4 }
+        { icon: require('../../assets/image/rubli1.png'), checked: false, size: 32, id: 1 },
+        { icon: require('../../assets/image/rubli2.png'), checked: false, size: 41, id: 2 },
+        { icon: require('../../assets/image/rubli3.png'), checked: false, size: 52, id: 3 },
+        { icon: require('../../assets/image/rubli4.png'), checked: false, size: 64, id: 4 }
       ],
 
       sOpenCityDropDown: false,
@@ -40,7 +40,7 @@ export default class FilterComponent extends React.Component {
 
 
 
-      meshok: '',
+      meshok: [],
       category_name: [],
       city_name: '',
       made_in: [],
@@ -126,20 +126,27 @@ export default class FilterComponent extends React.Component {
       if (item.checked) {
         made_in_result.push(item.made_in_name)
       }
-
     })
-    
+
+
+    let meshok_new = [];
+
+    meshok.forEach((item, index) => {
+      if (item.checked) {
+        meshok_new.push(item.id)
+      }
+    })
 
     let filter_data = {
-      meshok: meshok,
+      meshok: meshok_new.join(','),
       category_name: category_name,
       made_in_result: made_in_result,
       city_name: city_name,
       show_room: show_room,
     };
-
-    this.props.handler(filter_data);
     
+    this.props.handler(filter_data);
+
 
   }
 
@@ -151,6 +158,20 @@ export default class FilterComponent extends React.Component {
     this.getCountry()
   }
 
+  setMeshokInChecked = async (checked_index) => {
+    let { rubli } = this.state;
+
+    rubli.forEach((item, index) => {
+      if (index == checked_index) {
+        item.checked = !item.checked
+      }
+    })
+
+    this.setState({
+      meshok: rubli
+    })
+
+  };
 
 
   setMadeInChecked = async (checked_index) => {
@@ -196,21 +217,11 @@ export default class FilterComponent extends React.Component {
                     return (
                       <TouchableOpacity
                         onPress={async () => {
-                          if (index !== this.state.rubliActive) {
-                            this.setState({
-                              rubliActive: index,
-                              meshok: item.id
-                            })
-                          }
-                          else if (index == this.state.rubliActive) {
-                            this.setState({
-                              rubliActive: null,
-                              meshok: null
-                            })
-                          }
+                          await this.setMeshokInChecked(index);
+
                         }}
                         key={item.id}
-                        style={this.state.rubliActive == index ? styles.rubliActive : styles.rubli}>
+                        style={item.checked ? styles.rubliActive : styles.rubli}>
                         <Image
                           source={item.icon}
                           style={{ width: item.size, height: 17 }}
@@ -579,7 +590,7 @@ export default class FilterComponent extends React.Component {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={{ width: 165, height: 38,marginTop: 20, backgroundColor: '#B5D8FE', justifyContent: 'center', alignItems: 'center', borderRadius: 15 }}
+                style={{ width: 165, height: 38, marginTop: 20, backgroundColor: '#B5D8FE', justifyContent: 'center', alignItems: 'center', borderRadius: 15 }}
                 onPress={() => {
                   this.props.resetFilterData();
                 }}>

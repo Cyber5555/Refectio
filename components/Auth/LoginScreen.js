@@ -5,6 +5,7 @@ import ArrowGrayComponent from "../../assets/image/ArrowGray"
 import BlueButton from "../Component/Buttons/BlueButton";
 
 import { AuthContext } from '../AuthContext/context';
+import MaskInput from "react-native-mask-input";
 
 
 export default class LoginScreenComponent extends Component {
@@ -74,6 +75,15 @@ export default class LoginScreenComponent extends Component {
           } else {
             this.setState({
               pass_error: false
+            })
+          }
+          if (res.message == 'User@   heraxosahamari hastatum chi ancel Levon jan') {
+            this.setState({
+              login_error: true
+            })
+          } else {
+            this.setState({
+              login_error: false
             })
           }
         }
@@ -187,12 +197,15 @@ export default class LoginScreenComponent extends Component {
             <Text style={[styles.fiealdset, { marginTop: 27, }, this.state.login_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
               Номер телефона
             </Text>
-            <TextInput
+            <MaskInput
               underlineColorAndroid="transparent"
               keyboardType="phone-pad"
-              style={[styles.input, this.state.login_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+              placeholder="+7 (975) 991-99-99"
+              style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, },
+              this.state.login_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
               value={this.state.login}
               onChangeText={(text) => this.setState({ login: text })}
+              // mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
             />
           </View>
 

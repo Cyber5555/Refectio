@@ -18,12 +18,6 @@ export default class RegistrationManufacturerComponent extends Component {
       sOpenCityDropDown3: false,
 
 
-
-      regionItems: [],
-      regionChange: '',
-      regionChangeId: null,
-      regionChange_error: false,
-
       cityItems: [],
       sales_city: [],
       sales_city_error: false,
@@ -181,13 +175,13 @@ export default class RegistrationManufacturerComponent extends Component {
 
   changeFrom = (value, index) => {
     let { procentArray } = this.state;
+
     procentArray[index].from = value;
 
     this.setState({
       procentArray: procentArray
     })
   }
-
 
   changePercent = (value, index) => {
     let { procentArray } = this.state;
@@ -298,16 +292,27 @@ export default class RegistrationManufacturerComponent extends Component {
 
 
 
-  getRegionApi = async () => {
-    await fetch("http://80.78.246.59/Refectio/public/api/getregion", {
-      method: 'GET'
-    })
-      .then(response => response.json())
+  getCityApi = async () => {
+
+
+    let requestOptions = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+
+    await fetch("http://80.78.246.59/Refectio/public/api/getCityApi", requestOptions)
+      .then((response) => (response.json()))
       .then((res) => {
-        this.setState({ regionItems: res.data.region })
+        console.log(res);
+        if (res.status === true) {
+          this.setState({ sOpenCityDropDown3: !this.state.sOpenCityDropDown3 })
+        }
+        this.setState({ cityItems: res.data.city })
       })
-      .catch(error => error, 'error')
+
+
   }
+
 
 
   getProductCategory = async () => {
@@ -599,14 +604,13 @@ export default class RegistrationManufacturerComponent extends Component {
 
   componentDidMount() {
     const { navigation } = this.props;
-    this.getRegionApi()
+
     this.getProductCategory()
 
 
 
     this.focusListener = navigation.addListener("focus", () => {
 
-      this.getRegionApi()
       this.getProductCategory()
 
     });
@@ -769,7 +773,7 @@ export default class RegistrationManufacturerComponent extends Component {
                 onChangeText={(masked, unmasked, obfuscated) => {
                   this.setState({ phone: masked }); // you can use the unmasked value as well
                 }}
-              // mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
+                mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
               />
             </View>
 
@@ -980,7 +984,7 @@ export default class RegistrationManufacturerComponent extends Component {
                   borderRadius: 5,
                   position: 'relative',
                 }, this.state.price_of_metr_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
-                onPress={() => !this.state.sOpenCityDropDown ? this.setState({ sOpenCityDropDown: true }) : this.setState({ sOpenCityDropDown: false })}
+                onPress={() => this.setState({ sOpenCityDropDown: !this.state.sOpenCityDropDown })}
               >
                 <Text
                   style={{
@@ -1036,84 +1040,6 @@ export default class RegistrationManufacturerComponent extends Component {
               </View>
             </View>
 
-
-
-
-            {/* dropDown region start*/}
-
-            <View
-              style={{
-                position: 'relative',
-              }}>
-              <Text style={[{ fontFamily: 'Poppins_500Medium', lineHeight: 23, fontSize: 15, marginTop: 27, marginBottom: 5, },
-              this.state.regionChange_error ? { color: 'red' } : { color: '#5B5B5B' }
-              ]}>
-                Область
-              </Text>
-
-              <TouchableOpacity
-                style={{ borderWidth: 1, borderColor: '#F5F5F5', padding: 10, width: '100%', borderRadius: 5, position: 'relative', }}
-                onPress={() => !this.state.sOpenCityDropDown1 ? this.setState({ sOpenCityDropDown1: true }) : this.setState({ sOpenCityDropDown1: false })}
-              >
-                <Text style={{ padding: 5, width: '100%', borderRadius: 5, fontFamily: 'Poppins_500Medium', }}>
-                  {this.state.regionChange}
-                </Text>
-
-                <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
-                  {!this.state.sOpenCityDropDown1 &&
-                    <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </Svg>
-                  }
-                  {this.state.sOpenCityDropDown1 &&
-                    <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                    </Svg>
-                  }
-
-                </View>
-              </TouchableOpacity>
-              <View
-                style={this.state.sOpenCityDropDown1 ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
-                <ScrollView nestedScrollEnabled={true} >
-                  {
-                    this.state.regionItems.map((item, index) => {
-                      return (
-                        <TouchableOpacity
-                          key={index}
-                          style={{
-                            width: '100%',
-                            justifyContent: 'center',
-                            textAlign: 'left',
-                          }}
-                          onPress={() => {
-                            this.setState({ regionChange: item.name, regionChangeId: item.id, sOpenCityDropDown1: false })
-                            let formdata = new FormData();
-                            formdata.append("region_id", item.id);
-
-                            let requestOptions = {
-                              method: 'POST',
-                              body: formdata,
-                              redirect: 'follow'
-                            };
-
-                            fetch("http://80.78.246.59/Refectio/public/api/getCity", requestOptions)
-                              .then((response) => (response.json()))
-                              .then((res) => this.setState({ cityItems: res.data.city }))
-                          }}
-                        >
-                          <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
-                            {item.name}
-                          </Text>
-
-                        </TouchableOpacity>
-                      )
-                    })
-                  }
-                </ScrollView>
-              </View>
-            </View>
-            {/* dropDown region end*/}
 
 
             {/* cityButons start */}
@@ -1201,7 +1127,9 @@ export default class RegistrationManufacturerComponent extends Component {
                 style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, position: 'relative', },
                 this.state.sales_city_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }
                 ]}
-                onPress={() => this.setState({ sOpenCityDropDown3: !this.state.sOpenCityDropDown3 })}
+                onPress={() => {
+                  this.getCityApi()
+                }}
               >
                 <Text style={{ padding: 5, width: '100%', borderRadius: 5, color: '#5B5B5B' }}>
                   указанное количество {this.state.countCity}
@@ -1242,10 +1170,6 @@ export default class RegistrationManufacturerComponent extends Component {
                           <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
                             {item.name}
                           </Text>
-
-
-
-
                         </TouchableOpacity>
                       )
                     })
@@ -1276,7 +1200,7 @@ export default class RegistrationManufacturerComponent extends Component {
 
               <TextInput
                 underlineColorAndroid="transparent"
-                keyboardType="number-pad"
+                // keyboardType="number-pad"
                 style={[{
                   borderWidth: 1,
                   padding: 10,
@@ -1434,7 +1358,7 @@ export default class RegistrationManufacturerComponent extends Component {
                   borderRadius: 5,
                   position: 'relative',
                 }, this.state.show_room_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
-                onPress={() => !this.state.sOpenCityDropDown3 ? this.setState({ sOpenCityDropDown3: true }) : this.setState({ sOpenCityDropDown3: false })}
+                onPress={() => this.setState({ sOpenCityDropDown1: !this.state.sOpenCityDropDown1 })}
               >
                 <Text
                   style={{
@@ -1447,13 +1371,13 @@ export default class RegistrationManufacturerComponent extends Component {
                 </Text>
                 <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
                   {
-                    !this.state.sOpenCityDropDown3 &&
+                    !this.state.sOpenCityDropDown1 &&
                     <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </Svg>
                   }
                   {
-                    this.state.sOpenCityDropDown3 &&
+                    this.state.sOpenCityDropDown1 &&
                     <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </Svg>
@@ -1461,7 +1385,7 @@ export default class RegistrationManufacturerComponent extends Component {
                 </View>
               </TouchableOpacity>
               <View
-                style={this.state.sOpenCityDropDown3 ? styles.daNetActive : styles.daNet}>
+                style={this.state.sOpenCityDropDown1 ? styles.daNetActive : styles.daNet}>
                 <ScrollView nestedScrollEnabled={true} >
                   {
                     this.state.show_room_arr.map((item, index) => {
@@ -1475,7 +1399,7 @@ export default class RegistrationManufacturerComponent extends Component {
                             borderBottomWidth: 1,
                             borderBottomColor: '#F5F5F5'
                           }}
-                          onPress={() => this.setState({ show_room: item.name, sOpenCityDropDown3: false })}
+                          onPress={() => this.setState({ show_room: item.name, sOpenCityDropDown1: false })}
                         >
                           <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', color: '#888888' }}>
                             {item.name}
@@ -1516,16 +1440,18 @@ export default class RegistrationManufacturerComponent extends Component {
 
                       <Text style={styles.procentText}>От</Text>
 
-                      <TextInput
+                      <MaskInput
                         editable={index === 0 ? false : true}
                         keyboardType={'number-pad'}
                         style={styles.procentInput}
+                        underlineColorAndroid="transparent"
+                        placeholderTextColor={'#aaaaaa'}
+                        placeholder="5.000.000"
                         value={item.to}
                         onChangeText={async (value) => {
-
-                          // await this.setState({ attttttt: value })
                           this.changeTo(value, index)
                         }}
+                        mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                       />
 
                       <View style={styles.rubli}>
@@ -1536,15 +1462,17 @@ export default class RegistrationManufacturerComponent extends Component {
 
                       <Text style={styles.procentText}>До</Text>
 
-                      <TextInput
-                        maxLength={10}
-                        keyboardType="number-pad"
+                      <MaskInput
+                        keyboardType={'number-pad'}
                         style={styles.procentInput}
+                        underlineColorAndroid="transparent"
+                        placeholder="5.000.000"
+                        placeholderTextColor={'#aaaaaa'}
                         value={item.from}
                         onChangeText={async (value) => {
                           this.changeFrom(value, index)
                         }}
-
+                        mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                       />
 
                       <View style={styles.rubli}>
@@ -1759,7 +1687,7 @@ const styles = StyleSheet.create({
     height: '100%',
     paddingLeft: 5,
     fontSize: 14,
-    fontFamily: 'Poppins_500Medium',
+    fontFamily: 'Poppins_400Regular',
     color: '#888888',
     marginRight: 10
   },

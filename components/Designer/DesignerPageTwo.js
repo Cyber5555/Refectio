@@ -5,6 +5,7 @@ import Slider from "../slider/Slider";
 import DesignerPageNavComponent from "./DesignerPageNav";
 import BlueButton from "../../components/Component/Buttons/BlueButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Slider2 from "../slider/Slider2";
 
 
 export default class DesignerPageTwoComponent extends React.Component {
@@ -1165,7 +1166,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                 this.state.products.map((item, index) => {
                   return (
                     <View key={index} style={{ marginTop: 18 }}>
-                      <Slider slid={item.product_image} />
+                      <Slider2 slid={item.product_image} />
                       <Text style={{ fontFamily: 'Raleway_700Bold', fontSize: 13, marginTop: 6 }}>{item.name}</Text>
                       <Text style={styles.zakazInfo}>Фасады : {item.facades}</Text>
                       <Text style={styles.zakazInfo}>Корпус: {item.frame}</Text>

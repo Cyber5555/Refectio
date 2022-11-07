@@ -5,6 +5,7 @@ import Slider from "../slider/Slider";
 import GhostNavComponent from "./GhostNav";
 import BlueButton from "../Component/Buttons/BlueButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Slider2 from "../slider/Slider2";
 
 
 
@@ -55,7 +56,7 @@ export default class GhostPageTwoComponent extends React.Component {
 
 
 
- 
+
 
 
   getObjectData = async () => {
@@ -79,7 +80,7 @@ export default class GhostPageTwoComponent extends React.Component {
 
 
 
- 
+
 
 
   updateProduct = async (category_name) => {
@@ -441,9 +442,10 @@ export default class GhostPageTwoComponent extends React.Component {
               </View>
               {
                 this.state.products.map((item, index) => {
+                  console.log(item);
                   return (
                     <View key={index} style={{ marginTop: 18 }}>
-                      <Slider slid={item.product_image} />
+                      <Slider2 slid={item.product_image} />
                       <Text style={{ fontFamily: 'Raleway_700Bold', fontSize: 13, marginTop: 6 }}>{item.name}</Text>
                       <Text style={styles.zakazInfo}>Фасады : {item.facades}</Text>
                       <Text style={styles.zakazInfo}>Корпус: {item.frame}</Text>

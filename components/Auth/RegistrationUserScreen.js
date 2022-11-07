@@ -375,7 +375,7 @@ export default class RegistrationUserScreenComponent extends Component {
                 onChangeText={(masked, unmasked, obfuscated) => {
                   this.setState({ phone: masked }); // you can use the unmasked value as well
                 }}
-              // mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
+                mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
               />
             </View>
 
@@ -511,7 +511,7 @@ export default class RegistrationUserScreenComponent extends Component {
                   fontFamily: 'Raleway_400Regular',
                 }}
               >
-                (Можно,чтобы не видно было номер паспорта)
+                (Можно, чтобы не видно было номер паспорта)
               </Text>
             </View>
             <View style={{ flexDirection: "row", alignItems: 'center' }}>
