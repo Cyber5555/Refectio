@@ -167,6 +167,6 @@ const styles = StyleSheet.create({
   modalSliderStyle: {
     full_height,
     width,
-    resizeMode: "cover"
+    resizeMode: "contain"
   }
 });

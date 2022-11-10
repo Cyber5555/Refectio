@@ -237,7 +237,7 @@ export default class ConfirmTelScreenComponent extends Component {
     this.callToPhone()
 
     this.focusListener = navigation.addListener("focus", () => {
-      
+
       this.callToPhone()
 
       clearInterval(this.interval);
@@ -383,8 +383,8 @@ export default class ConfirmTelScreenComponent extends Component {
                 lineHeight: 17.61,
                 fontFamily: 'Poppins_400Regular'
               }}>
-              На ваш номер телефона осуществлён звонок,
-              Пожалуйста введите последние 4 цыфры
+              На ваш номер осуществлён звонок.
+              Пожалуйста, введите последние 4 цифры.
             </Text>
           </View>
 

@@ -33,6 +33,7 @@ export default class RegistrationManufacturerComponent extends Component {
 
       phone: '',
       phone_error: false,
+      phone_exist: false,
 
       individual_number: '',
       individual_number_error: false,
@@ -58,7 +59,9 @@ export default class RegistrationManufacturerComponent extends Component {
       price_of_metr_error: false,
 
       saite: '',
-      saite_error: false,
+
+      telegram: '',
+
 
       show_room_arr: [
         { name: 'Да', id: 1 },
@@ -85,7 +88,7 @@ export default class RegistrationManufacturerComponent extends Component {
       procentArray: [
         {
           to: '0',
-          from: '',
+          from: '9.999.999',
           percent: ''
         },
       ],
@@ -303,7 +306,6 @@ export default class RegistrationManufacturerComponent extends Component {
     await fetch("http://80.78.246.59/Refectio/public/api/getCityApi", requestOptions)
       .then((response) => (response.json()))
       .then((res) => {
-        console.log(res);
         if (res.status === true) {
           this.setState({ sOpenCityDropDown3: !this.state.sOpenCityDropDown3 })
         }
@@ -327,7 +329,6 @@ export default class RegistrationManufacturerComponent extends Component {
   }
 
 
-
   form_data = new FormData();
 
 
@@ -335,7 +336,7 @@ export default class RegistrationManufacturerComponent extends Component {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [4, 4],
       quality: 1,
     });
     if (!result.cancelled) {
@@ -424,6 +425,7 @@ export default class RegistrationManufacturerComponent extends Component {
     this.form_data.append("made_in", made_in);
     this.form_data.append("price_of_metr", price_of_metr);
     this.form_data.append("saite", saite);
+    this.form_data.append("telegram", this.state.telegram);
     this.form_data.append("show_room", show_room);
     this.form_data.append("sales_city[]", new_sales_city);
     this.form_data.append("product_category[]", new_product_category);
@@ -441,7 +443,7 @@ export default class RegistrationManufacturerComponent extends Component {
 
     fetch("http://80.78.246.59/Refectio/public/api/RegisterManufacturerUser", requestOptions)
       .then(response => response.json())
-      .then(res => {
+      .then(async res => {
         console.log(res, 'registerrrrrr');
         if (res.success === false && res.message == 'Validation errors') {
 
@@ -555,6 +557,7 @@ export default class RegistrationManufacturerComponent extends Component {
             })
           }
 
+          this.form_data = new FormData()
 
           return false;
 
@@ -564,15 +567,25 @@ export default class RegistrationManufacturerComponent extends Component {
             phone_error: true
           })
 
+          this.form_data = new FormData()
 
           return false
 
+        }
+        else if (res.status === false && res.message == 'phone arledy exist') {
+          this.setState({
+            phone_exist: true
+          })
+          this.form_data = new FormData()
+
+          return false
         }
         else if (res.status === false && res.message == 'i_agree required true') {
 
           this.setState({
             i_agree_error: true
           })
+          this.form_data = new FormData()
 
 
         }
@@ -583,6 +596,7 @@ export default class RegistrationManufacturerComponent extends Component {
           this.props.navigation.navigate('ConfirmTelScreen', {
             params: res.token
           })
+          this.form_data = new FormData()
 
           return false
 
@@ -590,11 +604,12 @@ export default class RegistrationManufacturerComponent extends Component {
         else {
 
 
-
+          await this.clearAllStates();
 
           this.props.navigation.navigate('ConfirmTelScreen', {
             params: res.data.token
           })
+
 
         }
       })
@@ -606,12 +621,13 @@ export default class RegistrationManufacturerComponent extends Component {
     const { navigation } = this.props;
 
     this.getProductCategory()
-
+    this.clearAllStates()
 
 
     this.focusListener = navigation.addListener("focus", () => {
 
       this.getProductCategory()
+      this.clearAllStates()
 
     });
   }
@@ -622,12 +638,103 @@ export default class RegistrationManufacturerComponent extends Component {
       this.focusListener();
       console.log(' END')
     }
+
   }
 
 
 
 
-  goToRegistredScreen = () => {
+  clearAllStates = async () => {
+    await this.setState({
+      sOpenCityDropDown: false,
+      sOpenCityDropDown1: false,
+      sOpenCityDropDown2: false,
+      sOpenCityDropDown3: false,
+
+
+      cityItems: [],
+      sales_city: [],
+      sales_city_error: false,
+      cityChange: '',
+
+      getProductCategory: [],
+      category: '',
+
+      logo: null,
+
+      company_name: '',
+      company_name_error: false,
+
+      phone: '',
+      phone_error: false,
+      phone_exist: false,
+
+      individual_number: '',
+      individual_number_error: false,
+
+      password: '',
+      password_error: false,
+
+      password_confirmation: '',
+      password_confirmation_error: false,
+
+      watsap_phone: '',
+      watsap_phone_error: false,
+
+      i_agree: false,
+      i_agree_error: false,
+
+      made_in_array: [],
+      made_in_select: false,
+      made_in: '',
+      made_in_error: false,
+
+      price_of_metr: '',
+      price_of_metr_error: false,
+
+      saite: '',
+      telegram: '',
+
+      show_room_arr: [
+        { name: 'Да', id: 1 },
+        { name: 'Нет', id: 2 }
+      ],
+      show_room: '',
+      show_room_error: false,
+
+      percent_bonus: [],
+      percent_bonus_error: false,
+
+      product_category: [],
+      product_category_error: false,
+
+      item_id: null,
+
+      accessToken: null,
+
+
+
+      count: 0,
+      countCity: 0,
+
+      procentArray: [
+        {
+          to: '0',
+          from: '9.999.999',
+          percent: ''
+        },
+      ],
+      procentArrayToString: [],
+
+      valid_error: false
+    })
+
+    this.form_data = new FormData();
+
+  }
+
+  goToRegistredScreen = async () => {
+    await this.clearAllStates()
     this.props.navigation.navigate('RegisteredScreen')
   }
 
@@ -758,9 +865,9 @@ export default class RegistrationManufacturerComponent extends Component {
                   color: '#5B5B5B',
                   marginTop: 27,
                   marginBottom: 5
-                }, this.state.phone_error ? { color: 'red' } : { color: '#5B5B5B' }]}
+                }, this.state.phone_error || this.state.phone_exist ? { color: 'red' } : { color: '#5B5B5B' }]}
               >
-                Номер телефона
+                {this.state.phone_exist ? 'Этот телефонный номер уже зарегистрирован за другим пользователем' : 'Номер телефона'}
               </Text>
 
               <MaskInput
@@ -773,7 +880,7 @@ export default class RegistrationManufacturerComponent extends Component {
                 onChangeText={(masked, unmasked, obfuscated) => {
                   this.setState({ phone: masked }); // you can use the unmasked value as well
                 }}
-                mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
+              // mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
               />
             </View>
 
@@ -789,7 +896,7 @@ export default class RegistrationManufacturerComponent extends Component {
               >
                 Номер Whatsapp-для запроса стоимости
               </Text>
-              <TextInput
+              <MaskInput
                 underlineColorAndroid="transparent"
                 keyboardType="phone-pad"
                 style={[{
@@ -798,8 +905,12 @@ export default class RegistrationManufacturerComponent extends Component {
                   width: '100%',
                   borderRadius: 5,
                 }, this.state.watsap_phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+                placeholder="+7 (975) 991-99-99"
                 value={this.state.watsap_phone}
-                onChangeText={(value) => { this.setState({ watsap_phone: value }) }}
+                onChangeText={(value) => {
+                  this.setState({ watsap_phone: value })
+                }}
+                mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
               />
             </View>
 
@@ -974,7 +1085,7 @@ export default class RegistrationManufacturerComponent extends Component {
                 marginTop: 27,
                 marginBottom: 5,
               }, this.state.product_category_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
-                Категория продукта
+                Категория продукции
               </Text>
               <TouchableOpacity
                 style={[{
@@ -1236,6 +1347,8 @@ export default class RegistrationManufacturerComponent extends Component {
                   width: '100%',
                   borderRadius: 5,
                 }}
+                value={this.state.saite}
+                onChangeText={(text) => this.setState({ saite: text })}
               />
 
             </View>
@@ -1262,6 +1375,8 @@ export default class RegistrationManufacturerComponent extends Component {
                   width: '100%',
                   borderRadius: 5,
                 }}
+                value={this.state.telegram}
+                onChangeText={(text) => this.setState({ telegram: text })}
               />
 
             </View>
@@ -1279,7 +1394,7 @@ export default class RegistrationManufacturerComponent extends Component {
                 this.state.password_error ? { color: 'red', } : { color: '#5B5B5B', }
                 ]}
               >
-                Пароль
+                Пароль (минимум 6 символов).
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"
@@ -1446,7 +1561,7 @@ export default class RegistrationManufacturerComponent extends Component {
                         style={styles.procentInput}
                         underlineColorAndroid="transparent"
                         placeholderTextColor={'#aaaaaa'}
-                        placeholder="5.000.000"
+                        placeholder="0"
                         value={item.to}
                         onChangeText={async (value) => {
                           this.changeTo(value, index)
@@ -1463,10 +1578,11 @@ export default class RegistrationManufacturerComponent extends Component {
                       <Text style={styles.procentText}>До</Text>
 
                       <MaskInput
+                        editable={index === 0 ? false : true}
                         keyboardType={'number-pad'}
                         style={styles.procentInput}
                         underlineColorAndroid="transparent"
-                        placeholder="5.000.000"
+                        placeholder="9.999.999"
                         placeholderTextColor={'#aaaaaa'}
                         value={item.from}
                         onChangeText={async (value) => {
@@ -1489,6 +1605,7 @@ export default class RegistrationManufacturerComponent extends Component {
                           maxLength={2}
                           value={item.percent}
                           style={{ width: '100%', height: '100%' }}
+                          placeholder={'99'}
                           onChangeText={async (value) => {
                             this.changePercent(value, index)
                           }}

@@ -63,7 +63,6 @@ export default class RegistrationUserScreenComponent extends Component {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
     });
     if (!result.cancelled) {
@@ -82,7 +81,6 @@ export default class RegistrationUserScreenComponent extends Component {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 1,
     });
 
@@ -113,7 +111,7 @@ export default class RegistrationUserScreenComponent extends Component {
     } = this.state
 
 
-    this.form_data.append('name', this.state.name);
+    this.form_data.append('name', name);
     this.form_data.append('surname', surname);
     this.form_data.append('phone', phone);
     this.form_data.append('password', password);
@@ -393,7 +391,7 @@ export default class RegistrationUserScreenComponent extends Component {
                 this.state.password_error ? { color: 'red', } : { color: '#5B5B5B', }
                 ]}
               >
-                Пароль
+                Пароль (минимум 6 символов).
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"
