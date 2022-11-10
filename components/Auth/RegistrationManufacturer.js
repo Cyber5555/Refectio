@@ -88,7 +88,7 @@ export default class RegistrationManufacturerComponent extends Component {
       procentArray: [
         {
           to: '0',
-          from: '9.999.999',
+          from: 'datark',
           percent: ''
         },
       ],
@@ -119,14 +119,14 @@ export default class RegistrationManufacturerComponent extends Component {
     let { procentArray } = this.state;
 
     procentArray.push({
-      to: '',
-      from: '',
+      to: 'datark',
+      from: 'datark',
       percent: ''
     })
-    let newProcentArray = procentArray;
+
 
     this.setState({
-      procentArray: newProcentArray
+      procentArray: procentArray
     })
   }
 
@@ -139,10 +139,11 @@ export default class RegistrationManufacturerComponent extends Component {
 
     for (let i = 0; i < procentArray.length; i++) {
 
-      if (procentArray[i].to == '' || procentArray[i].from == '' || procentArray[i].percent == '') {
+      if (procentArray[i].percent == '') {
         valid_error = true;
         break;
       }
+
 
       let resultString = procentArray[i].to + '^' + procentArray[i].from + '^' + procentArray[i].percent
       result.push(resultString)
@@ -188,6 +189,7 @@ export default class RegistrationManufacturerComponent extends Component {
 
   changePercent = (value, index) => {
     let { procentArray } = this.state;
+
     procentArray[index].percent = value;
 
     this.setState({
@@ -260,40 +262,6 @@ export default class RegistrationManufacturerComponent extends Component {
   }
 
 
-  procent = async (items, ids) => {
-    let filterSort = this.state.product_category;
-    let find = true
-    filterSort.find((item) => {
-      if (item.id == ids) {
-        find = false
-      }
-    })
-    if (find) {
-      filterSort.push({ name: items, id: ids })
-      this.setState({ count: this.state.count + 1 });
-    }
-    await this.setState({ product_category: filterSort })
-  }
-
-  procentRemove = (items) => {
-    let filterSort = this.state.product_category
-    let find = false
-    filterSort.find((item) => {
-      if (item == items) {
-        find = true
-      }
-    })
-    if (find) {
-      const index = filterSort.indexOf(items);
-      filterSort.splice(index, 1);
-      this.setState({ count: this.state.count - 1 });
-    }
-    this.setState({ product_category: filterSort })
-
-  }
-
-
-
 
   getCityApi = async () => {
 
@@ -342,8 +310,6 @@ export default class RegistrationManufacturerComponent extends Component {
     if (!result.cancelled) {
       this.setState({ logo: result.uri });
     }
-    let res = result.uri.split('.')
-    let type = res[res.length - 1]
 
     this.form_data.append("logo", {
       uri: result.uri,
@@ -432,7 +398,7 @@ export default class RegistrationManufacturerComponent extends Component {
     this.form_data.append("percent_bonus[]", this.state.procentArrayToString);
 
 
-
+    console.log(this.form_data);
 
     var requestOptions = {
       method: 'POST',
@@ -444,7 +410,6 @@ export default class RegistrationManufacturerComponent extends Component {
     fetch("http://80.78.246.59/Refectio/public/api/RegisterManufacturerUser", requestOptions)
       .then(response => response.json())
       .then(async res => {
-        console.log(res, 'registerrrrrr');
         if (res.success === false && res.message == 'Validation errors') {
 
           if (res.data.hasOwnProperty('company_name')) {
@@ -621,13 +586,11 @@ export default class RegistrationManufacturerComponent extends Component {
     const { navigation } = this.props;
 
     this.getProductCategory()
-    this.clearAllStates()
 
 
     this.focusListener = navigation.addListener("focus", () => {
 
       this.getProductCategory()
-      this.clearAllStates()
 
     });
   }
@@ -720,7 +683,7 @@ export default class RegistrationManufacturerComponent extends Component {
       procentArray: [
         {
           to: '0',
-          from: '9.999.999',
+          from: 'datark',
           percent: ''
         },
       ],
@@ -880,7 +843,7 @@ export default class RegistrationManufacturerComponent extends Component {
                 onChangeText={(masked, unmasked, obfuscated) => {
                   this.setState({ phone: masked }); // you can use the unmasked value as well
                 }}
-              // mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
+                mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
               />
             </View>
 
@@ -1561,10 +1524,10 @@ export default class RegistrationManufacturerComponent extends Component {
                         style={styles.procentInput}
                         underlineColorAndroid="transparent"
                         placeholderTextColor={'#aaaaaa'}
-                        placeholder="0"
+                        placeholder={''}
                         value={item.to}
                         onChangeText={async (value) => {
-                          this.changeTo(value, index)
+                          await this.changeTo(value, index)
                         }}
                         mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                       />
@@ -1578,15 +1541,15 @@ export default class RegistrationManufacturerComponent extends Component {
                       <Text style={styles.procentText}>До</Text>
 
                       <MaskInput
-                        editable={index === 0 ? false : true}
+                        editable={this.state.procentArray.length <= 1 ? false : true}
                         keyboardType={'number-pad'}
                         style={styles.procentInput}
                         underlineColorAndroid="transparent"
-                        placeholder="9.999.999"
+                        placeholder={this.state.procentArray.length <= 1 ? '9.999.999' : ''}
                         placeholderTextColor={'#aaaaaa'}
                         value={item.from}
                         onChangeText={async (value) => {
-                          this.changeFrom(value, index)
+                          await this.changeFrom(value, index)
                         }}
                         mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                       />
@@ -1598,14 +1561,13 @@ export default class RegistrationManufacturerComponent extends Component {
                       </View>
 
                       <View
-                        style={styles.procent}
+                        style={[styles.procent, this.state.valid_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                       >
                         <TextInput
                           keyboardType="number-pad"
                           maxLength={2}
                           value={item.percent}
                           style={{ width: '100%', height: '100%' }}
-                          placeholder={'99'}
                           onChangeText={async (value) => {
                             this.changePercent(value, index)
                           }}

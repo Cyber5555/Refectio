@@ -71,7 +71,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
       procentArray: [
         {
           start_price: '0',
-          before_price: '',
+          before_price: 'datark',
           percent: ''
         },
       ],
@@ -360,8 +360,8 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
 
     procentArray.push({
-      start_price: '',
-      before_price: '',
+      start_price: 'datark',
+      before_price: 'datark',
       percent: ''
     })
     let newProcentArray = procentArray;
@@ -381,7 +381,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
     for (let i = 0; i < procentArray.length; i++) {
 
-      if (procentArray[i].start_price == '' || procentArray[i].before_price == '' || procentArray[i].percent == '') {
+      if (procentArray[i].percent == '') {
         valid_error = true;
         break;
       }
@@ -1920,6 +1920,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                           keyboardType={'number-pad'}
                           style={styles.procentInput}
                           value={item.start_price}
+                          placeholder={''}
                           mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                         />
 
@@ -1936,6 +1937,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                           keyboardType="number-pad"
                           style={styles.procentInput}
                           value={item.before_price}
+                          placeholder={this.state.procentArray.length <= 1 ? '9.999.999' : ''}
                           editable={false}
                           mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                         />
@@ -2050,20 +2052,21 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
                             />
 
+
                             <MaskInput
                               editable={index === 0 ? false : true}
-                              underlineColorAndroid="transparent"
-                              maxLength={10}
                               keyboardType={'number-pad'}
                               style={styles.procentInput}
-                              placeholder="5.000.000"
+                              underlineColorAndroid="transparent"
                               placeholderTextColor={'#aaaaaa'}
+                              placeholder={''}
                               value={item.start_price}
                               onChangeText={async (value) => {
-                                this.changeTo(value, index)
+                                await this.changeTo(value, index)
                               }}
                               mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                             />
+
 
                             <View style={styles.rubli}>
                               <Svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2073,16 +2076,18 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
                             <Text style={styles.procentText}>До</Text>
 
+
+
                             <MaskInput
-                              underlineColorAndroid="transparent"
-                              maxLength={10}
+                              editable={this.state.procentArray.length <= 1 ? false : true}
                               keyboardType={'number-pad'}
                               style={styles.procentInput}
-                              placeholder="5.000.000"
+                              underlineColorAndroid="transparent"
+                              placeholder={this.state.procentArray.length <= 1 ? '9.999.999' : ''}
                               placeholderTextColor={'#aaaaaa'}
-                              value={item.before_price}
+                              value={this.state.procentArray.length <= 1 ? '9.999.999' : item.before_price}
                               onChangeText={async (value) => {
-                                this.changeFrom(value, index)
+                                await this.changeFrom(value, index)
                               }}
                               mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                             />
@@ -2094,13 +2099,13 @@ export default class CustomerMyAccauntComponent extends React.Component {
                             </View>
 
                             <View
-                              style={styles.procent}
+                              style={[styles.procent, this.state.valid_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                             >
                               <TextInput
                                 keyboardType="number-pad"
                                 maxLength={2}
                                 value={item.percent}
-                                style={{color: '#888888', fontSize: 13}}
+                                style={{ color: '#888888', fontSize: 13 }}
                                 onChangeText={async (value) => {
                                   this.changePercent(value, index)
 

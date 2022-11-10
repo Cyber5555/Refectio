@@ -6,6 +6,7 @@ import DesignerPageNavComponent from "./DesignerPageNav";
 import BlueButton from "../../components/Component/Buttons/BlueButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Slider2 from "../slider/Slider2";
+import MaskInput from "react-native-mask-input";
 
 
 export default class DesignerPageTwoComponent extends React.Component {
@@ -503,12 +504,16 @@ export default class DesignerPageTwoComponent extends React.Component {
 
                           <Text style={styles.procentText}>От</Text>
 
-                          <TextInput
+
+                          <MaskInput
                             editable={false}
                             keyboardType={'number-pad'}
                             style={styles.procentInput}
                             value={item.start_price}
+                            placeholder={''}
+                            mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                           />
+
                           <View style={styles.rubli}>
                             <Svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <Path d="M6.285 8.99997C7.37392 9.02686 8.42909 8.62091 9.21919 7.8711C10.0093 7.1213 10.4699 6.08881 10.5 4.99997C10.4699 3.91113 10.0093 2.87865 9.21919 2.12884C8.42909 1.37904 7.37392 0.973087 6.285 0.999974H2C1.86739 0.999974 1.74021 1.05265 1.64645 1.14642C1.55268 1.24019 1.5 1.36737 1.5 1.49997V7.99997H0.5C0.367392 7.99997 0.240215 8.05265 0.146447 8.14642C0.0526785 8.24019 0 8.36736 0 8.49997C0 8.63258 0.0526785 8.75976 0.146447 8.85353C0.240215 8.9473 0.367392 8.99997 0.5 8.99997H1.5V9.99997H0.5C0.367392 9.99997 0.240215 10.0527 0.146447 10.1464C0.0526785 10.2402 0 10.3674 0 10.5C0 10.6326 0.0526785 10.7598 0.146447 10.8535C0.240215 10.9473 0.367392 11 0.5 11H1.5V14.5C1.5 14.6326 1.55268 14.7598 1.64645 14.8535C1.74021 14.9473 1.86739 15 2 15C2.13261 15 2.25979 14.9473 2.35355 14.8535C2.44732 14.7598 2.5 14.6326 2.5 14.5V11H7C7.13261 11 7.25979 10.9473 7.35355 10.8535C7.44732 10.7598 7.5 10.6326 7.5 10.5C7.5 10.3674 7.44732 10.2402 7.35355 10.1464C7.25979 10.0527 7.13261 9.99997 7 9.99997H2.5V8.99997H6.285ZM2.5 1.99997H6.285C7.10839 1.9743 7.90853 2.27531 8.51083 2.83733C9.11313 3.39935 9.46872 4.17677 9.5 4.99997C9.47001 5.82362 9.11483 6.60182 8.51223 7.16412C7.90964 7.72642 7.10875 8.02698 6.285 7.99997H2.5V1.99997Z" fill="#888888" />
@@ -517,12 +522,17 @@ export default class DesignerPageTwoComponent extends React.Component {
 
                           <Text style={styles.procentText}>До</Text>
 
-                          <TextInput
+
+                          <MaskInput
+                            maxLength={10}
                             keyboardType="number-pad"
                             style={styles.procentInput}
-                            editable={false}
                             value={item.before_price}
+                            placeholder={this.state.user_bonus_for_designer.length <= 1 ? '9.999.999' : ''}
+                            editable={false}
+                            mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                           />
+
 
                           <View style={styles.rubli}>
                             <Svg width="11" height="15" viewBox="0 0 11 15" fill="none" xmlns="http://www.w3.org/2000/svg">

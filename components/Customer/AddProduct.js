@@ -124,6 +124,33 @@ export default class AddProductComponent extends React.Component {
       .catch(error => error, 'error')
   }
 
+  clearState = async () => {
+    this.setState({
+
+      name: "",
+      name_error: false,
+
+      frame: "",
+      frame_error: false,
+
+      facades: "",
+      facades_error: false,
+
+      length: "",
+      length_error: false,
+
+      height: "",
+      height_error: false,
+
+      price: "",
+      price_error: false,
+
+      tabletop: "",
+      tabletop_error: false,
+      all_images: [],
+
+    })
+  }
 
 
   sendProduct = async () => {
@@ -172,8 +199,10 @@ export default class AddProductComponent extends React.Component {
           this.setState({
             modalBool: true
           })
+          this.clearState()
           console.log(this.props.id, 'this.props.id')
         }
+        this.formdata = new FormData()
       })
       .catch(error => console.log('error', error));
 
