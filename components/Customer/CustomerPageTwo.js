@@ -559,7 +559,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                     height: 24,
                     paddingLeft: 5,
                   }}
-                  onPress={() => !this.state.sOpenCityDropDown ? this.setState({ sOpenCityDropDown: true }) : this.setState({ sOpenCityDropDown: false })}
+                  onPress={() => this.setState({ sOpenCityDropDown: !this.state.sOpenCityDropDown })}
                 >
                   <Text style={{ fontFamily: 'Raleway_400Regular', }}>{this.state.changed}</Text>
                   <View style={{ position: 'absolute', right: 17, bottom: 6 }}>

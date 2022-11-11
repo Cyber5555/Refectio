@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, SafeAreaView, TouchableOpacity, View, Text, ScrollView } from "react-native";
+import Svg, { Path } from "react-native-svg";
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
 
@@ -122,7 +123,9 @@ export default class CheckDesignerComponent extends React.Component {
           rubli: '2,000,000 руб'
         },
 
-      ]
+      ],
+      calichestva: false,
+      changed: 'По кол. покупок'
     }
   }
 
@@ -156,6 +159,93 @@ export default class CheckDesignerComponent extends React.Component {
               Дизайнеры
             </Text>
           </View>
+
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: 15 }}>
+
+            <TouchableOpacity style={{ paddingHorizontal: 24, paddingVertical: 8, backgroundColor: '#378DFE', borderRadius: 10 }}>
+              <Text style={{ fontFamily: 'Raleway_600SemiBold', color: '#fff', fontSize: 15 }}>Мои дизайнеры</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={{ paddingHorizontal: 20, paddingVertical: 8, borderColor: '#E6E6E6', borderWidth: 1, borderRadius: 10 }}
+              onPress={() => {
+                this.props.navigation.navigate('CustomerRewards')
+              }}>
+              <Text style={{ fontFamily: 'Raleway_600SemiBold', color: '#333333', fontSize: 15 }}>Вознаграждения</Text>
+            </TouchableOpacity>
+
+          </View>
+
+
+
+
+          <View
+            style={{
+              position: 'relative',
+              marginTop: 9,
+              marginBottom: 15,
+              height: 30
+            }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#F5F5F5',
+                width: 165,
+                borderRadius: 5,
+                position: 'relative',
+                justifyContent: 'center',
+                height: '100%',
+                paddingLeft: 12,
+                paddingBottom: 3,
+                marginLeft: 5,
+              }}
+              onPress={() => {
+                this.setState({ calichestva: !this.state.calichestva })
+              }}>
+
+              <Text style={{ fontFamily: 'Raleway_400Regular', }}>{this.state.changed}</Text>
+
+              <View style={{ position: 'absolute', right: 12, bottom: 8 }}>
+                {!this.state.calichestva &&
+                  <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </Svg>
+                }
+                {this.state.calichestva &&
+                  <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  </Svg>
+                }
+              </View>
+
+            </TouchableOpacity>
+            <View
+              style={this.state.calichestva ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
+              <ScrollView nestedScrollEnabled={true}>
+                {/* {
+                  this.state.city_for_sales_user.map((item, index) => {
+                    return (
+                      <TouchableOpacity
+                        key={index}
+                        style={{
+                          width: '100%',
+                          justifyContent: 'center',
+                          textAlign: 'left',
+                        }}
+                        onPress={() => this.setState({ changed: item.city_name, sOpenCityDropDown: false })}
+                      >
+                        <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Raleway_400Regular', }}>
+                          {item.city_name}
+                        </Text>
+
+                      </TouchableOpacity>
+                    )
+
+                  })
+                } */}
+              </ScrollView>
+            </View>
+          </View>
+
+
           <ScrollView showsVerticalScrollIndicator={false}>
             <View
               style={{
@@ -314,7 +404,7 @@ export default class CheckDesignerComponent extends React.Component {
           </ScrollView>
         </View>
         <CustomerMainPageNavComponent active_page={'Дизайнеры'} navigation={this.props.navigation} />
-      </SafeAreaView>
+      </SafeAreaView >
     )
   }
 

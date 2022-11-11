@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, ScrollView } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
+import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
 
 
@@ -166,215 +167,209 @@ export default class CustomerRewardsComponent extends Component {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <View style={styles.main}>
-          <Text
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('CustomerMainPage')}
             style={{
-              fontSize: 24,
-              fontFamily: 'Poppins_500Medium',
-              color: '#1571F0',
-              marginVertical: 11,
+              position: 'absolute',
+              top: 10,
+              left: 10,
             }}>
-            Вознаграждения
-          </Text>
+            <ArrowGrayComponent />
+          </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginLeft: 35,
+              marginTop: 13,
+              justifyContent: 'space-between',
+              paddingBottom: 18
+            }}>
+            <Text
+              style={{
+                fontSize: 20,
+                fontFamily: 'Poppins_500Medium',
+                color: '#1571F0'
+              }}>
+              Дизайнеры
+            </Text>
+          </View>
+
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: 15 }}>
+
+            <TouchableOpacity style={{ paddingHorizontal: 24, paddingVertical: 8, borderColor: '#E6E6E6', borderWidth: 1, borderRadius: 10 }}
+              onPress={() => {
+                this.props.navigation.navigate('CheckDesigner')
+              }}>
+              <Text style={{ fontFamily: 'Raleway_600SemiBold', color: '#333333', fontSize: 15 }}>Мои дизайнеры</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={{ paddingHorizontal: 20, paddingVertical: 8, backgroundColor: '#378DFE', borderRadius: 10, }}>
+              <Text style={{ fontFamily: 'Raleway_600SemiBold', color: '#fff', fontSize: 15 }}>Вознаграждения</Text>
+            </TouchableOpacity>
+
+          </View>
+
           <ScrollView showsVerticalScrollIndicator={false}>
-            {this.state.broni.map((item, index) => {
-              return (
-                <View key={index} style={styles.sortMain}>
-                  <View style={styles.sorts}>
+            {
+              this.state.broni.map((item, index) => {
+                return (
+                  <View key={index} style={styles.sortMain}>
+                    <View style={styles.sorts}>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                        }}>
+                        <Text
+                          style={{
+                            fontSize: 25,
+                            fontFamily: 'Poppins_500Medium',
+                            marginRight: 14,
+                            color: '#A8A8A8'
+                          }}>
+                          {item.id}
+                        </Text>
+                        <Text
+                          style={{
+                            marginTop: 6,
+                            color: '#C4C4C4',
+                            fontSize: 20,
+                            fontFamily: 'Poppins_300Light',
+                          }}>
+                          {item.date}
+                        </Text>
+                      </View>
+                      <View key={item.id} style={styles.checkBox}>
+                        <TouchableOpacity
+                          style={{
+                            borderRadius: 5,
+                            overflow: 'hidden',
+                          }}
+                          onPress={() => {
+                            this.enterCheckBox(item.id)
+                          }}>
+                          {this.verifyCheckBox(item.id) === false &&
+                            <Text
+                              style={{
+                                paddingBottom: 7,
+                                paddingTop: 5,
+                                paddingHorizontal: 15,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: '#52A8EF',
+                                color: '#fff',
+                                fontFamily: 'Raleway_600SemiBold',
+                                fontSize: 13,
+                              }}>
+                              Подтвердить
+                            </Text>
+                          }
+                          {this.verifyCheckBox(item.id) === true &&
+                            <Text
+                              style={{
+                                paddingBottom: 7,
+                                paddingTop: 5,
+                                paddingHorizontal: 15,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: '#B5D8FE',
+                                borderRadius: 5,
+                                color: '#fff',
+                                fontFamily: 'Raleway_600SemiBold',
+                                fontSize: 13,
+                              }}>
+                              Оплачено
+                            </Text>
+                          }
+                        </TouchableOpacity>
+                      </View>
+                    </View>
                     <View
                       style={{
                         flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        marginBottom: 2
                       }}>
-                      <Text
-                        style={{
-                          fontSize: 25,
-                          fontFamily: 'Poppins_500Medium',
-                          marginRight: 14,
-                          color: '#1571F0'
-                        }}>
-                        {item.id}
+                      <Text style={{
+                        fontSize: 12,
+                        fontFamily: 'Poppins_500Medium',
+                      }}>
+                        {item.categir}
                       </Text>
-                      <Text
-                        style={{
-                          marginTop: 6,
-                          color: '#C4C4C4',
-                          fontSize: 20,
-                          fontFamily: 'Poppins_300Light',
-                        }}>
-                        {item.date}
+                      <Text style={{
+                        fontSize: 12,
+                        fontFamily: 'Poppins_500Medium',
+                      }}>
+                        {item.stranaa}
                       </Text>
                     </View>
-                    <View key={item.id} style={styles.checkBox}>
-                      <TouchableOpacity
-                        style={{
-                          borderRadius: 5,
-                          overflow: 'hidden',
-                        }}
-                        onPress={() => {
-                          this.enterCheckBox(item.id)
-                        }}>
-                        {this.verifyCheckBox(item.id) === false &&
-                          <Text
-                            style={{
-                              paddingBottom: 7,
-                              paddingTop: 5,
-                              paddingHorizontal: 15,
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              backgroundColor: '#B5D8FE',
-                              color: '#fff',
-                              fontFamily: 'Raleway_600SemiBold',
-                              fontSize: 13,
-                            }}>
-                            Подтвердить
-                          </Text>
-                        }
-                        {this.verifyCheckBox(item.id) === true &&
-                          <Text
-                            style={{
-                              paddingBottom: 7,
-                              paddingTop: 5,
-                              paddingHorizontal: 15,
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              backgroundColor: '#52A8EF',
-                              borderRadius: 5,
-                              color: '#fff',
-                              fontFamily: 'Raleway_600SemiBold',
-                              fontSize: 13,
-                            }}>
-                            Оплачено
-                          </Text>
-                        }
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                      marginBottom: 2
-                    }}>
-                    <Text style={{
-                      fontSize: 12,
-                      fontFamily: 'Poppins_500Medium',
-                    }}>
-                      {item.categir}
-                    </Text>
-                    <Text style={{
-                      fontSize: 12,
-                      fontFamily: 'Poppins_500Medium',
-                    }}>
-                      {item.stranaa}
-                    </Text>
-                  </View>
 
-                  {item.data.map((res, index) => {
-                    return (
-                      <View
-                        key={index}
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}>
-                        <Text style={{
-                          fontSize: 18,
-                          fontFamily: 'Poppins_400Regular',
-                        }}>
-                          {res.name}
-                        </Text>
-                        <Text style={{
-                          fontSize: 14,
-                          fontFamily: 'Poppins_300Light',
-                        }}>
-                          {res.number}
-                        </Text>
-                      </View>
-                    )
-                  })}
-                  <View style={{ width: '100%', borderWidth: 1, borderColor: '#EBEBEB', marginVertical: 5 }}></View>
-                  {item.comp.map((res, index) => {
-                    return (
-                      <View
-                        key={index}
-                        style={{
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                        }}>
-                        <Text style={{
-                          fontSize: 18,
-                          fontFamily: 'Poppins_600SemiBold',
-                        }}>
-                          {res.name}
-                        </Text>
-                        <View>
+                    {item.data.map((res, index) => {
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}>
                           <Text style={{
-                            fontSize: 13,
-                            marginTop: 3,
+                            fontSize: 18,
+                            fontFamily: 'Poppins_400Regular',
+                          }}>
+                            {res.name}
+                          </Text>
+                          <Text style={{
+                            fontSize: 14,
                             fontFamily: 'Poppins_300Light',
                           }}>
-                            {res.rubli1}
-                          </Text>
-                          <Text style={{
-                            fontSize: 17,
-                            color: '#77ADF6',
-                            textAlign: 'right',
-                            fontFamily: 'Poppins_500Medium',
-                          }}>
-                            {res.rubli}
+                            {res.number}
                           </Text>
                         </View>
-                      </View>
-                    )
-                  })}
+                      )
+                    })}
+                    <View style={{ width: '100%', borderWidth: 1, borderColor: '#EBEBEB', marginVertical: 5 }}></View>
+                    {item.comp.map((res, index) => {
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                          }}>
+                          <Text style={{
+                            fontSize: 18,
+                            fontFamily: 'Poppins_600SemiBold',
+                          }}>
+                            {res.name}
+                          </Text>
+                          <View>
+                            <Text style={{
+                              fontSize: 13,
+                              marginTop: 3,
+                              fontFamily: 'Poppins_300Light',
+                            }}>
+                              {res.rubli1}
+                            </Text>
+                            <Text style={{
+                              fontSize: 17,
+                              color: '#77ADF6',
+                              textAlign: 'right',
+                              fontFamily: 'Poppins_500Medium',
+                            }}>
+                              {res.rubli}
+                            </Text>
+                          </View>
+                        </View>
+                      )
+                    })}
 
-                </View>
-              )
-            })
-
+                  </View>
+                )
+              })
             }
-            {/*  {this.state.data.map((res, index) => {
-                        return (
-                            <View
-                                key={index}
-                                style={styles.sortMain}
-                            >
-                                <View style={styles.sorts}>
-                                    <View
-                                        style={{
-                                            flexDirection: 'row',
-                                        }}>
-                                        <Text
-                                            style={{
-                                                fontSize: 25,
-                                                fontWeight: '500',
-                                                marginRight: 14
-                                            }}>
-                                            {index + 1}
-                                        </Text>
-                                        <Text
-                                            style={{
-                                                marginTop: 11,
-                                            }}>
-                                            {res.created_at}
-                                        </Text>
-                                    </View>
-                                </View>
-                                <View>
-                                
-                                </View>
-                                <View>
-                                <Text>{res.designer_name}</Text>
-                                <Text>{res.designer_surname}</Text>
-                                <Text>{res.book_proizvoditel[0].price}</Text>
-                                </View>
-                                </View>
-                                )
-
-                    })}*/}
           </ScrollView>
         </View>
-        <CustomerMainPageNavComponent active_page={'Награда'} navigation={this.props.navigation} />
+        <CustomerMainPageNavComponent active_page={'Дизайнеры'} navigation={this.props.navigation} />
       </SafeAreaView>
     )
   }

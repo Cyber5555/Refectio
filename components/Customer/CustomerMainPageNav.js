@@ -6,7 +6,7 @@ export default class CustomerMainPageNavComponent extends React.Component {
     this.state = {
       navBar: [
         { images: require('../../assets/image/home.png'), text: 'Главная', change: 'CustomerMainPage', id: 1 },
-        { images: require('../../assets/image/nagrada.png'), text: 'Награда', change: 'CustomerRewards', id: 2 },
+        { images: require('../../assets/image/LIVE.png'), text: 'Заказы', change: 'ZakaziLive', id: 2 },
         { images: require('../../assets/image/dizayneri.png'), text: 'Дизайнеры', change: 'CheckDesigner', id: 3 },
         { images: require('../../assets/image/broni.png'), text: 'Брони', change: 'CustomerMyBroni', id: 4 },
         { images: require('../../assets/image/carbon_user-avatar.png'), text: 'Профиль', change: 'CustomerMyAccaunt', id: 5 }
@@ -14,6 +14,8 @@ export default class CustomerMainPageNavComponent extends React.Component {
       // active: 0
     }
   }
+
+  // CustomerRewards
 
   // componentDidMount = () => {
 
@@ -56,7 +58,10 @@ export default class CustomerMainPageNavComponent extends React.Component {
               <TouchableOpacity style={{ alignItems: 'center', width: '20%', }} onPress={() => this.goToPages(item.change)} key={index}>
                 <Image
                   source={item.images}
-                  style={this.props.active_page == item.text ? styles.navIconsActive : styles.navIcons}
+                  style={[this.props.active_page == item.text ? styles.navIconsActive : styles.navIcons,
+                  index === 1 ? { width: 40, height: 14, resizeMode: 'contain', marginBottom: 5, marginTop: 5 }
+                    : { width: 25, height: 25 }
+                  ]}
                 />
 
                 <Text key={index} style={[this.props.active_page == item.text ? styles.navTextActive : styles.navText, { fontSize: 10 }]}>{item.text}</Text>
@@ -83,15 +88,11 @@ const styles = StyleSheet.create({
   },
   navIcons: {
     tintColor: '#44BBEB',
-    width: 25,
-    height: 25,
     // resizeMode: "center",
 
   },
   navIconsActive: {
     tintColor: '#52A8EF',
-    width: 25,
-    height: 25,
     // resizeMode: "center",
   },
   navText: {

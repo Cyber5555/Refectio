@@ -44,7 +44,7 @@ export default class LoginScreenComponent extends Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        login: this.state.login,
+        login: '+7' + this.state.login,
         password: this.state.pass
       })
     })
@@ -86,6 +86,17 @@ export default class LoginScreenComponent extends Component {
               login_error: false
             })
           }
+          if (res.message.message == 'user does not exist') {
+            this.setState({
+              login_error: true
+            })
+          } else {
+            this.setState({
+              login_error: false
+            })
+          }
+
+
         }
         else {
           if (res.message.user.active == '2') {
@@ -204,8 +215,10 @@ export default class LoginScreenComponent extends Component {
               style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, },
               this.state.login_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
               value={this.state.login}
-              onChangeText={(text) => this.setState({ login: text })}
-              // mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
+              onChangeText={(text, unmasked, obfuscated) => {
+                this.setState({ login: text })
+              }}
+              mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
             />
           </View>
 

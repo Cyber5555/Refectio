@@ -35,6 +35,7 @@ import EditPasswordCustomerCompnent from './components/Auth/EditPaswordCustomer'
 import EditPhoneNumberDesignerComponent from './components/Auth/EditPhoneNumberDesigner';
 import EditPhoneNumberDesignerConfirmComponent from './components/Auth/EditPhoneNumberDesignerConfirm';
 import EditPasswordDesignerCompnent from './components/Auth/EditPaswordDesigner';
+import ZakaziLiveComponent from './components/Customer/Live/ZakaziLive';
 
 
 
@@ -137,9 +138,9 @@ function EditPasswordCustomer({ navigation }) {
   );
 }
 
-function GhostPageTwoFunc({route, navigation }) {
+function GhostPageTwoFunc({ route, navigation }) {
 
-  const {params} = route.params
+  const { params } = route.params
 
   return (
     <GhostPageTwoComponent user_id={params} navigation={navigation} />
@@ -250,6 +251,12 @@ function Modal({ navigation }) {
   )
 }
 
+
+function ZakaziLive({ navigation }) {
+  return (
+    <ZakaziLiveComponent navigation={navigation} />
+  )
+}
 
 const tabBarStyle = {
   height: 90,
@@ -469,12 +476,12 @@ export default function App() {
                     tabBarStyle: { display: 'none' }
                   })}
                 />
-                 <Tab.Screen name="EditPasswordDesigner" component={EditPasswordDesignerCompnent}
-                    options={({ route }) => ({
-                      tabBarButton: () => null,
-                      tabBarStyle: { display: 'none' }
-                    })}
-                  />
+                <Tab.Screen name="EditPasswordDesigner" component={EditPasswordDesignerCompnent}
+                  options={({ route }) => ({
+                    tabBarButton: () => null,
+                    tabBarStyle: { display: 'none' }
+                  })}
+                />
               </Tab.Navigator>
             ) :
 
@@ -556,6 +563,12 @@ export default function App() {
                   />
 
                   <Tab.Screen name="EditPasswordCustomer" component={EditPasswordCustomerCompnent}
+                    options={({ route }) => ({
+                      tabBarButton: () => null,
+                      tabBarStyle: { display: 'none' }
+                    })}
+                  />
+                  <Tab.Screen name="ZakaziLive" component={ZakaziLiveComponent}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }
