@@ -3,7 +3,7 @@ import React, { Component } from "react"
 import { Image, ImageBackground, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import CustomerMainPageNavComponent from "../CustomerMainPageNav"
 
-export default class ZakaziLiveComponent extends React.Component {
+export default class ZakaziLiveDesignerComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = {

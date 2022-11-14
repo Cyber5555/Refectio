@@ -36,6 +36,9 @@ import EditPhoneNumberDesignerComponent from './components/Auth/EditPhoneNumberD
 import EditPhoneNumberDesignerConfirmComponent from './components/Auth/EditPhoneNumberDesignerConfirm';
 import EditPasswordDesignerCompnent from './components/Auth/EditPaswordDesigner';
 import ZakaziLiveComponent from './components/Customer/Live/ZakaziLive';
+import LiveZakazchikSinglComponent from './components/Customer/Live/LiveZakazchikSingl';
+import AddZakaziComponent from './components/Customer/Live/AddZakazi';
+import EditZakaziComponent from './components/Customer/Live/EditZakazi';
 
 
 
@@ -255,6 +258,24 @@ function Modal({ navigation }) {
 function ZakaziLive({ navigation }) {
   return (
     <ZakaziLiveComponent navigation={navigation} />
+  )
+}
+
+function LiveZakazchikSingl({ navigation }) {
+  return (
+    <LiveZakazchikSinglComponent navigation={navigation} />
+  )
+}
+
+function AddZakazi({ navigation }) {
+  return (
+    <AddZakaziComponent navigation={navigation} />
+  )
+}
+
+function EditZakazi({ navigation }) {
+  return (
+    <EditZakaziComponent navigation={navigation} />
   )
 }
 
@@ -569,6 +590,24 @@ export default function App() {
                     })}
                   />
                   <Tab.Screen name="ZakaziLive" component={ZakaziLiveComponent}
+                    options={({ route }) => ({
+                      tabBarButton: () => null,
+                      tabBarStyle: { display: 'none' }
+                    })}
+                  />
+                  <Tab.Screen name="LiveZakazchikSingl" component={LiveZakazchikSinglComponent}
+                    options={({ route }) => ({
+                      tabBarButton: () => null,
+                      tabBarStyle: { display: 'none' }
+                    })}
+                  />
+                  <Tab.Screen name="AddZakazi" component={AddZakaziComponent}
+                    options={({ route }) => ({
+                      tabBarButton: () => null,
+                      tabBarStyle: { display: 'none' }
+                    })}
+                  />
+                  <Tab.Screen name="EditZakazi" component={EditZakaziComponent}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }

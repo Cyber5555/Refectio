@@ -398,8 +398,6 @@ export default class RegistrationManufacturerComponent extends Component {
     this.form_data.append("percent_bonus[]", this.state.procentArrayToString);
 
 
-    console.log(this.form_data);
-
     var requestOptions = {
       method: 'POST',
       headers: myHeaders,

@@ -4,6 +4,7 @@ import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import Svg, { Path, Rect } from "react-native-svg";
 import BlueButton from "../Component/Buttons/BlueButton"
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MaskInput from "react-native-mask-input";
 
 
 export default class EditPhoneNumberComponent extends React.Component {
@@ -36,12 +37,15 @@ export default class EditPhoneNumberComponent extends React.Component {
       .then(response => response.json())
       .then(result => {
 
-        console.log(this.state.phone, 'uxarkumenq')
-        
+        // console.log(result);
+
         if (result.status === true && result.message == 'code send your phone number') {
           this.props.navigation.navigate('EditPhoneNumberConfirm', {
             params: this.state.phone
           });
+        }
+        else {
+          this.setState({ phone_error: true })
         }
       })
       .catch(error => console.log('error', error));
@@ -105,18 +109,18 @@ export default class EditPhoneNumberComponent extends React.Component {
               >
                 Новый номер телефона
               </Text>
-              <TextInput
+
+              <MaskInput
                 underlineColorAndroid="transparent"
                 keyboardType="phone-pad"
-                style={{
-                  borderWidth: 1,
-                  padding: 10,
-                  width: '100%',
-                  borderRadius: 5,
-                  borderColor: '#F5F5F5'
-                }}
+                placeholder="+7 (975) 991-99-99"
+                style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, borderColor: '#F5F5F5' },
+                this.state.login_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                 value={this.state.phone}
-                onChangeText={(value) => { this.setState({ phone: value }) }}
+                onChangeText={(text, unmasked, obfuscated) => {
+                  this.setState({ phone: text })
+                }}
+                mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
               />
             </View>
 
@@ -125,7 +129,13 @@ export default class EditPhoneNumberComponent extends React.Component {
 
 
           </View>
-          <TouchableOpacity style={{ alignSelf: 'center', position: 'absolute', bottom: '10%' }} onPress={() => this.sendPhoneNumber()}>
+          <TouchableOpacity
+            style={{ alignSelf: 'center', position: 'absolute', bottom: '10%' }}
+            onPress={() => {
+              if (this.state.phone !== '') {
+                this.sendPhoneNumber()
+              }
+            }}>
             <BlueButton name="Подтвердить" />
           </TouchableOpacity>
         </View>

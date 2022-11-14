@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { Component } from "react";
 import { SafeAreaView, View, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Modal } from "react-native";
+import MaskInput from "react-native-mask-input";
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import BlueButton from "../Component/Buttons/BlueButton";
 
@@ -29,11 +30,10 @@ export default class ForgetPasswordComponent extends Component {
     await fetch("http://80.78.246.59/Refectio/public/api/sendcodeforphone", requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result)
         if (result.status === false) {
           this.setState({ phone_error: true })
         }
-         else if (result.status === true) {
+        else if (result.status === true) {
           this.setState({ phone_error: false })
           this.props.navigation.navigate('ForgetPasswordTel');
           AsyncStorage.setItem('phone', this.state.phone)
@@ -107,19 +107,20 @@ export default class ForgetPasswordComponent extends Component {
               Номер телефона
             </Text>
 
-            <TextInput
+            <MaskInput
               underlineColorAndroid="transparent"
               keyboardType="phone-pad"
-              style={[{
-                borderWidth: 1,
-                borderColor: '#F5F5F5',
-                padding: 10,
-                width: '100%',
-                borderRadius: 5,
-              }, this.state.phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5', }]}
+              placeholder="+7 (975) 991-99-99"
+              style={[{ borderWidth: 1, borderColor: '#F5F5F5', padding: 10, width: '100%', borderRadius: 5, },
+              this.state.phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5', }]}
               value={this.state.phone}
-              onChangeText={(text) => this.setState({ phone: text })}
+              onChangeText={(masked, unmasked, obfuscated) => {
+                this.setState({ phone: masked }); // you can use the unmasked value as well
+              }}
+              mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
             />
+
+
           </View>
           <View
             style={{

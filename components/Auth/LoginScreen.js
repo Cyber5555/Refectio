@@ -44,7 +44,7 @@ export default class LoginScreenComponent extends Component {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        login: '+7' + this.state.login,
+        login: this.state.login,
         password: this.state.pass
       })
     })
@@ -217,6 +217,7 @@ export default class LoginScreenComponent extends Component {
               value={this.state.login}
               onChangeText={(text, unmasked, obfuscated) => {
                 this.setState({ login: text })
+                console.log(text);
               }}
               mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
             />
