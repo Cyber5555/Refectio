@@ -1,6 +1,7 @@
 import React from "react";
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ArrowGrayComponent from "../../../assets/image/ArrowGray";
+import DesignerPageNavComponent from "../DesignerPageNav";
 
 export default class LiveZakazchikSinglDesignerComponent extends React.Component {
   constructor(props) {
@@ -14,7 +15,11 @@ export default class LiveZakazchikSinglDesignerComponent extends React.Component
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <View style={styles.NameBack}>
-            <TouchableOpacity>
+            <TouchableOpacity
+              style={styles.goBack}
+              onPress={() => {
+                this.props.navigation.navigate('ZakaziLiveDesigner')
+              }}>
               <ArrowGrayComponent />
             </TouchableOpacity>
 
@@ -44,7 +49,7 @@ export default class LiveZakazchikSinglDesignerComponent extends React.Component
                             <Text style={styles.readyDate}>20.09.2023</Text>
                           </Text>
 
-                          <Text style={styles.readyText}>Готовность {'\n'}
+                          <Text style={styles.readyText}>Доставка {'\n'}
                             <Text style={styles.readyDate}>20.09.2023</Text>
                           </Text>
                         </View>
@@ -54,12 +59,15 @@ export default class LiveZakazchikSinglDesignerComponent extends React.Component
                 ))
               }
             </View>
-            <TouchableOpacity style={styles.plusPraizvaditel}>
+            <TouchableOpacity
+              style={styles.plusPraizvaditel}
+            >
               <Text style={styles.plusPraizvaditelText}>+ Производитель</Text>
             </TouchableOpacity>
           </ScrollView>
 
         </View>
+        <DesignerPageNavComponent active_page={'Заказы'} navigation={this.props.navigation} />
       </SafeAreaView>
     )
   }
@@ -150,5 +158,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins_600SemiBold',
     color: '#969696'
+  },
+  goBack: {
+    marginLeft: -10
   }
 })

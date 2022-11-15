@@ -15,7 +15,11 @@ export default class LiveZakazchikSinglComponent extends React.Component {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           <View style={styles.NameBack}>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate('ZakaziLive')}>
+            <TouchableOpacity
+              style={styles.goBack}
+              onPress={() => {
+                this.props.navigation.navigate('ZakaziLive')
+              }}>
               <ArrowGrayComponent />
             </TouchableOpacity>
 
@@ -174,5 +178,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins_600SemiBold',
     color: '#969696'
+  },
+  goBack: {
+    marginLeft: -10
   }
 })

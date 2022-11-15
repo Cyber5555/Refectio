@@ -11,7 +11,7 @@ export default class DesignerPageNavComponent extends React.Component {
     this.state = {
       navBar: [
         { images: require('../../assets/image/home.png'), text: 'Главная', change: 'DesignerPage', id: 1 },
-        { images: require('../../assets/image/akar-icons_phone.png'), text: 'Поддержка', change: 'DesignerPage', id: 2 },
+        { images: require('../../assets/image/LIVE.png'), text: 'Заказы', change: 'ZakaziLiveDesigner', id: 2 },
         { images: require('../../assets/image/akar-icons_heart.png'), text: 'Избранное', change: 'DesignerSaved', id: 3 },
         { images: require('../../assets/image/broni.png'), text: 'Брони', change: 'DesignerMyBroni', id: 4 },
         { images: require('../../assets/image/carbon_user-avatar.png'), text: 'Профиль', change: 'MyAccaunt', id: 5 }
@@ -57,10 +57,13 @@ export default class DesignerPageNavComponent extends React.Component {
         {
           this.state.navBar.map((item, index) => {
             return (
-              <TouchableOpacity style={{ alignItems: 'center', width: '20%', }} onPress={() => { this.goToPages(item.change) }} key={index}>
+              <TouchableOpacity style={{ alignItems: 'center', width: '20%', height: 45 }} onPress={() => { this.goToPages(item.change) }} key={index}>
                 <Image
                   source={item.images}
-                  style={this.props.active_page == item.text ? styles.navIconsActive : styles.navIcons}
+                  style={[this.props.active_page == item.text ? styles.navIconsActive : styles.navIcons,
+                  index === 1 ? { width: 40, height: 14,resizeMode: 'contain', marginBottom: 5, marginTop: 5 }
+                    : { width: 25, height: 25 }
+                  ]}
                 />
                 <Text key={index} style={this.props.active_page == item.text ? styles.navTextActive : styles.navText}>{item.text}</Text>
               </TouchableOpacity>
@@ -98,12 +101,15 @@ const styles = StyleSheet.create({
   navText: {
     color: '#000',
     fontSize: 10,
-    fontFamily: 'Poppins_500Medium',
+    // fontFamily: 'Poppins_500Medium',
+    fontWeight: "500"
+
   },
   navTextActive: {
     color: '#52A8EF',
     fontSize: 10,
-    fontFamily: 'Poppins_500Medium',
+    // fontFamily: 'Poppins_500Medium',
+    fontWeight: "500"
   },
 
 })

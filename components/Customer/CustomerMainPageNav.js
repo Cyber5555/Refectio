@@ -97,10 +97,15 @@ const styles = StyleSheet.create({
   },
   navText: {
     color: '#000',
-    fontFamily: 'Poppins_500Medium',
+    fontSize: 10,
+    // fontFamily: 'Poppins_500Medium',
+    fontWeight: "500"
+
   },
   navTextActive: {
     color: '#52A8EF',
-    fontFamily: 'Poppins_500Medium',
-  }
+    fontSize: 10,
+    // fontFamily: 'Poppins_500Medium',
+    fontWeight: "500"
+  },
 })

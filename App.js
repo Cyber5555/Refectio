@@ -39,6 +39,10 @@ import ZakaziLiveComponent from './components/Customer/Live/ZakaziLive';
 import LiveZakazchikSinglComponent from './components/Customer/Live/LiveZakazchikSingl';
 import AddZakaziComponent from './components/Customer/Live/AddZakazi';
 import EditZakaziComponent from './components/Customer/Live/EditZakazi';
+import ZakaziLiveDesignerComponent from './components/Designer/Live/ZakaziLiveDesigner';
+import LiveZakazchikSinglDesignerComponent from './components/Designer/Live/LiveZakazchikSinglDesigner';
+import AddZakazchikDesignerComponent from './components/Designer/Live/AddZakazchikDesigner';
+import ConfirmateZakazComponent from './components/Designer/Live/ConfirmateZakaz';
 
 
 
@@ -279,6 +283,31 @@ function EditZakazi({ navigation }) {
   )
 }
 
+function ZakaziLiveDesigner({ navigation }) {
+  return (
+    <ZakaziLiveDesignerComponent navigation={navigation} />
+  )
+}
+
+function LiveZakazchikSinglDesigner({ navigation }) {
+  return (
+    <LiveZakazchikSinglDesignerComponent navigation={navigation} />
+  )
+}
+
+function AddZakazchikDesigner({ navigation }) {
+  return (
+    <AddZakazchikDesignerComponent navigation={navigation} />
+  )
+}
+
+function ConfirmateZakaz({ navigation }) {
+  return (
+    <ConfirmateZakazComponent navigation={navigation} />
+  )
+}
+
+
 const tabBarStyle = {
   height: 90,
   backgroundColor: 'white',
@@ -498,6 +527,30 @@ export default function App() {
                   })}
                 />
                 <Tab.Screen name="EditPasswordDesigner" component={EditPasswordDesignerCompnent}
+                  options={({ route }) => ({
+                    tabBarButton: () => null,
+                    tabBarStyle: { display: 'none' }
+                  })}
+                />
+                <Tab.Screen name="ZakaziLiveDesigner" component={ZakaziLiveDesignerComponent}
+                  options={({ route }) => ({
+                    tabBarButton: () => null,
+                    tabBarStyle: { display: 'none' }
+                  })}
+                />
+                <Tab.Screen name="LiveZakazchikSinglDesigner" component={LiveZakazchikSinglDesignerComponent}
+                  options={({ route }) => ({
+                    tabBarButton: () => null,
+                    tabBarStyle: { display: 'none' }
+                  })}
+                />
+                <Tab.Screen name="AddZakazchikDesigner" component={AddZakazchikDesignerComponent}
+                  options={({ route }) => ({
+                    tabBarButton: () => null,
+                    tabBarStyle: { display: 'none' }
+                  })}
+                />
+                 <Tab.Screen name="ConfirmateZakaz" component={ConfirmateZakazComponent}
                   options={({ route }) => ({
                     tabBarButton: () => null,
                     tabBarStyle: { display: 'none' }

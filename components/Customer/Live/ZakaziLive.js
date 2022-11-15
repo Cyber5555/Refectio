@@ -42,12 +42,12 @@ export default class ZakaziLiveComponent extends React.Component {
             <ImageBackground source={require('../../../assets/image/blurBg.png')} style={styles.blurBg}>
               <View style={styles.whiteBox}>
                 <Text style={styles.info}>
-                  После того, как дизайнер добавит заказчика,
-                  вы сможете внести данные по изготавливаемым
-                  изделиям. У дизайнера информация
-                  (готовность, дата доставки) по всем
-                  производителям для одного заказчика
-                  будет в одном месте.
+                  После того, как дизайнер добавит
+                  заказчика, вы сможете внести данные
+                  по изготавливаемым изделиям. У дизайнера
+                  информация (готовность, дата доставки)
+                  по всем производителям для одного
+                  заказчика будет в одном месте.
                 </Text>
 
                 <TouchableOpacity style={styles.buttonOk} onPress={() => {

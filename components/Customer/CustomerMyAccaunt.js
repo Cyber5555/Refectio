@@ -1953,13 +1953,15 @@ export default class CustomerMyAccauntComponent extends React.Component {
                         >
                           <TextInput
                             keyboardType="number-pad"
-                            maxLength={2}
                             value={item.percent}
                             editable={false}
                             style={{
                               fontSize: 13,
                               fontFamily: 'Poppins_400Regular',
                               color: '#888888',
+                              width: 23,
+                              justifyContent: 'center',
+                              alignItems: 'center'
                             }}
                           />
                           <Text>%</Text>
@@ -2286,7 +2288,7 @@ const styles = StyleSheet.create({
     width: 21,
     backgroundColor: '#F5F5F5',
     borderRadius: 6,
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
     color: '#888888',
     marginRight: 10
@@ -2294,6 +2296,7 @@ const styles = StyleSheet.create({
   procent: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#F5F5F5',
     borderRadius: 6,

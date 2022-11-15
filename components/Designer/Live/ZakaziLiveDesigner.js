@@ -1,7 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import React, { Component } from "react"
 import { Image, ImageBackground, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
-import CustomerMainPageNavComponent from "../CustomerMainPageNav"
+import Svg, { Path } from "react-native-svg"
+import DesignerPageNavComponent from "../DesignerPageNav"
+
 
 export default class ZakaziLiveDesignerComponent extends React.Component {
   constructor(props) {
@@ -42,12 +44,11 @@ export default class ZakaziLiveDesignerComponent extends React.Component {
             <ImageBackground source={require('../../../assets/image/blurBg.png')} style={styles.blurBg}>
               <View style={styles.whiteBox}>
                 <Text style={styles.info}>
-                  После того, как дизайнер добавит заказчика,
-                  вы сможете внести данные по изготавливаемым
-                  изделиям. У дизайнера информация
-                  (готовность, дата доставки) по всем
-                  производителям для одного заказчика
-                  будет в одном месте.
+                  В этом разделе вы сможете
+                  отслеживать актуальные данные
+                  по готовности и дате доставки
+                  от всех производителей по
+                  конкретному заказчику.
                 </Text>
 
                 <TouchableOpacity style={styles.buttonOk} onPress={() => {
@@ -88,7 +89,27 @@ export default class ZakaziLiveDesignerComponent extends React.Component {
             </TouchableOpacity>
 
           </View>
-
+          <View>
+            <TouchableOpacity
+              style={styles.plusBlue}
+              onPress={() => {
+                this.props.navigation.navigate('AddZakazchikDesigner')
+              }}>
+              <Svg
+                width={20}
+                height={20}
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <Path
+                  d="M10 19V1M19 10H1"
+                  stroke="#388DFD"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                />
+              </Svg>
+            </TouchableOpacity>
+          </View>
           <ScrollView showsVerticalScrollIndicator={false}>
 
             {
@@ -97,7 +118,7 @@ export default class ZakaziLiveDesignerComponent extends React.Component {
                   key={index}
                   style={styles.clounParnt}
                   onPress={() => {
-                    this.props.navigation.navigate('LiveZakazchikSingl')
+                    this.props.navigation.navigate('LiveZakazchikSinglDesigner')
                   }}
                 >
 
@@ -118,7 +139,7 @@ export default class ZakaziLiveDesignerComponent extends React.Component {
           </ScrollView>
 
         </View>
-        <CustomerMainPageNavComponent active_page={'Заказы'} navigation={this.props.navigation} />
+        <DesignerPageNavComponent active_page={'Заказы'} navigation={this.props.navigation} />
       </SafeAreaView>
     )
   }
@@ -222,5 +243,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#EBEBEB',
     marginTop: 15,
+  },
+  plusBlue: {
+    marginVertical: 11,
+    alignSelf: 'flex-end',
+    marginRight: 6
   }
 })
