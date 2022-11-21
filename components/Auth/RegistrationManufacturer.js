@@ -1355,7 +1355,7 @@ export default class RegistrationManufacturerComponent extends Component {
                 this.state.password_error ? { color: 'red', } : { color: '#5B5B5B', }
                 ]}
               >
-                Пароль (минимум 6 символов).
+                Пароль (минимум 6 символов)
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"

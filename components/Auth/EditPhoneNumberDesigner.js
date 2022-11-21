@@ -4,6 +4,7 @@ import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import Svg, { Path, Rect } from "react-native-svg";
 import BlueButton from "../Component/Buttons/BlueButton"
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MaskInput from "react-native-mask-input";
 
 
 export default class EditPhoneNumberDesignerComponent extends React.Component {
@@ -37,7 +38,7 @@ export default class EditPhoneNumberDesignerComponent extends React.Component {
       .then(result => {
         console.log(result);
         console.log(this.state.phone, 'uxarkumenq')
-        
+
         if (result.status === true && result.message[0] == 'code send your phone number') {
           this.props.navigation.navigate('EditPhoneNumberDesignerConfirm', {
             params: this.state.phone
@@ -105,9 +106,10 @@ export default class EditPhoneNumberDesignerComponent extends React.Component {
               >
                 Новый номер телефона
               </Text>
-              <TextInput
+              <MaskInput
                 underlineColorAndroid="transparent"
                 keyboardType="phone-pad"
+                placeholder="+7 (975) 991-99-99"
                 style={{
                   borderWidth: 1,
                   padding: 10,
@@ -115,6 +117,7 @@ export default class EditPhoneNumberDesignerComponent extends React.Component {
                   borderRadius: 5,
                   borderColor: '#F5F5F5'
                 }}
+                mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
                 value={this.state.phone}
                 onChangeText={(value) => { this.setState({ phone: value }) }}
               />

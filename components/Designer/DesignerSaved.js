@@ -83,7 +83,13 @@ export default class DesignerSavedComponent extends React.Component {
                 let count = item.favorit_users.meshok
                 return (
                   <View key={index} style={styles.campaign}>
-                    <View style={styles.infoCompanyMain}>
+                    <TouchableOpacity
+                      style={styles.infoCompanyMain}
+                      onPress={() => {
+                        this.props.navigation.navigate('DesignerPageTwo', {
+                          params: item.proizvoditel_id
+                        })
+                      }}>
                       <Image
                         source={{ uri: this.state.urlImage + item.favorit_users.logo }}
                         style={{
@@ -124,7 +130,7 @@ export default class DesignerSavedComponent extends React.Component {
 
 
                       </View>
-                    </View>
+                    </TouchableOpacity>
 
                     <View>
                       <ScrollView

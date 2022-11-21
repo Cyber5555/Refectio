@@ -80,11 +80,10 @@ export default class CustomerMainPageComponent extends React.Component {
     await fetch("http://80.78.246.59/Refectio/public/api/searchProizvoditel", requestOptions)
       .then(response => response.json())
       .then(res => {
-        console.log(res)
         if (res.status === true) {
           let data = res.data.user;
           let new_data_result = [];
-          // console.log(res);
+
           for (let i = 0; i < data.length; i++) {
 
             if (data[i].user_product_limit1.length < 1) {
@@ -98,7 +97,6 @@ export default class CustomerMainPageComponent extends React.Component {
 
           }
 
-          // console.log(data, 'res.data.data.data');
 
 
           this.setState({
@@ -144,7 +142,6 @@ export default class CustomerMainPageComponent extends React.Component {
     fetch("http://80.78.246.59/Refectio/public/api/filterProizvoditel", requestOptions)
       .then(response => response.json())
       .then(res => {
-        console.log(res, 'filterProizvoditel');
 
         if (!res.status) {
           this.setState({
@@ -156,7 +153,6 @@ export default class CustomerMainPageComponent extends React.Component {
         }
         let data = res.data.user;
         let new_data_result = [];
-        console.log(res);
         for (let i = 0; i < data.length; i++) {
 
           if (data[i].user_product_limit1.length < 1) {
@@ -170,7 +166,6 @@ export default class CustomerMainPageComponent extends React.Component {
 
         }
 
-        // console.log(data, 'res.data.data.data');
 
 
         this.setState({

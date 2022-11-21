@@ -7,7 +7,10 @@ import BlueButton from "../../components/Component/Buttons/BlueButton";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Slider2 from "../slider/Slider2";
 import MaskInput from "react-native-mask-input";
-
+// import FileDownload from 'react-native-file-download'
+// import RNFS from 'react-native-fs'
+// const FileDownload = require('react-native-file-download')
+// const RNFS = require('react-native-fs')
 
 export default class DesignerPageTwoComponent extends React.Component {
   constructor(props) {
@@ -66,6 +69,7 @@ export default class DesignerPageTwoComponent extends React.Component {
       favoriteBool: false,
 
       VipiskaModal: false,
+      extract: ''
     }
   }
 
@@ -144,6 +148,8 @@ export default class DesignerPageTwoComponent extends React.Component {
     let AuthStr = "Bearer " + userToken
     myHeaders.append("Authorization", AuthStr);
 
+    console.log(userID, 'idddddddddddddddddddddddddd');
+
     await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=2', {
       method: 'GET',
       headers: myHeaders
@@ -156,7 +162,8 @@ export default class DesignerPageTwoComponent extends React.Component {
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
           products: res.data.products,
-          favoriteBool: res.data.Favorit_button
+          favoriteBool: res.data.Favorit_button,
+          extract: res.data.user[0].extract
         })
       })
   }
@@ -176,46 +183,46 @@ export default class DesignerPageTwoComponent extends React.Component {
   }
 
 
-  DesignerAddBook = async () => {
-    let myHeaders = new Headers();
-    let userToken = await AsyncStorage.getItem('userToken')
-    let AuthStr = "Bearer " + userToken
-    myHeaders.append("Authorization", AuthStr);
+  // DesignerAddBook = async () => {
+  //   let myHeaders = new Headers();
+  //   let userToken = await AsyncStorage.getItem('userToken')
+  //   let AuthStr = "Bearer " + userToken
+  //   myHeaders.append("Authorization", AuthStr);
 
-    const { getPraizvaditelMap } = this.state
+  //   const { getPraizvaditelMap } = this.state
 
-    let result_praizvaditel_map = []
-    for (let i = 0; i < getPraizvaditelMap.length; i++) {
-      result_praizvaditel_map.push(getPraizvaditelMap[i].proizvodtel_id + '^' + getPraizvaditelMap[i].proizvodtel_name + '^' + getPraizvaditelMap[i].proizvoditel_price)
-    }
+  //   let result_praizvaditel_map = []
+  //   for (let i = 0; i < getPraizvaditelMap.length; i++) {
+  //     result_praizvaditel_map.push(getPraizvaditelMap[i].proizvodtel_id + '^' + getPraizvaditelMap[i].proizvodtel_name + '^' + getPraizvaditelMap[i].proizvoditel_price)
+  //   }
 
 
-    let formdata = new FormData();
-    formdata.append("phone", this.state.phone);
-    formdata.append("name", this.state.name);
-    formdata.append("dubl_phone", this.state.dubl_phone);
-    formdata.append("dubl_name", this.state.dubl_name);
-    formdata.append("city", this.state.city);
-    formdata.append("category_id", this.state.category_id);
-    formdata.append("category_name", this.state.category_name);
-    formdata.append("proizvaditel_info[]", result_praizvaditel_map);
+  //   let formdata = new FormData();
+  //   formdata.append("phone", this.state.phone);
+  //   formdata.append("name", this.state.name);
+  //   formdata.append("dubl_phone", this.state.dubl_phone);
+  //   formdata.append("dubl_name", this.state.dubl_name);
+  //   formdata.append("city", this.state.city);
+  //   formdata.append("category_id", this.state.category_id);
+  //   formdata.append("category_name", this.state.category_name);
+  //   formdata.append("proizvaditel_info[]", result_praizvaditel_map);
 
-    let requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: formdata,
-      redirect: 'follow'
-    };
+  //   let requestOptions = {
+  //     method: 'POST',
+  //     headers: myHeaders,
+  //     body: formdata,
+  //     redirect: 'follow'
+  //   };
 
-    fetch("http://80.78.246.59/Refectio/public/api/DesignerAddBook", requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        if (result.status === true && result.message[0] == 'created') {
-          this.setState({ bronyModal: false })
-        }
-      })
-      .catch(error => console.log('error', error));
-  }
+  //   fetch("http://80.78.246.59/Refectio/public/api/DesignerAddBook", requestOptions)
+  //     .then(response => response.json())
+  //     .then(result => {
+  //       if (result.status === true && result.message[0] == 'created') {
+  //         this.setState({ bronyModal: false })
+  //       }
+  //     })
+  //     .catch(error => console.log('error', error));
+  // }
 
   sendCategoryId = async () => {
     let myHeaders = new Headers();
@@ -293,7 +300,6 @@ export default class DesignerPageTwoComponent extends React.Component {
 
     let userID = this.props.user_id
 
-    console.log("Bearer " + userToken, 'userToken');
 
     let formdata = new FormData();
     formdata.append("category_name", category_name);
@@ -309,7 +315,6 @@ export default class DesignerPageTwoComponent extends React.Component {
     fetch("http://80.78.246.59/Refectio/public/api/filtergetOneProizvoditel", requestOptions)
       .then(response => response.json())
       .then(res => {
-        console.log(res, 'GetcategoryOneuserprduct');
 
         if (res.status === false) {
 
@@ -343,7 +348,8 @@ export default class DesignerPageTwoComponent extends React.Component {
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
           products: data.products,
-          show_plus_button: false
+          show_plus_button: false,
+          extract: data.user[0].extract
         })
       })
       .catch(error => console.log('error', error));
@@ -351,14 +357,33 @@ export default class DesignerPageTwoComponent extends React.Component {
 
   }
 
+  // downloadVipiska = () => {
 
+  //   const URL = ''
+  //   const DEST = RNFS.DocumentDirectoryPath
+  //   const fileName = 'выписка'
+  //   const headers = {
+  //     'Accept-Language': 'en-US'
+  //   }
 
+  //   FileDownload.download(URL, DEST, fileName, headers)
+  //     .then((response) => {
+  //       console.log(response);
+  //       console.log(`downloaded! file saved to: ${response}`)
+  //     })
+  //     .catch((error) => {
+  //       console.log(error)
+  //     })
+
+  // }
 
   componentDidMount() {
     const { navigation } = this.props;
-    this.getObjectData()
     this.getCategory()
     this.setState({ active: null })
+    this.getObjectData()
+
+
     this.focusListener = navigation.addListener("focus", () => {
       this.getCategory()
       this.setState({ active: null })
@@ -427,7 +452,10 @@ export default class DesignerPageTwoComponent extends React.Component {
                   Вы хотите скачать{'\n'}выписку
                 </Text>
                 <View style={[styles.Vipiska, { marginTop: 80 }]}>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      Linking.openURL(this.state.urlImage + this.state.extract)
+                    }}>
                     <BlueButton name='Подтвердить' />
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -933,7 +961,10 @@ export default class DesignerPageTwoComponent extends React.Component {
                             }}>
                             {
                               item.saite !== null &&
-                              <TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  Linking.openURL(item.saite)
+                                }}>
                                 <Image
                                   source={require('../../assets/image/globus.png')}
                                   style={{
@@ -952,7 +983,10 @@ export default class DesignerPageTwoComponent extends React.Component {
                             }
                             {
                               item.telegram !== null &&
-                              <TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  Linking.openURL(item.telegram)
+                                }}>
                                 <Image
                                   source={require('../../assets/image/telegram.png')}
                                   style={{
@@ -990,8 +1024,8 @@ export default class DesignerPageTwoComponent extends React.Component {
                           }
                           {this.state.favoriteBool == false &&
                             < Image
-                              source={require('../../assets/image/heartSev.png')}
-                              style={{ width: 24, height: 21.43, tintColor: '#333333', marginTop: 5, }}
+                              source={require('../../assets/image/heartHast.png')}
+                              style={{ width: 24, height: 21.43, tintColor: 'red', marginTop: 5, }}
                             />
                           }
 
@@ -1154,7 +1188,6 @@ export default class DesignerPageTwoComponent extends React.Component {
                           onPress={async () => {
                             if (index !== this.state.active) {
                               await this.updateProduct(item.category_name)
-                              console.log(item.category_name);
                               this.setState({ active: index })
                             }
                             else if (index == this.state.active) {

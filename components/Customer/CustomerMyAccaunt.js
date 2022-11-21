@@ -337,7 +337,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
     await fetch("http://80.78.246.59/Refectio/public/api/UpdateIndividualNumberProizvoditel", requestOptions)
       .then(response => response.json())
-      .then(result => result)
+      .then(result => {
+        if (result.status === true) {
+          this.getAuthUserProfile()
+        }
+      })
       .catch(error => console.log('error', error));
   }
 
@@ -671,7 +675,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [4, 4],
       quality: 1,
     });
     if (!result.cancelled) {
@@ -703,7 +707,12 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
     fetch("http://80.78.246.59/Refectio/public/api/updateLogoProizvoditel", requestOptions)
       .then(response => response.json())
-      .then(result => console.log(result))
+      .then(result => {
+        console.log(result, 'resssssssssssssssssssssssssssssssssssss');
+        if (result.status === true) {
+          this.getAuthUserProfile()
+        }
+      })
       .catch(error => console.log('error', error));
   };
 

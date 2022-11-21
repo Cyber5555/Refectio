@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { SafeAreaView, View, Image, Text, Modal, TouchableOpacity, TextInput, ScrollView, StyleSheet, ImageBackground, Pressable } from "react-native";
+import { SafeAreaView, View, Image, Text, Modal, TouchableOpacity, TextInput, ScrollView, StyleSheet, ImageBackground, Pressable, Linking, } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
 import Slider from "../slider/Slider";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
@@ -478,7 +478,10 @@ export default class DesignerPageTwoComponent extends React.Component {
                             }}>
                             {
                               item.saite !== null &&
-                              <TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  Linking.openURL(item.saite)
+                                }}>
                                 <Image
                                   source={require('../../assets/image/globus.png')}
                                   style={{
@@ -497,7 +500,10 @@ export default class DesignerPageTwoComponent extends React.Component {
                             }
                             {
                               item.telegram !== null &&
-                              <TouchableOpacity>
+                              <TouchableOpacity
+                                onPress={() => {
+                                  Linking.openURL(item.telegram)
+                                }}>
                                 <Image
                                   source={require('../../assets/image/telegram.png')}
                                   style={{

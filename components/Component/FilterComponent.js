@@ -12,7 +12,7 @@ export default class FilterComponent extends React.Component {
       view1: [
         { companyLogo: require('../../assets/image/category7.png'), category_name: 'Жилая мебель', filterName: 'Жилая мебель', size: 7, lineHeight: 9.03, id: 1 },
         { companyLogo: require('../../assets/image/category2.png'), category_name: 'Кухни', filterName: 'Кухни', size: 10, lineHeight: 12.9, id: 2 },
-        { companyLogo: require('../../assets/image/category1.png'), category_name: 'Прихожые', filterName: 'Прихожые', size: 10, lineHeight: 12.9, id: 3 },
+        { companyLogo: require('../../assets/image/category1.png'), category_name: 'Прихожие', filterName: 'Прихожие', size: 10, lineHeight: 12.9, id: 3 },
         { companyLogo: require('../../assets/image/category3.png'), category_name: 'Мебель для ванной', filterName: 'Мебель для\nванной', size: 7, lineHeight: 9.03, id: 4 },
         { companyLogo: require('../../assets/image/category7.png'), category_name: 'Мебель для спальни', filterName: 'Мебель для\nспальни', size: 7, lineHeight: 9.03, id: 5 },
         { companyLogo: require('../../assets/image/category5.png'), category_name: 'Гардеробные', filterName: 'Гардеробные', size: 8, lineHeight: 10.32, id: 6 },

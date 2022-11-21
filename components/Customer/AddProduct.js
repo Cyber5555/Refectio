@@ -6,6 +6,7 @@ import CustomerMainPageNavComponent from "./CustomerMainPageNav";
 import Svg, { Path, Rect } from "react-native-svg";
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import MaskInput from "react-native-mask-input";
 
 export default class AddProductComponent extends React.Component {
   constructor(props) {
@@ -59,24 +60,31 @@ export default class AddProductComponent extends React.Component {
 
 
 
-    let all_images = [];
+    let all_images = this.state.all_images;
 
-    await result.selected.map((element, index) => {
-      console.log(element);
+    if (result.hasOwnProperty('selected')) {
 
-      // this.formdata.append("photo[]", {
-      //   uri: element.uri,
-      //   type: 'image/jpg',
-      //   name: 'photo.jpg',
-      // });
+      console.log(result.selected, 'result.selected')
 
+      await result.selected.map((element, index) => {
+        console.log(element);
+
+        all_images.push({
+          uri: element.uri,
+          type: 'image/jpg',
+          name: 'photo.jpg',
+        })
+
+      })
+    }
+    else {
       all_images.push({
-        uri: element.uri,
+        uri: result.uri,
         type: 'image/jpg',
         name: 'photo.jpg',
       })
-
-    })
+      console.log(result, 'result')
+    }
 
 
     this.setState({
@@ -534,7 +542,7 @@ export default class AddProductComponent extends React.Component {
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"
-                placeholder="Змаль"
+                placeholder="Эмаль"
                 keyboardType="default"
                 style={{
                   borderWidth: 1,
@@ -562,7 +570,7 @@ export default class AddProductComponent extends React.Component {
                 Цена
               </Text>
               <View style={{ flexDirection: 'row' }}>
-                <TextInput
+                <MaskInput
                   underlineColorAndroid="transparent"
                   placeholder="1.000.000"
                   keyboardType="number-pad"
@@ -570,16 +578,17 @@ export default class AddProductComponent extends React.Component {
                     borderWidth: 1,
                     borderColor: '#F5F5F5',
                     padding: 10,
-                    width: '90%',
+                    width: '89%',
                     borderRadius: 5,
                     marginRight: 5
                   }}
+                  mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                   value={this.state.price}
                   onChangeText={(text) => this.setState({ price: text })}
                 />
                 <Image
                   source={require('../../assets/image/apranqiGin.png')}
-                  style={{ width: 32, height: 50 }}
+                  style={{ width: 30, height: 50 }}
                 />
               </View>
             </View>

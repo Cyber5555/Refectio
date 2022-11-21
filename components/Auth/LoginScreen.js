@@ -15,10 +15,15 @@ export default class LoginScreenComponent extends Component {
       password: true,
       pass: '',
       pass_error: false,
+
       login: '',
       login_error: false,
+      no_user: false,
+      no_verify: false,
+
       achq: require('../../assets/image/achq.png'),
       achqBac: require('../../assets/image/achq-bac.png'),
+
       moderacia: false,
       sendToken: null,
     }
@@ -60,11 +65,11 @@ export default class LoginScreenComponent extends Component {
         if (res.status == false) {
           if (res.message.message == 'user does not exist') {
             this.setState({
-              login_error: true
+              no_user: true
             })
           } else {
             this.setState({
-              login_error: false
+              no_user: false
             })
           }
 
@@ -79,23 +84,13 @@ export default class LoginScreenComponent extends Component {
           }
           if (res.message == 'User@   heraxosahamari hastatum chi ancel Levon jan') {
             this.setState({
-              login_error: true
+              no_verify: true
             })
           } else {
             this.setState({
-              login_error: false
+              no_verify: false
             })
           }
-          if (res.message.message == 'user does not exist') {
-            this.setState({
-              login_error: true
-            })
-          } else {
-            this.setState({
-              login_error: false
-            })
-          }
-
 
         }
         else {
@@ -205,15 +200,21 @@ export default class LoginScreenComponent extends Component {
           <Text style={styles.vxod}>Вход</Text>
 
           <View style={{ width: "85%", marginBottom: 15 }}>
-            <Text style={[styles.fiealdset, { marginTop: 27, }, this.state.login_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
-              Номер телефона
+            <Text style={[styles.fiealdset, { marginTop: 27, }, this.state.login_error || this.state.no_user || this.state.no_verify ? { color: 'red' } : { color: '#5B5B5B' }]}>
+              {
+                this.state.no_user ? 'По такому номеру телефона пользователь не зарегистрирован'
+                  :
+                  this.state.no_verify ? 'На данный момент не заходит и не ясна причина'
+                    :
+                    'Номер телефона'
+              }
             </Text>
             <MaskInput
               underlineColorAndroid="transparent"
               keyboardType="phone-pad"
               placeholder="+7 (975) 991-99-99"
               style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, },
-              this.state.login_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
+              this.state.login_error || this.state.no_user ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
               value={this.state.login}
               onChangeText={(text, unmasked, obfuscated) => {
                 this.setState({ login: text })
@@ -224,7 +225,9 @@ export default class LoginScreenComponent extends Component {
           </View>
 
           <View style={{ position: 'relative', width: "85%", }}>
-            <Text style={[styles.fiealdset, { marginTop: 15, }, this.state.pass_error ? { color: 'red' } : { color: '#5B5B5B' }]}>Пароль</Text>
+            <Text style={[styles.fiealdset, { marginTop: 15, }, this.state.pass_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
+              {this.state.pass_error ? 'Неправильно указан пароль' : 'Пароль'}
+            </Text>
             <TextInput
               underlineColorAndroid="transparent"
               secureTextEntry={this.state.password}
