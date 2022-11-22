@@ -1416,7 +1416,7 @@ export default class RegistrationManufacturerComponent extends Component {
                 // marginTop: 9,
               }}>
               <Text style={[{
-                fontFamily: 'Raleway_500Medium',
+                fontFamily: 'Poppins_500Medium',
                 lineHeight: 23,
                 fontSize: 15,
                 color: '#5B5B5B',
@@ -1500,7 +1500,7 @@ export default class RegistrationManufacturerComponent extends Component {
             < View style={styles.DesignerRemunerationPercentageParent} >
               <Text
                 style={[{
-                  fontFamily: 'Raleway_500Medium',
+                  fontFamily: 'Poppins_500Medium',
                   lineHeight: 23,
                   fontSize: 15,
                   marginTop: 27,
@@ -1618,11 +1618,11 @@ export default class RegistrationManufacturerComponent extends Component {
             <View>
               <Text
                 style={{
-                  color: '#888888',
+                  color: '#5B5B5B',
                   fontSize: 15,
                   lineHeight: 18,
                   marginTop: 27,
-                  fontFamily: 'Raleway_500Medium',
+                  fontFamily: 'Poppins_500Medium',
                 }}
               >
                 Загрузите аватар/логотип
@@ -1636,6 +1636,7 @@ export default class RegistrationManufacturerComponent extends Component {
                     color: 'white',
                     fontSize: 15,
                     fontFamily: 'Raleway_500Medium',
+                    marginTop: 7
                   }}
                 >
                   Загрузить
@@ -1729,9 +1730,9 @@ const styles = StyleSheet.create({
     width: 111,
     height: 40,
     backgroundColor: '#B5D8FE',
-    justifyContent: "center",
     alignItems: "center",
     borderRadius: 8,
+    lineHeight: 18
   },
   checkBox: {
     marginTop: 22,

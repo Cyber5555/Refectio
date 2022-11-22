@@ -517,7 +517,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
                             {
                               item.extract !== null &&
-                              <TouchableOpacity>
+                              <View>
                                 <Image
                                   source={require('../../assets/image/sidebar.png')}
                                   style={{
@@ -525,7 +525,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                                     height: 24,
                                   }}
                                 />
-                              </TouchableOpacity>
+                              </View>
                             }
                           </View>
                         </View>

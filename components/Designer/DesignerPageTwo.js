@@ -69,7 +69,8 @@ export default class DesignerPageTwoComponent extends React.Component {
       favoriteBool: false,
 
       VipiskaModal: false,
-      extract: ''
+      extract: '',
+      whatsapp: ''
     }
   }
 
@@ -163,7 +164,8 @@ export default class DesignerPageTwoComponent extends React.Component {
           city_for_sales_user: res.data.city_for_sales_user,
           products: res.data.products,
           favoriteBool: res.data.Favorit_button,
-          extract: res.data.user[0].extract
+          extract: res.data.user[0].extract,
+          whatsapp: res.data.user[0].watsap_phone
         })
       })
   }
@@ -341,7 +343,6 @@ export default class DesignerPageTwoComponent extends React.Component {
           data[i].images = product_image;
         }
 
-
         this.setState({
           user: data.user,
           user_bonus_for_designer: res.data.user_bonus_for_designer,
@@ -349,7 +350,8 @@ export default class DesignerPageTwoComponent extends React.Component {
           city_for_sales_user: res.data.city_for_sales_user,
           products: data.products,
           show_plus_button: false,
-          extract: data.user[0].extract
+          extract: data.user[0].extract,
+          whatsapp: res.data.user[0].watsap_phone
         })
       })
       .catch(error => console.log('error', error));
@@ -1024,7 +1026,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                           }
                           {this.state.favoriteBool == false &&
                             < Image
-                              source={require('../../assets/image/heartHast.png')}
+                              source={require('../../assets/image/heartSev.png')}
                               style={{ width: 24, height: 21.43, tintColor: 'red', marginTop: 5, }}
                             />
                           }
@@ -1155,7 +1157,10 @@ export default class DesignerPageTwoComponent extends React.Component {
                     }} />
                   <Text style={styles.infoText}>Вознаграждение</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.info, { borderRightWidth: 2, borderRightColor: '#EEEEEE' }]} onPress={() => { Linking.openURL('https://api.whatsapp.com/send/?phone=%2B79162939496&text&type=phone_number&app_absent=0') }}>
+                <TouchableOpacity style={[styles.info, { borderRightWidth: 2, borderRightColor: '#EEEEEE' }]}
+                  onPress={() => {
+                    Linking.openURL(`whatsapp://send?text=hello&phone=${this.state.whatsapp}`)
+                  }}>
                   <Image
                     source={require('../../assets/image/clarity_ruble-line.png')}
                     style={{ width: 30, height: 30, resizeMode: 'contain' }}

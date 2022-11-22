@@ -50,7 +50,7 @@ export default class GhostPageTwoComponent extends React.Component {
       category_name_error: false,
 
 
-      VipiskaModal: false,
+
     }
   }
 
@@ -215,7 +215,9 @@ export default class GhostPageTwoComponent extends React.Component {
                             }}>
                             {
                               item.saite !== null &&
-                              <TouchableOpacity>
+                              <TouchableOpacity onPress={() => {
+                                this.props.navigation.navigate('Modal')
+                              }}>
                                 <Image
                                   source={require('../../assets/image/globus.png')}
                                   style={{
@@ -234,7 +236,9 @@ export default class GhostPageTwoComponent extends React.Component {
                             }
                             {
                               item.telegram !== null &&
-                              <TouchableOpacity>
+                              <TouchableOpacity onPress={() => {
+                                this.props.navigation.navigate('Modal')
+                              }}>
                                 <Image
                                   source={require('../../assets/image/telegram.png')}
                                   style={{
@@ -249,7 +253,7 @@ export default class GhostPageTwoComponent extends React.Component {
                             {
                               item.extract !== null &&
                               <TouchableOpacity onPress={() => {
-                                this.setState({ VipiskaModal: true })
+                                this.props.navigation.navigate('Modal')
                               }}>
                                 <Image
                                   source={require('../../assets/image/sidebar.png')}

@@ -1323,7 +1323,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     fontFamily: 'Poppins_500Medium',
                     marginBottom: 20
                   }}>
-                  Изменения личных{'\n'}данных
+                  Изменение данных{'\n'}компании
                 </Text>
 
 
