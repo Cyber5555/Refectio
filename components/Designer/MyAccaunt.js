@@ -295,7 +295,7 @@ export default class MyAccauntComponent extends React.Component {
           </Modal>
 
 
-          <ScrollView style={{ flex: 1, position: 'relative' }}>
+          <ScrollView style={{ flex: 1, position: 'relative' }} showsVerticalScrollIndicator={false}>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 27, }}>
               <Text style={{ fontSize: 20, fontFamily: 'Poppins_500Medium', }}>{this.state.chcngeName} {this.state.chcngeSurname}</Text>

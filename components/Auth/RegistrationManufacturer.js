@@ -5,6 +5,8 @@ import Svg, { Path, Rect } from "react-native-svg";
 import BlueButton from "../Component/Buttons/BlueButton"
 import MaskInput from 'react-native-mask-input';
 import * as ImagePicker from 'expo-image-picker';
+import TextInputMask from "react-native-mask-input";
+
 
 
 
@@ -99,7 +101,10 @@ export default class RegistrationManufacturerComponent extends Component {
   }
 
 
-
+  // validateEmail = (mask) => {
+  //   var re = /^ [0 - 9]{ 2}:[0-5][0-9]:[0-5][0-9]$"/;
+  //   return re.test(mask);
+  // };
 
 
   removeInputRow = () => {
@@ -169,7 +174,11 @@ export default class RegistrationManufacturerComponent extends Component {
 
   changeTo = (value, index) => {
     let { procentArray } = this.state;
-    procentArray[index].to = value;
+    let without_dots = value.split('.').join('');
+    let with_dots = without_dots.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    procentArray[index].to = with_dots;
+    console.log(with_dots, 'converted_value')
 
     this.setState({
       procentArray: procentArray
@@ -180,7 +189,11 @@ export default class RegistrationManufacturerComponent extends Component {
   changeFrom = (value, index) => {
     let { procentArray } = this.state;
 
-    procentArray[index].from = value;
+    let without_dots = value.split('.').join('');
+    let with_dots = without_dots.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    procentArray[index].from = with_dots;
+    console.log(with_dots, 'converted_value')
 
     this.setState({
       procentArray: procentArray
@@ -1516,18 +1529,18 @@ export default class RegistrationManufacturerComponent extends Component {
 
                       <Text style={styles.procentText}>От</Text>
 
-                      <MaskInput
+                      <TextInput
                         editable={index === 0 ? false : true}
                         keyboardType={'number-pad'}
                         style={styles.procentInput}
                         underlineColorAndroid="transparent"
                         placeholderTextColor={'#aaaaaa'}
                         placeholder={''}
-                        value={item.to}
+                        maxLength={10}
+                        value={item.to !== 'datark' ? item.to : ''}
                         onChangeText={async (value) => {
                           await this.changeTo(value, index)
                         }}
-                        mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                       />
 
                       <View style={styles.rubli}>
@@ -1538,18 +1551,18 @@ export default class RegistrationManufacturerComponent extends Component {
 
                       <Text style={styles.procentText}>До</Text>
 
-                      <MaskInput
+                      <TextInput
                         editable={this.state.procentArray.length <= 1 ? false : true}
                         keyboardType={'number-pad'}
                         style={styles.procentInput}
                         underlineColorAndroid="transparent"
                         placeholder={this.state.procentArray.length <= 1 ? '9.999.999' : ''}
                         placeholderTextColor={'#aaaaaa'}
-                        value={item.from}
+                        maxLength={10}
+                        value={item.from !== 'datark' ? item.from : ''}
                         onChangeText={async (value) => {
                           await this.changeFrom(value, index)
                         }}
-                        mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                       />
 
                       <View style={styles.rubli}>
@@ -1761,10 +1774,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#F5F5F5',
     borderRadius: 6,
-    width: '22%',
+    width: '23%',
     height: '100%',
     paddingLeft: 5,
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Poppins_400Regular',
     color: '#888888',
     marginRight: 10
@@ -1777,7 +1790,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     color: '#888888',
-    marginRight: 10
+    marginRight: 5
   },
   procent: {
     flexDirection: 'row',

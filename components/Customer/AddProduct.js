@@ -408,153 +408,167 @@ export default class AddProductComponent extends React.Component {
               </View>
             </View>
 
+            {
+              this.state.categoryChanged == 'Мебель для ванной' &&
 
-            <View>
-              <Text
-                style={{
-                  fontFamily: 'Poppins_500Medium',
-                  lineHeight: 23,
-                  fontSize: 16,
-                  color: '#5B5B5B',
-                  marginBottom: 5,
-                  marginTop: 12
-                }}
-              >
-                Корпус
-              </Text>
-              <TextInput
-                underlineColorAndroid="transparent"
-                placeholder="ДСП"
-                keyboardType="default"
-                style={{
-                  borderWidth: 1,
-                  borderColor: '#F5F5F5',
-                  padding: 10,
-                  width: '100%',
-                  borderRadius: 5,
-                }}
-                value={this.state.frame}
-                onChangeText={(text) => this.setState({ frame: text })}
-              />
-            </View>
+              < View View >
+                <Text
+                  style={{
+                    fontFamily: 'Poppins_500Medium',
+                    lineHeight: 23,
+                    fontSize: 16,
+                    color: '#5B5B5B',
+                    marginBottom: 5,
+                    marginTop: 12
+                  }}
+                >
+                  Корпус
+                </Text>
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  placeholder="ДСП"
+                  keyboardType="default"
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#F5F5F5',
+                    padding: 10,
+                    width: '100%',
+                    borderRadius: 5,
+                  }}
+                  value={this.state.frame}
+                  onChangeText={(text) => this.setState({ frame: text })}
+                />
+              </View>
+            }
 
+            {
+              this.state.categoryChanged == 'Мебель для ванной' &&
+              <View>
+                <Text
+                  style={{
+                    fontFamily: 'Poppins_500Medium',
+                    lineHeight: 23,
+                    fontSize: 16,
+                    color: '#5B5B5B',
+                    marginBottom: 5,
+                    marginTop: 12
+                  }}
+                >
+                  Столешница
+                </Text>
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  placeholder="Камень"
+                  keyboardType="default"
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#F5F5F5',
+                    padding: 10,
+                    width: '100%',
+                    borderRadius: 5,
+                  }}
+                  value={this.state.tabletop}
+                  onChangeText={(text) => this.setState({ tabletop: text })}
+                />
+              </View>
+            }
 
-            <View>
-              <Text
-                style={{
-                  fontFamily: 'Poppins_500Medium',
-                  lineHeight: 23,
-                  fontSize: 16,
-                  color: '#5B5B5B',
-                  marginBottom: 5,
-                  marginTop: 12
-                }}
-              >
-                Столешница
-              </Text>
-              <TextInput
-                underlineColorAndroid="transparent"
-                placeholder="Камень"
-                keyboardType="default"
-                style={{
-                  borderWidth: 1,
-                  borderColor: '#F5F5F5',
-                  padding: 10,
-                  width: '100%',
-                  borderRadius: 5,
-                }}
-                value={this.state.tabletop}
-                onChangeText={(text) => this.setState({ tabletop: text })}
-              />
-            </View>
+            {
+              this.state.categoryChanged == 'Мебель для ванной' &&
 
+              <View>
+                <Text
+                  style={{
+                    fontFamily: 'Poppins_500Medium',
+                    lineHeight: 23,
+                    fontSize: 16,
+                    color: '#5B5B5B',
+                    marginBottom: 5,
+                    marginTop: 12
+                  }}
+                >
+                  Длина
+                </Text>
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  placeholder="8 метров"
+                  keyboardType="number-pad"
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#F5F5F5',
+                    padding: 10,
+                    width: '100%',
+                    borderRadius: 5,
+                  }}
+                  value={this.state.length}
+                  onChangeText={(text) => this.setState({ length: text })}
+                />
+              </View>
+            }
 
-            <View>
-              <Text
-                style={{
-                  fontFamily: 'Poppins_500Medium',
-                  lineHeight: 23,
-                  fontSize: 16,
-                  color: '#5B5B5B',
-                  marginBottom: 5,
-                  marginTop: 12
-                }}
-              >
-                Длина
-              </Text>
-              <TextInput
-                underlineColorAndroid="transparent"
-                placeholder="8 метров"
-                keyboardType="number-pad"
-                style={{
-                  borderWidth: 1,
-                  borderColor: '#F5F5F5',
-                  padding: 10,
-                  width: '100%',
-                  borderRadius: 5,
-                }}
-                value={this.state.length}
-                onChangeText={(text) => this.setState({ length: text })}
-              />
-            </View>
+            {
+              this.state.categoryChanged == 'Мебель для ванной' &&
+              <View>
+                <Text
+                  style={{
+                    fontFamily: 'Poppins_500Medium',
+                    lineHeight: 23,
+                    fontSize: 16,
+                    color: '#5B5B5B',
+                    marginBottom: 5,
+                    marginTop: 12
+                  }}
+                >
+                  Высота
+                </Text>
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  placeholder="0.5 метров"
+                  keyboardType="number-pad"
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#F5F5F5',
+                    padding: 10,
+                    width: '100%',
+                    borderRadius: 5,
+                  }}
+                  value={this.state.height}
+                  onChangeText={(text) => this.setState({ height: text })}
+                />
+              </View>
+            }
 
-            <View>
-              <Text
-                style={{
-                  fontFamily: 'Poppins_500Medium',
-                  lineHeight: 23,
-                  fontSize: 16,
-                  color: '#5B5B5B',
-                  marginBottom: 5,
-                  marginTop: 12
-                }}
-              >
-                Высота
-              </Text>
-              <TextInput
-                underlineColorAndroid="transparent"
-                placeholder="0.5 метров"
-                keyboardType="number-pad"
-                style={{
-                  borderWidth: 1,
-                  borderColor: '#F5F5F5',
-                  padding: 10,
-                  width: '100%',
-                  borderRadius: 5,
-                }}
-                value={this.state.height}
-                onChangeText={(text) => this.setState({ height: text })}
-              />
-            </View>
-
-            <View>
-              <Text
-                style={{
-                  fontFamily: 'Poppins_500Medium',
-                  lineHeight: 23,
-                  fontSize: 16,
-                  color: '#5B5B5B',
-                  marginBottom: 5,
-                  marginTop: 12
-                }}
-              >
-                Фасады
-              </Text>
-              <TextInput
-                underlineColorAndroid="transparent"
-                placeholder="Эмаль"
-                keyboardType="default"
-                style={{
-                  borderWidth: 1,
-                  borderColor: '#F5F5F5',
-                  padding: 10,
-                  width: '100%',
-                  borderRadius: 5,
-                }}
-                value={this.state.facades}
-                onChangeText={(text) => this.setState({ facades: text })}
-              />
-            </View>
+            {
+              this.state.categoryChanged == 'Мебель для ванной' &&
+              <View>
+                <Text
+                  style={{
+                    fontFamily: 'Poppins_500Medium',
+                    lineHeight: 23,
+                    fontSize: 16,
+                    color: '#5B5B5B',
+                    marginBottom: 5,
+                    marginTop: 12
+                  }}
+                >
+                  Фасады
+                </Text>
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  placeholder="Эмаль"
+                  keyboardType="default"
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#F5F5F5',
+                    padding: 10,
+                    width: '100%',
+                    borderRadius: 5,
+                  }}
+                  value={this.state.facades}
+                  onChangeText={(text) => this.setState({ facades: text })}
+                />
+              </View>
+            }
 
             <View>
               <Text
@@ -662,11 +676,12 @@ export default class AddProductComponent extends React.Component {
             </TouchableOpacity>
 
           </ScrollView>
-        </View>
-        {this.state.keyboardOpen === false &&
+        </View >
+        {
+          this.state.keyboardOpen === false &&
           <CustomerMainPageNavComponent navigation={this.props.navigation} />
         }
-      </SafeAreaView>
+      </SafeAreaView >
     )
   }
 }

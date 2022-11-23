@@ -1,5 +1,5 @@
 import React from "react"
-import { SafeAreaView, Keyboard, StyleSheet, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, Modal, ImageBackground } from "react-native"
+import { SafeAreaView, Keyboard, StyleSheet, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, Modal, ImageBackground, Linking } from "react-native"
 
 import ArrowGrayComponent from "../../assets/image/ArrowGray"
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
@@ -441,7 +441,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
   changeTo = (value, index) => {
     let { procentArray } = this.state;
 
-    procentArray[index].start_price = value;
+    let without_dots = value.split('.').join('');
+    let with_dots = without_dots.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    procentArray[index].start_price = with_dots;
+    console.log(with_dots, 'converted_value')
 
     this.setState({
       procentArray: procentArray
@@ -452,7 +456,11 @@ export default class CustomerMyAccauntComponent extends React.Component {
   changeFrom = (value, index) => {
     let { procentArray } = this.state;
 
-    procentArray[index].before_price = value;
+    let without_dots = value.split('.').join('');
+    let with_dots = without_dots.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    procentArray[index].before_price = with_dots;
+    console.log(with_dots, 'converted_value')
 
     this.setState({
       procentArray: procentArray
@@ -1508,14 +1516,16 @@ export default class CustomerMyAccauntComponent extends React.Component {
                         }}>
                           {
                             item.telegram !== null &&
-                            <Image
-                              source={require('../../assets/image/telegram.png')}
-                              style={{
-                                width: 24,
-                                height: 24,
-                                marginRight: 8,
-                              }}
-                            />
+                            <TouchableOpacity onPress={() => { Linking.openURL(item.telegram) }}>
+                              <Image
+                                source={require('../../assets/image/telegram.png')}
+                                style={{
+                                  width: 24,
+                                  height: 24,
+                                  marginRight: 8,
+                                }}
+                              />
+                            </TouchableOpacity>
                           }
                           {
                             item.telegram == null &&
@@ -1523,13 +1533,15 @@ export default class CustomerMyAccauntComponent extends React.Component {
                           }
                           {
                             item.saite !== null &&
-                            <Image
-                              source={require('../../assets/image/admin-site.png')}
-                              style={{
-                                width: 24,
-                                height: 24,
-                              }}
-                            />
+                            <TouchableOpacity onPress={() => { Linking.openURL(item.saite) }}>
+                              <Image
+                                source={require('../../assets/image/admin-site.png')}
+                                style={{
+                                  width: 24,
+                                  height: 24,
+                                }}
+                              />
+                            </TouchableOpacity>
                           }
                         </View>
                       </View>
@@ -1924,13 +1936,12 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
                         <Text style={styles.procentText}>От</Text>
 
-                        <MaskInput
+                        <TextInput
                           editable={false}
                           keyboardType={'number-pad'}
                           style={styles.procentInput}
-                          value={item.start_price}
+                          value={item.start_price !== 'datark' ? item.start_price : ''}
                           placeholder={''}
-                          mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                         />
 
                         <View style={styles.rubli}>
@@ -1941,14 +1952,13 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
                         <Text style={styles.procentText}>До</Text>
 
-                        <MaskInput
+                        <TextInput
                           maxLength={10}
                           keyboardType="number-pad"
                           style={styles.procentInput}
-                          value={item.before_price}
+                          value={item.before_price !== 'datark' ? item.before_price : ''}
                           placeholder={this.state.procentArray.length <= 1 ? '9.999.999' : ''}
                           editable={false}
-                          mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
                         />
 
                         <View style={styles.rubli}>
@@ -2064,18 +2074,18 @@ export default class CustomerMyAccauntComponent extends React.Component {
                             />
 
 
-                            <MaskInput
+                            <TextInput
                               editable={index === 0 ? false : true}
                               keyboardType={'number-pad'}
                               style={styles.procentInput}
                               underlineColorAndroid="transparent"
                               placeholderTextColor={'#aaaaaa'}
                               placeholder={''}
-                              value={item.start_price}
+                              value={item.start_price !== 'datark' ? item.start_price : ''}
                               onChangeText={async (value) => {
                                 await this.changeTo(value, index)
                               }}
-                              mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
+
                             />
 
 
@@ -2089,18 +2099,18 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
 
 
-                            <MaskInput
+                            <TextInput
                               editable={this.state.procentArray.length <= 1 ? false : true}
                               keyboardType={'number-pad'}
                               style={styles.procentInput}
                               underlineColorAndroid="transparent"
                               placeholder={this.state.procentArray.length <= 1 ? '9.999.999' : ''}
                               placeholderTextColor={'#aaaaaa'}
-                              value={this.state.procentArray.length <= 1 ? '9.999.999' : item.before_price}
+                              value={this.state.procentArray.length <= 1 ? '9.999.999' : item.before_price && item.before_price !== 'datark' ? item.before_price : ''}
                               onChangeText={async (value) => {
                                 await this.changeFrom(value, index)
                               }}
-                              mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
+
                             />
 
                             <View style={styles.rubli}>
@@ -2297,7 +2307,7 @@ const styles = StyleSheet.create({
     width: 21,
     backgroundColor: '#F5F5F5',
     borderRadius: 6,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     color: '#888888',
     marginRight: 10
