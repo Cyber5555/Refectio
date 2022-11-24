@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { SafeAreaView, View, Image, Text, Keyboard, TouchableOpacity, TextInput, ScrollView, StyleSheet, Pressable } from "react-native";
+import { SafeAreaView, View, Image, Text, Keyboard, TouchableOpacity, TextInput, ScrollView, StyleSheet, Pressable, Modal } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
 import Slider from "../slider/Slider";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
@@ -41,10 +41,9 @@ export default class CustomerMainPageComponent extends React.Component {
       .then(response => response.json())
       .then(res => {
 
-        // console.log(res.data.data.data, 'res.data.data.data')
         let data = res.data.data;
         let new_data_result = [];
-        // console.log(res);
+
         for (let i = 0; i < data.length; i++) {
 
           if (data[i].user_product_limit1.length < 1) {
@@ -58,7 +57,6 @@ export default class CustomerMainPageComponent extends React.Component {
 
         }
 
-        // console.log(data, 'res.data.data.data');
 
 
         this.setState({
@@ -85,11 +83,9 @@ export default class CustomerMainPageComponent extends React.Component {
     await fetch("http://80.78.246.59/Refectio/public/api/searchProizvoditel", requestOptions)
       .then(response => response.json())
       .then(res => {
-        console.log(res)
         if (res.status === true) {
           let data = res.data.user;
           let new_data_result = [];
-          // console.log(res);
           for (let i = 0; i < data.length; i++) {
 
             if (data[i].user_product_limit1.length < 1) {
@@ -102,8 +98,6 @@ export default class CustomerMainPageComponent extends React.Component {
             data[i].images = product_image;
 
           }
-
-          // console.log(data, 'res.data.data.data');
 
 
           this.setState({
@@ -150,7 +144,6 @@ export default class CustomerMainPageComponent extends React.Component {
     fetch("http://80.78.246.59/Refectio/public/api/filterProizvoditel", requestOptions)
       .then(response => response.json())
       .then(res => {
-        console.log(res, 'filterProizvoditel');
 
         if (!res.status) {
           this.setState({
@@ -162,7 +155,6 @@ export default class CustomerMainPageComponent extends React.Component {
         }
         let data = res.data.user;
         let new_data_result = [];
-        console.log(res);
         for (let i = 0; i < data.length; i++) {
 
           if (data[i].user_product_limit1.length < 1) {
@@ -176,7 +168,6 @@ export default class CustomerMainPageComponent extends React.Component {
 
         }
 
-        // console.log(data, 'res.data.data.data');
 
 
         this.setState({
@@ -313,6 +304,10 @@ export default class CustomerMainPageComponent extends React.Component {
 
             <Text style={styles.myComponyName}>{this.state.name}</Text>
           </View>
+
+
+          {/* <Modal visible={}></Modal> */}
+
 
           <View style={styles.searchParent}>
             <TouchableOpacity onPress={() => {

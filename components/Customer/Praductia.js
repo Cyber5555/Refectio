@@ -79,11 +79,11 @@ export default class PraductiaComponent extends React.Component {
 
   getObjectData = async () => {
     let userID = this.props.id
-    
+
     const { limit_without_cat } = this.state
     console.log(userID, 'useridddd');
 
-    this.setState({active: null})
+    this.setState({ active: null })
 
     await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=' + limit_without_cat, {
       method: 'GET'
@@ -235,7 +235,7 @@ export default class PraductiaComponent extends React.Component {
     }
 
     // this.focusListener();
-    
+
   }
 
 
@@ -416,12 +416,45 @@ export default class PraductiaComponent extends React.Component {
                         </TouchableOpacity>
                       </View>
                       <Slider slid={item.images} />
+
                       <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, marginTop: 5, marginBottom: 4 }}>{item.name}</Text>
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Фасады : {item.facades}</Text>
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Корпус:  {item.frame}</Text>
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Столешница: {item.tabletop}</Text>
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Длина: {item.length} метров*</Text>
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Цена: {item.price} руб.</Text>
+                      {
+                        item.facades &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Фасады : {item.facades}</Text>
+                      }
+                      {
+                        item.frame &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Корпус:  {item.frame}</Text>
+                      }
+                      {
+                        item.tabletop &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Столешница: {item.tabletop}</Text>
+                      }
+                      {
+                        item.length &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Длина: {item.length} метров*</Text>
+                      }
+                      {
+                        item.price &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Цена: {item.price} руб.</Text>
+                      }
+                      {
+                        item.height &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Высота: {item.height} метров*</Text>
+                      }
+                      {
+                        item.material &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Материал: {item.material}</Text>
+                      }
+                      {
+                        item.description &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.description}</Text>
+                      }
+                      {
+                        item.inserciones &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Вставки: {item.inserciones}</Text>
+                      }
+
                     </View>
                   )
                 })

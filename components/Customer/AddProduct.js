@@ -37,6 +37,10 @@ export default class AddProductComponent extends React.Component {
       price: "",
       price_error: false,
 
+      material: '',
+      inserciones: '',
+      description: '',
+
       tabletop: "",
       tabletop_error: false,
       all_images: [],
@@ -153,6 +157,10 @@ export default class AddProductComponent extends React.Component {
       price: "",
       price_error: false,
 
+      material: '',
+      inserciones: '',
+      description: '',
+
       tabletop: "",
       tabletop_error: false,
       all_images: [],
@@ -179,6 +187,10 @@ export default class AddProductComponent extends React.Component {
     this.formdata.append("height", this.state.height);
     this.formdata.append("price", this.state.price);
     this.formdata.append("tabletop", this.state.tabletop);
+    this.formdata.append("material", this.state.material);
+    this.formdata.append("inserciones", this.state.inserciones);
+    this.formdata.append("description", this.state.description);
+
 
 
 
@@ -250,6 +262,21 @@ export default class AddProductComponent extends React.Component {
       keyboardOpen: false
 
     })
+
+  }
+
+  findInstring = (cat, cat_arr) => {
+
+    let bool = false;
+    for (const cat_arr_item in cat_arr) {
+
+      if (cat == cat_arr[cat_arr_item]) {
+        bool = true;
+      }
+
+    }
+
+    return bool
 
   }
 
@@ -362,8 +389,12 @@ export default class AddProductComponent extends React.Component {
                     height: 45,
                     marginRight: 12
                   }}
-                  onPress={() => !this.state.category ? this.setState({ category: true }) : this.setState({ category: false })}
-                >
+                  onPress={() => {
+                    // if (this.state.categoryChanged == '') {
+                    //   this.setState({ categoryChanged: '' })
+                    // }
+                    this.setState({ category: !this.state.category })
+                  }}>
                   <Text style={{ color: "#5B5B5B", fontFamily: 'Poppins_500Medium', }}>{this.state.categoryChanged}</Text>
 
                   <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
@@ -393,7 +424,7 @@ export default class AddProductComponent extends React.Component {
                             justifyContent: 'center',
                             textAlign: 'left',
                           }}
-                          onPress={() => this.setState({ categoryChanged: item.name, category: false, categoryId: item.id })}
+                          onPress={async () => await this.setState({ categoryChanged: item.name, category: false, categoryId: item.id })}
                         >
                           <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
                             {item.name}
@@ -408,41 +439,28 @@ export default class AddProductComponent extends React.Component {
               </View>
             </View>
 
-            {
-              this.state.categoryChanged == 'Мебель для ванной' &&
+            {this.findInstring(this.state.categoryChanged, ['Кухни', 'Мебель для ванной', 'Прихожие', 'Гардеробные', 'Гостиные', 'Кабинеты']) &&
+              <View>
 
-              < View View >
-                <Text
-                  style={{
-                    fontFamily: 'Poppins_500Medium',
-                    lineHeight: 23,
-                    fontSize: 16,
-                    color: '#5B5B5B',
-                    marginBottom: 5,
-                    marginTop: 12
-                  }}
-                >
+                <Text style={{ fontFamily: 'Poppins_500Medium', lineHeight: 23, fontSize: 16, color: '#5B5B5B', marginBottom: 5, marginTop: 12 }} >
                   Корпус
                 </Text>
+
                 <TextInput
                   underlineColorAndroid="transparent"
                   placeholder="ДСП"
                   keyboardType="default"
-                  style={{
-                    borderWidth: 1,
-                    borderColor: '#F5F5F5',
-                    padding: 10,
-                    width: '100%',
-                    borderRadius: 5,
-                  }}
+                  style={{ borderWidth: 1, borderColor: '#F5F5F5', padding: 10, width: '100%', borderRadius: 5, }}
                   value={this.state.frame}
                   onChangeText={(text) => this.setState({ frame: text })}
                 />
               </View>
+
             }
 
             {
-              this.state.categoryChanged == 'Мебель для ванной' &&
+              this.findInstring(this.state.categoryChanged, ['Кухни', 'Мебель для ванной']) &&
+
               <View>
                 <Text
                   style={{
@@ -474,9 +492,8 @@ export default class AddProductComponent extends React.Component {
             }
 
             {
-              this.state.categoryChanged == 'Мебель для ванной' &&
-
-              <View>
+              this.findInstring(this.state.categoryChanged, ['Кухни', 'Мебель для ванной', 'Прихожие', 'Гардеробные', 'Гостиные', 'Кабинеты', 'Детские', 'Мебель для спальни ', 'Межкомнатные перегородки']) &&
+              <View >
                 <Text
                   style={{
                     fontFamily: 'Poppins_500Medium',
@@ -507,7 +524,7 @@ export default class AddProductComponent extends React.Component {
             }
 
             {
-              this.state.categoryChanged == 'Мебель для ванной' &&
+              this.findInstring(this.state.categoryChanged, ['Прихожие', 'Гардеробные', 'Детские', 'Межкомнатные перегородки']) &&
               <View>
                 <Text
                   style={{
@@ -539,7 +556,7 @@ export default class AddProductComponent extends React.Component {
             }
 
             {
-              this.state.categoryChanged == 'Мебель для ванной' &&
+              this.findInstring(this.state.categoryChanged, ['Кухни', 'Мебель для ванной', 'Прихожие', 'Гардеробные', 'Гостиные', 'Кабинеты', 'Детские', 'Мебель для спальни ',]) &&
               <View>
                 <Text
                   style={{
@@ -570,43 +587,150 @@ export default class AddProductComponent extends React.Component {
               </View>
             }
 
-            <View>
-              <Text
-                style={{
-                  fontFamily: 'Poppins_500Medium',
-                  lineHeight: 23,
-                  fontSize: 16,
-                  color: '#5B5B5B',
-                  marginBottom: 5,
-                  marginTop: 12
-                }}
-              >
-                Цена
-              </Text>
-              <View style={{ flexDirection: 'row' }}>
-                <MaskInput
+
+            {
+              this.findInstring(this.state.categoryChanged, ['Межкомнатные перегородки']) &&
+              <View>
+                <Text
+                  style={{
+                    fontFamily: 'Poppins_500Medium',
+                    lineHeight: 23,
+                    fontSize: 16,
+                    color: '#5B5B5B',
+                    marginBottom: 5,
+                    marginTop: 12
+                  }}
+                >
+                  Материал
+                </Text>
+                <TextInput
                   underlineColorAndroid="transparent"
-                  placeholder="1.000.000"
-                  keyboardType="number-pad"
+                  placeholder="Эмаль"
+                  keyboardType="default"
                   style={{
                     borderWidth: 1,
                     borderColor: '#F5F5F5',
                     padding: 10,
-                    width: '89%',
+                    width: '100%',
                     borderRadius: 5,
-                    marginRight: 5
                   }}
-                  mask={[/\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/, '.', /\d/, /\d/, /\d/]}
-                  value={this.state.price}
-                  onChangeText={(text) => this.setState({ price: text })}
-                />
-                <Image
-                  source={require('../../assets/image/apranqiGin.png')}
-                  style={{ width: 30, height: 50 }}
+                  value={this.state.material}
+                  onChangeText={(text) => this.setState({ material: text })}
                 />
               </View>
-            </View>
+            }
 
+            {
+              this.findInstring(this.state.categoryChanged, ['Межкомнатные перегородки']) &&
+              <View>
+                <Text
+                  style={{
+                    fontFamily: 'Poppins_500Medium',
+                    lineHeight: 23,
+                    fontSize: 16,
+                    color: '#5B5B5B',
+                    marginBottom: 5,
+                    marginTop: 12
+                  }}
+                >
+                  Вставки
+                </Text>
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  placeholder="Эмаль"
+                  keyboardType="default"
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#F5F5F5',
+                    padding: 10,
+                    width: '100%',
+                    borderRadius: 5,
+                  }}
+                  value={this.state.inserciones}
+                  onChangeText={(text) => this.setState({ inserciones: text })}
+                />
+              </View>
+            }
+
+
+            {
+              this.findInstring(this.state.categoryChanged, ['Островные павильоны', 'Выставочные стенды', 'Зоны ресепшн']) &&
+              <View>
+                <Text
+                  underlineColorAndroid={'transparent'}
+                  style={{
+                    fontFamily: 'Poppins_500Medium',
+                    lineHeight: 23,
+                    fontSize: 16,
+                    color: '#5B5B5B',
+                    marginBottom: 5,
+                    marginTop: 12
+                  }}
+                >
+                  Описание
+                </Text>
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  // placeholder="Эмаль"
+                  keyboardType="default"
+                  multiline
+                  style={{
+                    borderWidth: 1,
+                    borderColor: '#F5F5F5',
+                    padding: 10,
+                    width: '100%',
+                    borderRadius: 5,
+                  }}
+                  value={this.state.description}
+                  onChangeText={(text) => this.setState({ description: text })}
+                />
+              </View>
+            }
+
+
+            {
+              this.findInstring(this.state.categoryChanged, ['Кухни', 'Мебель для ванной', 'Прихожие', 'Детские', 'Гардеробные', 'Мебель для спальни ', 'Гостиные', 'Кабинеты', 'Межкомнатные перегородки', 'Островные павильоны', 'Выставочные стенды', 'Зоны ресепшн']) &&
+              <View>
+                <Text
+                  style={{
+                    fontFamily: 'Poppins_500Medium',
+                    lineHeight: 23,
+                    fontSize: 16,
+                    color: '#5B5B5B',
+                    marginBottom: 5,
+                    marginTop: 12
+                  }}
+                >
+                  Цена
+                </Text>
+                <View style={{ flexDirection: 'row' }}>
+                  <TextInput
+                    underlineColorAndroid="transparent"
+                    placeholder="1.000.000"
+                    keyboardType="number-pad"
+                    style={{
+                      borderWidth: 1,
+                      borderColor: '#F5F5F5',
+                      padding: 10,
+                      width: '89%',
+                      borderRadius: 5,
+                      marginRight: 5
+                    }}
+                    value={this.state.price}
+                    onChangeText={(text) => {
+                      let without_dots = text.split('.').join('');
+                      let with_dots = without_dots.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+                      this.setState({ price: with_dots })
+                    }}
+                  />
+                  <Image
+                    source={require('../../assets/image/apranqiGin.png')}
+                    style={{ width: 30, height: 50 }}
+                  />
+                </View>
+              </View>
+            }
             <Text
               style={{
                 fontSize: 16,

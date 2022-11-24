@@ -450,12 +450,43 @@ export default class GhostPageTwoComponent extends React.Component {
                   return (
                     <View key={index} style={{ marginTop: 18 }}>
                       <Slider2 slid={item.product_image} />
-                      <Text style={{ fontFamily: 'Raleway_700Bold', fontSize: 13, marginTop: 6 }}>{item.name}</Text>
-                      <Text style={styles.zakazInfo}>Фасады : {item.facades}</Text>
-                      <Text style={styles.zakazInfo}>Корпус: {item.frame}</Text>
-                      <Text style={styles.zakazInfo}>Столешница: {item.tabletop}</Text>
-                      <Text style={styles.zakazInfo}>Длина: {item.length} метров*</Text>
-                      <Text style={styles.zakazInfo}>Цена: {item.price} руб.</Text>
+                      <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, marginTop: 5, marginBottom: 4 }}>{item.name}</Text>
+                      {
+                        item.facades &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Фасады : {item.facades}</Text>
+                      }
+                      {
+                        item.frame &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Корпус:  {item.frame}</Text>
+                      }
+                      {
+                        item.tabletop &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Столешница: {item.tabletop}</Text>
+                      }
+                      {
+                        item.length &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Длина: {item.length} метров*</Text>
+                      }
+                      {
+                        item.price &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Цена: {item.price} руб.</Text>
+                      }
+                      {
+                        item.height &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Высота: {item.height} метров*</Text>
+                      }
+                      {
+                        item.material &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Материал: {item.material}</Text>
+                      }
+                      {
+                        item.description &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.description}</Text>
+                      }
+                      {
+                        item.inserciones &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.inserciones}</Text>
+                      }
                     </View>
                   )
                 })
