@@ -63,7 +63,7 @@ export default class GhostPageTwoComponent extends React.Component {
     let userID = this.props.user_id
 
 
-    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=2', {
+    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID, {
       method: 'GET',
     })
       .then(response => response.json())

@@ -1,11 +1,12 @@
 import React, { Component } from "react";
-import { SafeAreaView, View, Image, Text, Keyboard, TouchableOpacity, TextInput, ScrollView, StyleSheet, Pressable, Modal } from "react-native";
+import { SafeAreaView, View, Image, Text, Keyboard, TouchableOpacity, TextInput, ScrollView, StyleSheet, Pressable, Modal, ImageBackground } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
 import Slider from "../slider/Slider";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
 import FilterComponent from "../Component/FilterComponent";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import BlueButton from "../Component/Buttons/BlueButton";
 
 
 export default class CustomerMainPageComponent extends React.Component {
@@ -19,6 +20,8 @@ export default class CustomerMainPageComponent extends React.Component {
       countMeshok: 0,
       logo: '',
       name: '',
+
+      firstLogin: '',
 
       searchUser: '',
       searchUserButton: false
@@ -111,6 +114,29 @@ export default class CustomerMainPageComponent extends React.Component {
         }
       })
       .catch(error => console.log('error', error));
+  }
+
+
+  firstLoginModal = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken');
+    let AuthStr = 'Bearer ' + userToken;
+    myHeaders.append("Authorization", AuthStr);
+    // myHeaders.append("Content-Type", "multipart/form-data");
+    await fetch('http://80.78.246.59/Refectio/public/api/firstLogin', {
+      method: 'POST',
+      headers: myHeaders,
+      body: {
+        firstLogin: '2'
+      }
+    })
+      .then(response => response.json())
+      .then(res => {
+        console.log(res);
+        if (res.status == true) {
+          this.setState({ firstLogin: '2' })
+        }
+      })
   }
 
 
@@ -272,6 +298,7 @@ export default class CustomerMainPageComponent extends React.Component {
         this.setState({
           logo: res.data[0].logo,
           name: res.data[0].company_name,
+          firstLogin: res.data[0].firstLogin
         })
       })
   }
@@ -306,7 +333,34 @@ export default class CustomerMainPageComponent extends React.Component {
           </View>
 
 
-          {/* <Modal visible={}></Modal> */}
+          <Modal visible={this.state.firstLogin == '1'}>
+            <ImageBackground
+              style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}
+              source={require('../../assets/image/blurBg.png')}>
+              <View style={{ backgroundColor: '#FFFFFF', width: '90%', borderRadius: 20, position: 'relative' }}>
+                {/* <TouchableOpacity style={{ position: 'absolute', right: 18, top: 18 }}>
+                  <Image source={require('../../assets/image/ixs.png')} style={{ width: 22.5, height: 22.5 }} />
+                </TouchableOpacity> */}
+                <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 22, textAlign: 'center', marginTop: 70, color: '#2D9EFB' }}>Поздравляем!</Text>
+                <Text style={{ textAlign: 'center', fontFamily: 'Poppins_400Regular', marginTop: 30, fontSize: 16, color: '#888888' }}>
+                  Вы прошли модерацию.{'\n'}
+                  Теперь вы можете добавить
+                  фото и описание продукции
+                  в профиле, чтобы дизайнеры
+                  могли вас увидеть.
+                </Text>
+                <TouchableOpacity
+                  onPress={async () => {
+                    this.firstLoginModal()
+                  }}
+                  style={{ alignSelf: 'center', marginTop: 67, marginBottom: 50 }}>
+                  <BlueButton name='Ок' />
+                </TouchableOpacity>
+
+              </View>
+            </ImageBackground>
+          </Modal>
+
 
 
           <View style={styles.searchParent}>

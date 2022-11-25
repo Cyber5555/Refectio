@@ -2069,9 +2069,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
                             <Text style={styles.procentText}>От</Text>
 
-                            <TextInput
-
-                            />
 
 
                             <TextInput

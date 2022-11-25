@@ -63,6 +63,7 @@ export default class RegistrationManufacturerComponent extends Component {
       saite: '',
 
       telegram: '',
+      tg: 't.me/',
 
 
       show_room_arr: [
@@ -668,6 +669,7 @@ export default class RegistrationManufacturerComponent extends Component {
 
       saite: '',
       telegram: '',
+      tg: 't.me/',
 
       show_room_arr: [
         { name: 'Да', id: 1 },
@@ -1350,7 +1352,10 @@ export default class RegistrationManufacturerComponent extends Component {
                   borderRadius: 5,
                 }}
                 value={this.state.telegram}
-                onChangeText={(text) => this.setState({ telegram: text })}
+                onChangeText={(text) => {
+                  this.setState({ telegram: text })
+                }}
+
               />
 
             </View>

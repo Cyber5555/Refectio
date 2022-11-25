@@ -5,7 +5,7 @@ import Slider from "../slider/Slider";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
 import Svg, { Path, Rect } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import ShowMore from "../Component/Buttons/ShowMore";
+// import ShowMore from "../Component/Buttons/ShowMore";
 import BlueButton from "../Component/Buttons/BlueButton";
 
 
@@ -26,8 +26,8 @@ export default class PraductiaComponent extends React.Component {
       city_for_sales_user: [],
       products: [],
 
-      limit_without_cat: 2,
-      limit_count_plus: 2,
+      // limit_without_cat: 2,
+      // limit_count_plus: 2,
 
 
       show_plus_button: false,
@@ -38,12 +38,12 @@ export default class PraductiaComponent extends React.Component {
   }
 
 
-  showMore = async () => {
-    let { limit_count_plus, limit_without_cat } = this.state;
-    limit_without_cat += limit_count_plus
-    await this.setState({ limit_without_cat: limit_without_cat })
-    await this.getObjectData()
-  }
+  // showMore = async () => {
+  //   let { limit_count_plus, limit_without_cat } = this.state;
+  //   limit_without_cat += limit_count_plus
+  //   await this.setState({ limit_without_cat: limit_without_cat })
+  //   await this.getObjectData()
+  // }
 
 
   enterCheckBox = (id) => {
@@ -80,12 +80,12 @@ export default class PraductiaComponent extends React.Component {
   getObjectData = async () => {
     let userID = this.props.id
 
-    const { limit_without_cat } = this.state
+    // const { limit_without_cat } = this.state
     console.log(userID, 'useridddd');
 
     this.setState({ active: null })
 
-    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=' + limit_without_cat, {
+    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID, {
       method: 'GET'
     })
       .then(response => response.json())
@@ -434,10 +434,7 @@ export default class PraductiaComponent extends React.Component {
                         item.length &&
                         <Text style={{ fontFamily: 'Raleway_400Regular', }}>Длина: {item.length} метров*</Text>
                       }
-                      {
-                        item.price &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Цена: {item.price} руб.</Text>
-                      }
+
                       {
                         item.height &&
                         <Text style={{ fontFamily: 'Raleway_400Regular', }}>Высота: {item.height} метров*</Text>
@@ -454,17 +451,20 @@ export default class PraductiaComponent extends React.Component {
                         item.inserciones &&
                         <Text style={{ fontFamily: 'Raleway_400Regular', }}>Вставки: {item.inserciones}</Text>
                       }
-
+                      {
+                        item.price &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Цена: {item.price} руб.</Text>
+                      }
                     </View>
                   )
                 })
             }
-            {
+            {/* {
               this.state.show_plus_button &&
               <TouchableOpacity style={{ width: '100%', alignItems: 'center', marginBottom: 20 }} onPress={() => this.showMore()}>
                 <ShowMore />
               </TouchableOpacity>
-            }
+            } */}
           </ScrollView>
         </View>
         <CustomerMainPageNavComponent navigation={this.props.navigation} />

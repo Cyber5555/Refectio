@@ -151,7 +151,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
     console.log(userID, 'idddddddddddddddddddddddddd');
 
-    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID + '/limit=2', {
+    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID, {
       method: 'GET',
       headers: myHeaders
     })
@@ -322,7 +322,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
           this.setState({
             products: [],
-            show_plus_button: false
+            // show_plus_button: false
           })
 
           return false;
@@ -349,7 +349,7 @@ export default class DesignerPageTwoComponent extends React.Component {
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
           products: data.products,
-          show_plus_button: false,
+          // show_plus_button: false,
           extract: data.user[0].extract,
           whatsapp: res.data.user[0].watsap_phone
         })
@@ -1234,10 +1234,6 @@ export default class DesignerPageTwoComponent extends React.Component {
                         <Text style={{ fontFamily: 'Raleway_400Regular', }}>Длина: {item.length} метров*</Text>
                       }
                       {
-                        item.price &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Цена: {item.price} руб.</Text>
-                      }
-                      {
                         item.height &&
                         <Text style={{ fontFamily: 'Raleway_400Regular', }}>Высота: {item.height} метров*</Text>
                       }
@@ -1252,6 +1248,10 @@ export default class DesignerPageTwoComponent extends React.Component {
                       {
                         item.inserciones &&
                         <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.inserciones}</Text>
+                      }
+                      {
+                        item.price &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Цена: {item.price} руб.</Text>
                       }
                     </View>
                   )

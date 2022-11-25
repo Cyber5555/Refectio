@@ -13,7 +13,6 @@ export default class AddProductComponent extends React.Component {
     super(props)
     this.state = {
       keyboardOpen: false,
-      options: [],
       category: false,
       categoryChanged: '',
       categoryId: '',
@@ -45,6 +44,7 @@ export default class AddProductComponent extends React.Component {
       tabletop_error: false,
       all_images: [],
 
+      categoryArray: [],
 
       modalBool: false,
       status: false
@@ -125,16 +125,25 @@ export default class AddProductComponent extends React.Component {
   }
 
 
-  getProductCategory = async () => {
-    await fetch("http://80.78.246.59/Refectio/public/api/GetProductCategory", {
-      method: 'GET'
+
+  getAuthUserProfile = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken');
+    let AuthStr = 'Bearer ' + userToken;
+    myHeaders.append("Authorization", AuthStr);
+    myHeaders.append("Content-Type", "multipart/form-data");
+    await fetch('http://80.78.246.59/Refectio/public/api/AuthUserProfile', {
+      method: 'GET',
+      headers: myHeaders
     })
       .then(response => response.json())
-      .then((res) => {
-        this.setState({ options: res.data.city })
+      .then(res => {
+        this.setState({
+          categoryArray: res.data[0].user_category_product,
+        })
       })
-      .catch(error => error, 'error')
   }
+
 
   clearState = async () => {
     this.setState({
@@ -230,8 +239,18 @@ export default class AddProductComponent extends React.Component {
   }
 
 
+
   componentDidMount() {
-    this.getProductCategory()
+    const { navigation } = this.props;
+    this.getAuthUserProfile()
+
+
+    this.focusListener = navigation.addListener("focus", () => {
+
+      this.getAuthUserProfile()
+
+    });
+
     this.keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       this._keyboardDidShow,
@@ -244,9 +263,15 @@ export default class AddProductComponent extends React.Component {
 
 
   componentWillUnmount() {
+
+    if (this.focusListener) {
+      this.focusListener();
+      console.log(' END')
+    }
     this.keyboardDidShowListener.remove();
     this.keyboardDidHideListener.remove();
   }
+
 
   _keyboardDidShow = (event) => {
     this.setState({
@@ -415,7 +440,8 @@ export default class AddProductComponent extends React.Component {
                 style={this.state.category ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
                 <ScrollView nestedScrollEnabled={true} >
                   {
-                    this.state.options.map((item, index) => {
+                    this.state.categoryArray.map((item, index) => {
+                      console.log(item)
                       return (
                         <TouchableOpacity
                           key={index}
@@ -424,10 +450,10 @@ export default class AddProductComponent extends React.Component {
                             justifyContent: 'center',
                             textAlign: 'left',
                           }}
-                          onPress={async () => await this.setState({ categoryChanged: item.name, category: false, categoryId: item.id })}
+                          onPress={async () => await this.setState({ categoryChanged: item.category_name, category: false, categoryId: item.category_id })}
                         >
                           <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Poppins_500Medium', }}>
-                            {item.name}
+                            {item.category_name}
                           </Text>
 
                         </TouchableOpacity>
