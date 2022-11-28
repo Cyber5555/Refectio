@@ -1286,6 +1286,7 @@ export default class RegistrationManufacturerComponent extends Component {
               </Text>
 
               <TextInput
+                placeholder="Кухни 200 000р м2, Прихожые 100 000р м2"
                 underlineColorAndroid="transparent"
                 // keyboardType="number-pad"
                 style={[{
@@ -1316,6 +1317,7 @@ export default class RegistrationManufacturerComponent extends Component {
 
               <TextInput
                 underlineColorAndroid="transparent"
+                placeholder="www.mymebelsite.ru"
                 style={{
                   borderWidth: 1,
                   borderColor: '#F5F5F5',
@@ -1343,6 +1345,7 @@ export default class RegistrationManufacturerComponent extends Component {
               </Text>
 
               <TextInput
+                placeholder="t.me/MyTelegramChennel"
                 underlineColorAndroid="transparent"
                 style={{
                   borderWidth: 1,

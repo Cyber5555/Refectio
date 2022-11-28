@@ -430,12 +430,14 @@ export default class CustomerMainPageComponent extends React.Component {
                           }}
                         />
                         <View style={styles.infoCompany}>
-                          <View>
+                          <View style={{width: '70%'}}>
                             <Text
+                              numberOfLines={1}
                               style={{
                                 fontSize: 20,
                                 fontFamily: 'Raleway_700Bold',
                                 marginBottom: 6,
+                                
                               }}>
                               {item.company_name}
                             </Text>
@@ -545,7 +547,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   infoCompany: {
-    width: '76%',
+    width: '75%',
     flexDirection: 'row',
     justifyContent: 'space-between'
   },
