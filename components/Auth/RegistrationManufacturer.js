@@ -1345,7 +1345,7 @@ export default class RegistrationManufacturerComponent extends Component {
               </Text>
 
               <TextInput
-                placeholder="t.me/MyTelegramChennel"
+                placeholder="MyTelegramChennel"
                 underlineColorAndroid="transparent"
                 style={{
                   borderWidth: 1,

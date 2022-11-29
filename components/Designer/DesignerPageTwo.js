@@ -22,13 +22,13 @@ export default class DesignerPageTwoComponent extends React.Component {
 
       changed: '',
       sOpenCityDropDown: false,
-      active: null,
 
       user: [],
       user_bonus_for_designer: [],
       user_category_for_product: [],
       city_for_sales_user: [],
       products: [],
+      active: 0,
 
       categorySelect: false,
 
@@ -162,11 +162,12 @@ export default class DesignerPageTwoComponent extends React.Component {
           user_bonus_for_designer: res.data.user_bonus_for_designer,
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
-          products: res.data.products,
           favoriteBool: res.data.Favorit_button,
           extract: res.data.user[0].extract,
           whatsapp: res.data.user[0].watsap_phone
         })
+        this.updateProduct(res.data.user_category_for_product[0].category_name)
+
       })
   }
 
@@ -382,13 +383,11 @@ export default class DesignerPageTwoComponent extends React.Component {
   componentDidMount() {
     const { navigation } = this.props;
     this.getCategory()
-    this.setState({ active: null })
     this.getObjectData()
 
 
     this.focusListener = navigation.addListener("focus", () => {
       this.getCategory()
-      this.setState({ active: null })
       this.getObjectData()
 
     });
@@ -988,7 +987,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                               item.telegram !== null &&
                               <TouchableOpacity
                                 onPress={() => {
-                                  Linking.openURL(item.telegram)
+                                  Linking.openURL('https://t.me/' + item.telegram)
                                 }}>
                                 <Image
                                   source={require('../../assets/image/telegram.png')}
@@ -1192,14 +1191,10 @@ export default class DesignerPageTwoComponent extends React.Component {
                         <TouchableOpacity
                           key={index}
                           onPress={async () => {
-                            if (index !== this.state.active) {
-                              await this.updateProduct(item.category_name)
-                              this.setState({ active: index })
-                            }
-                            else if (index == this.state.active) {
-                              this.getObjectData()
-                              this.setState({ active: null })
-                            }
+                            await this.updateProduct(item.category_name)
+                            this.setState({ active: index })
+
+
                           }}
                           style={this.state.active === index ? styles.categoryButtonActive : styles.categoryButton}
                         >

@@ -19,7 +19,7 @@ export default class GhostPageTwoComponent extends React.Component {
 
       changed: '',
       sOpenCityDropDown: false,
-      active: null,
+      active: 0,
 
       user: [],
       user_category_for_product: [],
@@ -73,8 +73,9 @@ export default class GhostPageTwoComponent extends React.Component {
           user: res.data.user,
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
-          products: res.data.products,
+
         })
+        this.updateProduct(res.data.user_category_for_product[0].category_name)
       })
   }
 
@@ -147,13 +148,12 @@ export default class GhostPageTwoComponent extends React.Component {
     const { navigation } = this.props;
 
 
-    this.setState({ active: null })
     this.getObjectData()
 
 
 
     this.focusListener = navigation.addListener("focus", () => {
-      this.setState({ active: null })
+
       this.getObjectData()
 
     });
@@ -425,14 +425,8 @@ export default class GhostPageTwoComponent extends React.Component {
                         <TouchableOpacity
                           key={index}
                           onPress={async () => {
-                            if (index !== this.state.active) {
-                              await this.updateProduct(item.category_name)
-                              this.setState({ active: index })
-                            }
-                            else if (index == this.state.active) {
-                              this.getObjectData()
-                              this.setState({ active: null })
-                            }
+                            await this.updateProduct(item.category_name)
+                            this.setState({ active: index })
                           }}
                           style={this.state.active === index ? styles.categoriesButtonActive : styles.categoriesButton}
                         >

@@ -132,7 +132,7 @@ export default class CustomerMainPageComponent extends React.Component {
     })
       .then(response => response.json())
       .then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.status == true) {
           this.setState({ firstLogin: '2' })
         }

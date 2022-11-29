@@ -1516,7 +1516,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                         }}>
                           {
                             item.telegram !== null &&
-                            <TouchableOpacity onPress={() => { Linking.openURL(item.telegram) }}>
+                            <TouchableOpacity onPress={() => { Linking.openURL('https://t.me/' + item.telegram) }}>
                               <Image
                                 source={require('../../assets/image/telegram.png')}
                                 style={{

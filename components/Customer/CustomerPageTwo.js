@@ -16,13 +16,15 @@ export default class DesignerPageTwoComponent extends React.Component {
 
       changed: '',
       sOpenCityDropDown: false,
-      active: null,
+      active: 0,
 
       user: [],
       user_bonus_for_designer: [],
       user_category_for_product: [],
       city_for_sales_user: [],
       products: [],
+      user_id_for_search: '',
+
 
       procentArray: [
         {
@@ -33,21 +35,38 @@ export default class DesignerPageTwoComponent extends React.Component {
       ],
 
       urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
-      valid_error: false
+      valid_error: false,
+
     }
   }
 
 
+
+  getObjectData = async () => {
+    let userID = this.props.userID
+    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID, {
+      method: 'GET'
+    })
+      .then(response => response.json())
+      .then(res => {
+         this.setState({
+          user: res.data.user,
+          user_bonus_for_designer: res.data.user_bonus_for_designer,
+          user_category_for_product: res.data.user_category_for_product,
+          city_for_sales_user: res.data.city_for_sales_user,
+          user_id_for_search: userID
+        })
+        this.updateProduct(res.data.user_category_for_product[0].category_name)
+      })
+  }
+
   componentDidMount() {
     const { navigation } = this.props;
     this.getObjectData()
-    this.setState({ active: null })
 
     this.focusListener = navigation.addListener("focus", () => {
 
       this.getObjectData()
-      this.setState({ active: null })
-
 
     });
   }
@@ -60,83 +79,136 @@ export default class DesignerPageTwoComponent extends React.Component {
     }
   }
 
-  getObjectData = async () => {
-    let userID = this.props.userID
-    await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID, {
-      method: 'GET'
-    })
-      .then(response => response.json())
-      .then(res => {
-        this.setState({
-          user: res.data.user,
-          user_bonus_for_designer: res.data.user_bonus_for_designer,
-          user_category_for_product: res.data.user_category_for_product,
-          city_for_sales_user: res.data.city_for_sales_user,
-          products: res.data.products,
-        })
-      })
-  }
-
 
   updateProduct = async (category_name) => {
-    let myHeaders = new Headers();
-    let userToken = await AsyncStorage.getItem('userToken')
-    myHeaders.append("Authorization", "Bearer " + userToken);
+    let userID = this.props.userID
+    console.log(userID, 'iiiiiiiiiiiii');
+    console.log(this.state.user_id_for_search, 'this.state.user_id_for_search');
 
-    console.log("Bearer " + userToken, 'userToken');
+    if (userID == this.state.user_id_for_search) {
 
-    let formdata = new FormData();
-    formdata.append("category_name", category_name);
 
-    let requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: formdata,
-      redirect: 'follow'
-    };
+      let myHeaders = new Headers();
+      let userToken = await AsyncStorage.getItem('userToken')
+      myHeaders.append("Authorization", "Bearer " + userToken);
 
-    fetch("http://80.78.246.59/Refectio/public/api/GetcategoryOneuserprduct", requestOptions)
-      .then(response => response.json())
-      .then(res => {
-        console.log(res, 'GetcategoryOneuserprduct');
 
-        if (res.status === false) {
 
-          this.setState({
-            products: [],
-            // show_plus_button: false
-          })
 
-          return false;
-        }
 
-        let data = res.data.data;
-        let new_data_result = [];
+      let formdata = new FormData();
+      formdata.append("category_name", category_name);
+      formdata.append("user_id", userID);
 
-        for (let i = 0; i < data.length; i++) {
+      let requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow'
+      };
 
-          if (data[i].product_image.length < 1) {
-            data[i].images = [];
-            continue;
+
+      fetch("http://80.78.246.59/Refectio/public/api/filtergetOneProizvoditel", requestOptions)
+        .then(response => response.json())
+        .then(res => {
+
+          if (res.status === false) {
+
+            this.setState({
+              products: [],
+              // show_plus_button: false
+            })
+
+            return false;
           }
 
-          let product_image = data[i].product_image;
+          let data = res.data;
+          let new_data_result = [];
 
-          data[i].images = product_image;
-        }
+          for (let i = 0; i < data.length; i++) {
 
+            if (data[i].product_image.length < 1) {
+              data[i].images = [];
+              continue;
+            }
 
-        this.setState({
-          // user: data,
-          user_bonus_for_designer: res.data.data.user_bonus_for_designer,
-          // user_category_for_product: res.data.user_category_for_product,
-          // city_for_sales_user: res.data.data.city_for_sales_user,
-          products: data,
-          // show_plus_button: false
+            let product_image = data[i].product_image;
+
+            data[i].images = product_image;
+          }
+
+          this.setState({
+            // user: data.user,
+            // user_bonus_for_designer: res.data.user_bonus_for_designer,
+            // user_category_for_product: res.data.user_category_for_product,
+            // city_for_sales_user: res.data.city_for_sales_user,
+            products: data.products,
+            // show_plus_button: false,
+            // extract: data.user[0].extract,
+            // whatsapp: res.data.user[0].watsap_phone
+          })
         })
-      })
-      .catch(error => console.log('error', error));
+        .catch(error => console.log('error', error));
+    }
+    else {
+      let myHeaders = new Headers();
+      let userToken = await AsyncStorage.getItem('userToken')
+      myHeaders.append("Authorization", "Bearer " + userToken);
 
+
+      let formdata = new FormData();
+      formdata.append("category_name", category_name);
+
+      let requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow'
+      };
+
+      fetch("http://80.78.246.59/Refectio/public/api/GetcategoryOneuserprduct", requestOptions)
+        .then(response => response.json())
+        .then(res => {
+          // console.log(res, 'GetcategoryOneuserprduct');
+
+          if (res.status === false) {
+
+            this.setState({
+              products: [],
+              // show_plus_button: false
+            })
+
+            return false;
+          }
+
+          let data = res.data.data;
+          let new_data_result = [];
+
+          for (let i = 0; i < data.length; i++) {
+
+            if (data[i].product_image.length < 1) {
+              data[i].images = [];
+              continue;
+            }
+
+            let product_image = data[i].product_image;
+
+            data[i].images = product_image;
+          }
+
+
+          this.setState({
+            // user: data,
+            user_bonus_for_designer: res.data.data.user_bonus_for_designer,
+            // user_category_for_product: res.data.user_category_for_product,
+            // city_for_sales_user: res.data.data.city_for_sales_user,
+            products: data,
+            // show_plus_button: false
+          })
+        })
+        .catch(error => console.log('error', error));
+
+    }
 
   }
 
@@ -250,6 +322,7 @@ export default class DesignerPageTwoComponent extends React.Component {
   // }
 
   render() {
+
     return (
       <SafeAreaView style={{ flex: 1, }}>
         <View style={styles.main}>
@@ -502,7 +575,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                               item.telegram !== null &&
                               <TouchableOpacity
                                 onPress={() => {
-                                  Linking.openURL(item.telegram)
+                                  Linking.openURL('https://t.me/' + item.telegram)
                                 }}>
                                 <Image
                                   source={require('../../assets/image/telegram.png')}
@@ -706,18 +779,12 @@ export default class DesignerPageTwoComponent extends React.Component {
                         <TouchableOpacity
                           key={index}
                           onPress={async () => {
-                            if (index !== this.state.active) {
-                              await this.updateProduct(item.category_name)
-                              this.setState({ active: index })
-                            }
-                            else if (index == this.state.active) {
-                              this.getObjectData()
-                              this.setState({ active: null })
-                            }
+                            await this.updateProduct(item.category_name)
+                            this.setState({ active: index })
                           }}
-                          style={this.state.active === index ? styles.categoryButtonActive : styles.categoryButton}
+                          style={this.state.active == index ? styles.categoryButtonActive : styles.categoryButton}
                         >
-                          <Text style={this.state.active === index ? styles.categoriesNameActive : styles.categoriesName}>{item.category_name}</Text>
+                          <Text style={this.state.active == index ? styles.categoriesNameActive : styles.categoriesName}>{item.category_name}</Text>
 
                         </TouchableOpacity>
                       )
@@ -727,7 +794,6 @@ export default class DesignerPageTwoComponent extends React.Component {
               </View>
               {
                 this.state.products.map((item, index) => {
-                  console.log(item);
                   return (
                     <View key={index} style={{ marginTop: 18 }}>
                       <Slider2 slid={item.product_image} />
