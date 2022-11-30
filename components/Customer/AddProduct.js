@@ -56,7 +56,7 @@ export default class AddProductComponent extends React.Component {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
-      quality: 1,
+      quality: 0.5,
     });
     if (!result.cancelled) {
       this.setState({ img: result.uri });

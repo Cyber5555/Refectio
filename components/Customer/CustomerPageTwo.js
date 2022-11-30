@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { SafeAreaView, View, Image, Text, Modal, TouchableOpacity, TextInput, ScrollView, StyleSheet, ImageBackground, Pressable, Linking, } from "react-native";
+import { SafeAreaView, View, Image, Text, Modal, TouchableOpacity, TextInput, ScrollView, StyleSheet, ImageBackground, Pressable, Linking, ActivityIndicator, } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
 import Slider from "../slider/Slider";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
@@ -36,7 +36,9 @@ export default class DesignerPageTwoComponent extends React.Component {
 
       urlImage: 'http://80.78.246.59/Refectio/storage/app/uploads/',
       valid_error: false,
+      change_category_loaded: false,
 
+      pressCategory: true
     }
   }
 
@@ -49,25 +51,28 @@ export default class DesignerPageTwoComponent extends React.Component {
     })
       .then(response => response.json())
       .then(res => {
-         this.setState({
+        this.setState({
           user: res.data.user,
           user_bonus_for_designer: res.data.user_bonus_for_designer,
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
           user_id_for_search: userID
         })
-        this.updateProduct(res.data.user_category_for_product[0].category_name)
       })
+  }
+
+  loadedDataAfterLoadPage = async () => {
+    await this.getObjectData()
+    await this.updateProduct(this.state.user_category_for_product[0].category_name,)
+    this.setState({ active: 0 })
   }
 
   componentDidMount() {
     const { navigation } = this.props;
-    this.getObjectData()
+    this.loadedDataAfterLoadPage();
 
     this.focusListener = navigation.addListener("focus", () => {
-
-      this.getObjectData()
-
+      this.loadedDataAfterLoadPage();
     });
   }
 
@@ -81,6 +86,12 @@ export default class DesignerPageTwoComponent extends React.Component {
 
 
   updateProduct = async (category_name) => {
+
+    await this.setState({
+      change_category_loaded: true,
+
+    })
+
     let userID = this.props.userID
     console.log(userID, 'iiiiiiiiiiiii');
     console.log(this.state.user_id_for_search, 'this.state.user_id_for_search');
@@ -91,9 +102,6 @@ export default class DesignerPageTwoComponent extends React.Component {
       let myHeaders = new Headers();
       let userToken = await AsyncStorage.getItem('userToken')
       myHeaders.append("Authorization", "Bearer " + userToken);
-
-
-
 
 
       let formdata = new FormData();
@@ -112,11 +120,13 @@ export default class DesignerPageTwoComponent extends React.Component {
         .then(response => response.json())
         .then(res => {
 
+
           if (res.status === false) {
 
             this.setState({
               products: [],
               // show_plus_button: false
+              change_category_loaded: false
             })
 
             return false;
@@ -146,11 +156,13 @@ export default class DesignerPageTwoComponent extends React.Component {
             // show_plus_button: false,
             // extract: data.user[0].extract,
             // whatsapp: res.data.user[0].watsap_phone
+            change_category_loaded: false
           })
         })
         .catch(error => console.log('error', error));
     }
     else {
+
       let myHeaders = new Headers();
       let userToken = await AsyncStorage.getItem('userToken')
       myHeaders.append("Authorization", "Bearer " + userToken);
@@ -211,6 +223,171 @@ export default class DesignerPageTwoComponent extends React.Component {
     }
 
   }
+
+
+  
+  
+
+
+updateProductAfterClickToCategory = async (category_name, index) => {
+
+    await this.setState({
+      change_category_loaded: true,
+    })
+
+
+    if (this.state.pressCategory) {
+
+      console.log('Pressed to category')
+      this.setState({
+        pressCategory: false,
+        active: index
+      })
+
+      let userID = this.props.userID
+      console.log(userID, 'iiiiiiiiiiiii');
+      console.log(this.state.user_id_for_search, 'this.state.user_id_for_search');
+  
+      if (userID == this.state.user_id_for_search) {
+  
+  
+        let myHeaders = new Headers();
+        let userToken = await AsyncStorage.getItem('userToken')
+        myHeaders.append("Authorization", "Bearer " + userToken);
+  
+  
+        let formdata = new FormData();
+        formdata.append("category_name", category_name);
+        formdata.append("user_id", userID);
+  
+        let requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: formdata,
+          redirect: 'follow'
+        };
+  
+  
+        fetch("http://80.78.246.59/Refectio/public/api/filtergetOneProizvoditel", requestOptions)
+          .then(response => response.json())
+          .then(res => {
+  
+  
+            if (res.status === false) {
+  
+              this.setState({
+                products: [],
+                // show_plus_button: false
+                change_category_loaded: false,
+                pressCategory: true
+              })
+  
+              return false;
+            }
+  
+            let data = res.data;
+            let new_data_result = [];
+  
+            for (let i = 0; i < data.length; i++) {
+  
+              if (data[i].product_image.length < 1) {
+                data[i].images = [];
+                continue;
+              }
+  
+              let product_image = data[i].product_image;
+  
+              data[i].images = product_image;
+            }
+  
+            this.setState({
+              // user: data.user,
+              // user_bonus_for_designer: res.data.user_bonus_for_designer,
+              // user_category_for_product: res.data.user_category_for_product,
+              // city_for_sales_user: res.data.city_for_sales_user,
+              products: data.products,
+              // show_plus_button: false,
+              // extract: data.user[0].extract,
+              // whatsapp: res.data.user[0].watsap_phone
+              change_category_loaded: false,
+              pressCategory: true
+
+            })
+          })
+          .catch(error => console.log('error', error));
+      }
+      else {
+  
+        let myHeaders = new Headers();
+        let userToken = await AsyncStorage.getItem('userToken')
+        myHeaders.append("Authorization", "Bearer " + userToken);
+  
+  
+        let formdata = new FormData();
+        formdata.append("category_name", category_name);
+  
+        let requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: formdata,
+          redirect: 'follow'
+        };
+  
+        fetch("http://80.78.246.59/Refectio/public/api/GetcategoryOneuserprduct", requestOptions)
+          .then(response => response.json())
+          .then(res => {
+            // console.log(res, 'GetcategoryOneuserprduct');
+  
+            if (res.status === false) {
+  
+              this.setState({
+                products: [],
+                change_category_loaded: false,
+                pressCategory: true
+                // show_plus_button: false
+              })
+  
+              return false;
+            }
+  
+            let data = res.data.data;
+            let new_data_result = [];
+  
+            for (let i = 0; i < data.length; i++) {
+  
+              if (data[i].product_image.length < 1) {
+                data[i].images = [];
+                continue;
+              }
+  
+              let product_image = data[i].product_image;
+  
+              data[i].images = product_image;
+            }
+  
+  
+            this.setState({
+              // user: data,
+              user_bonus_for_designer: res.data.data.user_bonus_for_designer,
+              // user_category_for_product: res.data.user_category_for_product,
+              // city_for_sales_user: res.data.data.city_for_sales_user,
+              products: data,
+              change_category_loaded: false,
+              pressCategory: true
+              // show_plus_button: false
+            })
+          })
+          .catch(error => console.log('error', error));
+  
+      }
+    }
+
+    // this.setState({ active: index })
+
+    
+
+  }
+
 
   // removeInputRow = () => {
 
@@ -779,8 +956,8 @@ export default class DesignerPageTwoComponent extends React.Component {
                         <TouchableOpacity
                           key={index}
                           onPress={async () => {
-                            await this.updateProduct(item.category_name)
-                            this.setState({ active: index })
+                            await this.updateProductAfterClickToCategory(item.category_name, index)
+                           
                           }}
                           style={this.state.active == index ? styles.categoryButtonActive : styles.categoryButton}
                         >
@@ -792,52 +969,60 @@ export default class DesignerPageTwoComponent extends React.Component {
                   }
                 </ScrollView>
               </View>
-              {
-                this.state.products.map((item, index) => {
-                  return (
-                    <View key={index} style={{ marginTop: 18 }}>
-                      <Slider2 slid={item.product_image} />
-                      <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, marginTop: 5, marginBottom: 4 }}>{item.name}</Text>
-                      {
-                        item.facades &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Фасады : {item.facades}</Text>
-                      }
-                      {
-                        item.frame &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Корпус:  {item.frame}</Text>
-                      }
-                      {
-                        item.tabletop &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Столешница: {item.tabletop}</Text>
-                      }
-                      {
-                        item.length &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Длина: {item.length} метров*</Text>
-                      }
 
-                      {
-                        item.height &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Высота: {item.height} метров*</Text>
-                      }
-                      {
-                        item.material &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Материал: {item.material}</Text>
-                      }
-                      {
-                        item.description &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.description}</Text>
-                      }
-                      {
-                        item.inserciones &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.inserciones}</Text>
-                      }
-                      {
-                        item.price &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Цена: {item.price} руб.</Text>
-                      }
-                    </View>
-                  )
-                })
+
+              {this.state.change_category_loaded &&
+
+                <ActivityIndicator />
+
+              }
+
+
+              {!this.state.change_category_loaded && this.state.products.map((item, index) => {
+                return (
+                  <View key={index} style={{ marginTop: 18 }}>
+                    <Slider2 slid={item.product_image} />
+                    <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, marginTop: 5, marginBottom: 4 }}>{item.name}</Text>
+                    {
+                      item.facades &&
+                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Фасады : {item.facades}</Text>
+                    }
+                    {
+                      item.frame &&
+                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Корпус:  {item.frame}</Text>
+                    }
+                    {
+                      item.tabletop &&
+                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Столешница: {item.tabletop}</Text>
+                    }
+                    {
+                      item.length &&
+                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Длина: {item.length} метров*</Text>
+                    }
+
+                    {
+                      item.height &&
+                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Высота: {item.height} метров*</Text>
+                    }
+                    {
+                      item.material &&
+                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Материал: {item.material}</Text>
+                    }
+                    {
+                      item.description &&
+                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.description}</Text>
+                    }
+                    {
+                      item.inserciones &&
+                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.inserciones}</Text>
+                    }
+                    {
+                      item.price &&
+                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Цена: {item.price} руб.</Text>
+                    }
+                  </View>
+                )
+              })
               }
             </View>
           </ScrollView>

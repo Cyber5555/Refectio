@@ -17,7 +17,7 @@ export default class PraductiaComponent extends React.Component {
     this.state = {
       delateSortBy: [],
 
-      active: null,
+      active: 0,
       getAllProducts: [],
 
       user: [],
@@ -83,7 +83,7 @@ export default class PraductiaComponent extends React.Component {
     // const { limit_without_cat } = this.state
     console.log(userID, 'useridddd');
 
-    this.setState({ active: null })
+   
 
     await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID, {
       method: 'GET'
@@ -116,6 +116,7 @@ export default class PraductiaComponent extends React.Component {
           products: data,
           show_plus_button: true
         })
+        this.updateProduct(res.data.user_category_for_product[0].category_name)
       })
   }
 
@@ -354,14 +355,9 @@ export default class PraductiaComponent extends React.Component {
                   return (
                     <TouchableOpacity
                       onPress={async () => {
-                        if (index !== this.state.active) {
-                          await this.updateProduct(item.category_name)
-                          this.setState({ active: index })
-                        }
-                        else if (index == this.state.active) {
-                          this.getObjectData()
-                          this.setState({ active: null })
-                        }
+                        await this.updateProduct(item.category_name)
+                        this.setState({ active: index })
+
                       }}
                       key={index}
                       style={this.state.active === index ? styles.slideButtonActive : styles.slideButton}
