@@ -1206,6 +1206,14 @@ export default class DesignerPageTwoComponent extends React.Component {
                   }
                 </ScrollView>
               </View>
+
+
+              {this.state.change_category_loaded &&
+                <View style={{ marginTop: 200 }}>
+                  <ActivityIndicator size={100} color={'#2D9EFB'} />
+                </View>
+              }
+
               {
                 this.state.products.map((item, index) => {
                   return (
@@ -1214,11 +1222,11 @@ export default class DesignerPageTwoComponent extends React.Component {
                       <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, marginTop: 5, marginBottom: 4 }}>{item.name}</Text>
                       {
                         item.facades &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Фасады : {item.facades}</Text>
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Фасады: {item.facades}</Text>
                       }
                       {
                         item.frame &&
-                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Корпус:  {item.frame}</Text>
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Корпус: {item.frame}</Text>
                       }
                       {
                         item.tabletop &&

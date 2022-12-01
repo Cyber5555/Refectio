@@ -38,7 +38,8 @@ export default class DesignerPageTwoComponent extends React.Component {
       valid_error: false,
       change_category_loaded: false,
 
-      pressCategory: true
+      pressCategory: true,
+      show_room: ''
     }
   }
 
@@ -50,15 +51,19 @@ export default class DesignerPageTwoComponent extends React.Component {
       method: 'GET'
     })
       .then(response => response.json())
-      .then(res => {
+      .then(async res => {
         this.setState({
           user: res.data.user,
           user_bonus_for_designer: res.data.user_bonus_for_designer,
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
-          user_id_for_search: userID
+          user_id_for_search: userID,
+          changed: res.data.city_for_sales_user[0].city_name,
+          show_room: res.data.user[0].show_room
         })
+        console.log(res.data.user[0].show_room);
       })
+
   }
 
   loadedDataAfterLoadPage = async () => {
@@ -69,7 +74,7 @@ export default class DesignerPageTwoComponent extends React.Component {
 
   componentDidMount() {
     const { navigation } = this.props;
-    this.loadedDataAfterLoadPage();
+    // this.loadedDataAfterLoadPage();
 
     this.focusListener = navigation.addListener("focus", () => {
       this.loadedDataAfterLoadPage();
@@ -93,8 +98,6 @@ export default class DesignerPageTwoComponent extends React.Component {
     })
 
     let userID = this.props.userID
-    console.log(userID, 'iiiiiiiiiiiii');
-    console.log(this.state.user_id_for_search, 'this.state.user_id_for_search');
 
     if (userID == this.state.user_id_for_search) {
 
@@ -225,11 +228,11 @@ export default class DesignerPageTwoComponent extends React.Component {
   }
 
 
-  
-  
 
 
-updateProductAfterClickToCategory = async (category_name, index) => {
+
+
+  updateProductAfterClickToCategory = async (category_name, index) => {
 
     await this.setState({
       change_category_loaded: true,
@@ -238,68 +241,65 @@ updateProductAfterClickToCategory = async (category_name, index) => {
 
     if (this.state.pressCategory) {
 
-      console.log('Pressed to category')
       this.setState({
         pressCategory: false,
         active: index
       })
 
       let userID = this.props.userID
-      console.log(userID, 'iiiiiiiiiiiii');
-      console.log(this.state.user_id_for_search, 'this.state.user_id_for_search');
-  
+
       if (userID == this.state.user_id_for_search) {
-  
-  
+
+
         let myHeaders = new Headers();
         let userToken = await AsyncStorage.getItem('userToken')
         myHeaders.append("Authorization", "Bearer " + userToken);
-  
-  
+
+
         let formdata = new FormData();
         formdata.append("category_name", category_name);
         formdata.append("user_id", userID);
-  
+
         let requestOptions = {
           method: 'POST',
           headers: myHeaders,
           body: formdata,
           redirect: 'follow'
         };
-  
-  
+
+
         fetch("http://80.78.246.59/Refectio/public/api/filtergetOneProizvoditel", requestOptions)
           .then(response => response.json())
           .then(res => {
-  
-  
+
+
             if (res.status === false) {
-  
+
               this.setState({
                 products: [],
                 // show_plus_button: false
                 change_category_loaded: false,
                 pressCategory: true
               })
-  
+
               return false;
             }
-  
+
             let data = res.data;
             let new_data_result = [];
-  
+
             for (let i = 0; i < data.length; i++) {
-  
+
               if (data[i].product_image.length < 1) {
                 data[i].images = [];
                 continue;
               }
-  
+
               let product_image = data[i].product_image;
-  
+
               data[i].images = product_image;
             }
-  
+
             this.setState({
               // user: data.user,
               // user_bonus_for_designer: res.data.user_bonus_for_designer,
@@ -317,55 +317,55 @@ updateProductAfterClickToCategory = async (category_name, index) => {
           .catch(error => console.log('error', error));
       }
       else {
-  
+
         let myHeaders = new Headers();
         let userToken = await AsyncStorage.getItem('userToken')
         myHeaders.append("Authorization", "Bearer " + userToken);
-  
-  
+
+
         let formdata = new FormData();
         formdata.append("category_name", category_name);
-  
+
         let requestOptions = {
           method: 'POST',
           headers: myHeaders,
           body: formdata,
           redirect: 'follow'
         };
-  
+
         fetch("http://80.78.246.59/Refectio/public/api/GetcategoryOneuserprduct", requestOptions)
           .then(response => response.json())
           .then(res => {
             // console.log(res, 'GetcategoryOneuserprduct');
-  
+
             if (res.status === false) {
-  
+
               this.setState({
                 products: [],
                 change_category_loaded: false,
                 pressCategory: true
                 // show_plus_button: false
               })
-  
+
               return false;
             }
-  
+
             let data = res.data.data;
             let new_data_result = [];
-  
+
             for (let i = 0; i < data.length; i++) {
-  
+
               if (data[i].product_image.length < 1) {
                 data[i].images = [];
                 continue;
               }
-  
+
               let product_image = data[i].product_image;
-  
+
               data[i].images = product_image;
             }
-  
-  
+
+
             this.setState({
               // user: data,
               user_bonus_for_designer: res.data.data.user_bonus_for_designer,
@@ -378,13 +378,13 @@ updateProductAfterClickToCategory = async (category_name, index) => {
             })
           })
           .catch(error => console.log('error', error));
-  
+
       }
     }
 
     // this.setState({ active: index })
 
-    
+
 
   }
 
@@ -686,346 +686,352 @@ updateProductAfterClickToCategory = async (category_name, index) => {
             </ImageBackground>
           </Modal> */}
 
-          <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 15 }}>
-            <View style={styles.campaign}>
-              {
-                this.state.user.map((item, index) => {
-                  return (
-                    <View key={index} style={styles.infoCompanyMain}>
-                      <Image
-                        source={{ uri: this.state.urlImage + item.logo }}
+
+
+          {this.state.user.length > 0 &&
+
+            <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 15 }}>
+              <View style={styles.campaign}>
+                <View style={styles.infoCompanyMain}>
+                  <Image
+                    source={{ uri: this.state.urlImage + this.state.user[0].logo }}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      marginRight: 12,
+                      borderColor: '#C8C8C8',
+                      borderWidth: 1,
+                      resizeMode: "cover",
+                      borderRadius: 10,
+                    }}
+                  />
+                  <View style={styles.infoCompany}>
+                    <View>
+                      <Text
                         style={{
-                          width: 100,
-                          height: 100,
-                          marginRight: 12,
-                          borderColor: '#C8C8C8',
-                          borderWidth: 1,
-                          resizeMode: "cover",
-                          borderRadius: 10,
-                        }}
-                      />
-                      <View style={styles.infoCompany}>
-                        <View>
-                          <Text
-                            style={{
-                              fontSize: 20,
-                              fontFamily: 'Raleway_500Medium',
+                          fontSize: 20,
+                          fontFamily: 'Raleway_500Medium',
+                        }}>
+                        {this.state.user[0].company_name}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "#A8A8A8",
+                          fontFamily: 'Raleway_500Medium',
+                        }}>
+                        {this.state.user[0].made_in}
+                      </Text>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          marginTop: 4
+                        }}>
+                        {
+                          this.state.user[0].saite !== null &&
+                          <TouchableOpacity
+                            onPress={() => {
+                              Linking.openURL(this.state.user[0].saite)
                             }}>
-                            {item.company_name}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: "#A8A8A8",
-                              fontFamily: 'Raleway_500Medium',
-                            }}>
-                            {item.made_in}
-                          </Text>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              marginTop: 4
-                            }}>
-                            {
-                              item.saite !== null &&
-                              <TouchableOpacity
-                                onPress={() => {
-                                  Linking.openURL(item.saite)
-                                }}>
-                                <Image
-                                  source={require('../../assets/image/globus.png')}
-                                  style={{
-                                    width: 24,
-                                    height: 24,
-                                    marginRight: 14,
-                                  }}
-                                />
-                              </TouchableOpacity>
-                            }
-                            {
-                              item.saite == null &&
-                              <View style={{ height: 24 }}>
+                            <Image
+                              source={require('../../assets/image/globus.png')}
+                              style={{
+                                width: 24,
+                                height: 24,
+                                marginRight: 14,
+                              }}
+                            />
+                          </TouchableOpacity>
+                        }
+                        {
+                          this.state.user[0].saite == null &&
+                          <View style={{ height: 24 }}>
 
-                              </View>
-                            }
-                            {
-                              item.telegram !== null &&
-                              <TouchableOpacity
-                                onPress={() => {
-                                  Linking.openURL('https://t.me/' + item.telegram)
-                                }}>
-                                <Image
-                                  source={require('../../assets/image/telegram.png')}
-                                  style={{
-                                    width: 24,
-                                    height: 24,
-                                    marginRight: 14,
-                                  }}
-                                />
-                              </TouchableOpacity>
-                            }
-
-                            {
-                              item.extract !== null &&
-                              <View>
-                                <Image
-                                  source={require('../../assets/image/sidebar.png')}
-                                  style={{
-                                    width: 18,
-                                    height: 24,
-                                  }}
-                                />
-                              </View>
-                            }
                           </View>
-                        </View>
-                        {/* <TouchableOpacity>
-                          <Image
-                            source={require('../../assets/image/heartHast.png')}
-                            style={{
-                              width: 24,
-                              height: 21.43,
-                              tintColor: '#333333',
-                              marginTop: 5,
-                            }} />
-                        </TouchableOpacity> */}
+                        }
+                        {
+                          this.state.user[0].telegram !== null &&
+                          <TouchableOpacity
+                            onPress={() => {
+                              Linking.openURL('https://t.me/' + this.state.user[0].telegram)
+                            }}>
+                            <Image
+                              source={require('../../assets/image/telegram.png')}
+                              style={{
+                                width: 24,
+                                height: 24,
+                                marginRight: 14,
+                              }}
+                            />
+                          </TouchableOpacity>
+                        }
+
+                        {
+                          this.state.user[0].extract !== null &&
+                          <View>
+                            <Image
+                              source={require('../../assets/image/sidebar.png')}
+                              style={{
+                                width: 18,
+                                height: 24,
+                              }}
+                            />
+                          </View>
+                        }
                       </View>
                     </View>
-                  )
-                })
-              }
 
 
+                    {/* 
+                          <TouchableOpacity>
+                            <Image
+                              source={require('../../assets/image/heartHast.png')}
+                              style={{
+                                width: 24,
+                                height: 21.43,
+                                tintColor: '#333333',
+                                marginTop: 5,
+                              }} />
+                          </TouchableOpacity>
+                        */}
 
-              <View
-                style={{
-                  position: 'relative',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginTop: 9,
-                  justifyContent: "space-between",
-                }}>
-                <TouchableOpacity
-                  style={{
-                    borderWidth: 1,
-                    borderColor: '#F5F5F5',
-                    width: '50%',
-                    borderRadius: 5,
-                    position: 'relative',
-                    height: 24,
-                    paddingLeft: 5,
-                  }}
-                  onPress={() => this.setState({ sOpenCityDropDown: !this.state.sOpenCityDropDown })}
-                >
-                  <Text style={{ fontFamily: 'Raleway_400Regular', }}>{this.state.changed}</Text>
-                  <View style={{ position: 'absolute', right: 17, bottom: 6 }}>
-                    {!this.state.sOpenCityDropDown &&
-                      <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                      </Svg>
-                    }
-                    {this.state.sOpenCityDropDown &&
-                      <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                      </Svg>
-                    }
+
 
                   </View>
-                </TouchableOpacity>
+                </View>
+
+
+
+
                 <View
-                  style={this.state.sOpenCityDropDown ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
-                  <ScrollView nestedScrollEnabled={true}>
+                  style={{
+                    position: 'relative',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: 9,
+                    justifyContent: "space-between",
+                  }}>
+                  <TouchableOpacity
+                    style={{
+                      borderWidth: 1,
+                      borderColor: '#F5F5F5',
+                      width: '50%',
+                      borderRadius: 5,
+                      position: 'relative',
+                      height: 24,
+                      paddingLeft: 5,
+                    }}
+                    onPress={() => this.setState({ sOpenCityDropDown: !this.state.sOpenCityDropDown })}
+                  >
+                    <Text style={{ fontFamily: 'Raleway_400Regular', }}>{this.state.changed}</Text>
+                    <View style={{ position: 'absolute', right: 17, bottom: 6 }}>
+                      {!this.state.sOpenCityDropDown &&
+                        <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </Svg>
+                      }
+                      {this.state.sOpenCityDropDown &&
+                        <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </Svg>
+                      }
+
+                    </View>
+                  </TouchableOpacity>
+                  <View
+                    style={this.state.sOpenCityDropDown ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
+                    <ScrollView nestedScrollEnabled={true}>
+                      {
+                        this.state.city_for_sales_user.map((item, index) => {
+                          return (
+                            <TouchableOpacity
+                              key={index}
+                              style={{
+                                width: '100%',
+                                justifyContent: 'center',
+                                textAlign: 'left',
+                              }}
+                              onPress={() => this.setState({ changed: item.city_name, sOpenCityDropDown: false })}
+                            >
+                              <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Raleway_400Regular', }}>
+                                {item.city_name}
+                              </Text>
+
+                            </TouchableOpacity>
+                          )
+                        })
+                      }
+                    </ScrollView>
+                  </View>
+
+
+                  <View style={styles.checkBox}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                      <Text style={{
+                        fontSize: 13,
+                        marginRight: 5,
+                        fontFamily: 'Raleway_400Regular',
+                      }}>
+                        Шоурум
+                      </Text>
+                      <View>
+                        {this.state.show_room == null &&
+                          <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <Rect x="0.2" y="0.2" width="19.6" height="19.6" rx="3.8" stroke="#52A8EF" stroke-width="0.4" />
+                          </Svg>
+                        }
+                        {this.state.show_room == 'Да' &&
+                          <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <Path d="M4 11.4L7.52941 15.4L16 5" stroke="#52A8EF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <Rect x="0.2" y="0.2" width="19.6" height="19.6" rx="3.8" stroke="#52A8EF" stroke-width="0.4" />
+                          </Svg>
+
+                        }
+                      </View>
+                    </View>
+                  </View>
+
+                </View>
+
+
+
+
+
+
+                <View style={{
+                  width: "100%",
+                  height: 58,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: 14,
+                  marginBottom: 19,
+                  zIndex: -1
+                }}>
+                  <View
+                    style={[
+                      styles.info,
+                      {
+                        borderRightWidth: 2,
+                        borderRightColor: '#EEEEEE'
+                      }]}
+                    onPress={() => { this.setState({ RewardModal: true }) }}>
+                    <Image
+                      source={require('../../assets/image/la_percent.png')}
+                      style={{
+                        width: 30,
+                        height: 30,
+                        resizeMode: 'contain',
+                      }} />
+                    <Text style={styles.infoText}>Вознаграждение</Text>
+                  </View>
+                  <View style={[styles.info, { borderRightWidth: 2, borderRightColor: '#EEEEEE' }]}>
+                    <Image
+                      source={require('../../assets/image/clarity_ruble-line.png')}
+                      style={{
+                        width: 30,
+                        height: 30,
+                        resizeMode: 'contain',
+                      }} />
+                    <Text style={styles.infoText}>Запрос{'\n'}стоимости</Text>
+                  </View>
+                  <View style={styles.info}>
+                    <Image
+                      source={require('../../assets/image/pcichka.png')}
+                      style={{
+                        width: 30,
+                        height: 30,
+                        resizeMode: 'contain',
+                      }} />
+                    <Text style={styles.infoText}>Бронировать</Text>
+                  </View>
+                </View>
+                <View style={{ zIndex: -1 }}>
+                  <ScrollView
+                    horizontal={true}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                  >
                     {
-                      this.state.city_for_sales_user.map((item, index) => {
+                      this.state.user_category_for_product.map((item, index) => {
                         return (
                           <TouchableOpacity
                             key={index}
-                            style={{
-                              width: '100%',
-                              justifyContent: 'center',
-                              textAlign: 'left',
+                            onPress={async () => {
+                              await this.updateProductAfterClickToCategory(item.category_name, index)
+
                             }}
-                            onPress={() => this.setState({ changed: item.city_name, sOpenCityDropDown: false })}
+                            style={this.state.active == index ? styles.categoryButtonActive : styles.categoryButton}
                           >
-                            <Text style={{ textAlign: 'left', paddingVertical: 10, fontFamily: 'Raleway_400Regular', }}>
-                              {item.city_name}
-                            </Text>
+                            
+                            <Text style={this.state.active == index ? styles.categoriesNameActive : styles.categoriesName}>{item.category_name}</Text>
 
                           </TouchableOpacity>
                         )
-
                       })
                     }
                   </ScrollView>
                 </View>
 
-                {
-                  this.state.user.map((item, index) => {
-                    return (
-                      <View style={styles.checkBox} key={index}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                          <Text style={{
-                            fontSize: 13,
-                            marginRight: 5,
-                            fontFamily: 'Raleway_400Regular',
-                          }}>
-                            Шоурум
-                          </Text>
-                          <View>
-                            {item.show_room == null &&
-                              <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <Rect x="0.2" y="0.2" width="19.6" height="19.6" rx="3.8" stroke="#52A8EF" stroke-width="0.4" />
-                              </Svg>
-                            }
-                            {item.show_room == 'Да' &&
-                              <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <Path d="M4 11.4L7.52941 15.4L16 5" stroke="#52A8EF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                <Rect x="0.2" y="0.2" width="19.6" height="19.6" rx="3.8" stroke="#52A8EF" stroke-width="0.4" />
-                              </Svg>
 
-                            }
-                          </View>
-                        </View>
-                      </View>
-                    )
-                  })
-                }
-              </View>
-
-
-
-
-
-
-              <View style={{
-                width: "100%",
-                height: 58,
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                marginTop: 14,
-                marginBottom: 19,
-                zIndex: -1
-              }}>
-                <View
-                  style={[
-                    styles.info,
-                    {
-                      borderRightWidth: 2,
-                      borderRightColor: '#EEEEEE'
-                    }]}
-                  onPress={() => { this.setState({ RewardModal: true }) }}>
-                  <Image
-                    source={require('../../assets/image/la_percent.png')}
-                    style={{
-                      width: 30,
-                      height: 30,
-                      resizeMode: 'contain',
-                    }} />
-                  <Text style={styles.infoText}>Вознаграждение</Text>
-                </View>
-                <View style={[styles.info, { borderRightWidth: 2, borderRightColor: '#EEEEEE' }]}>
-                  <Image
-                    source={require('../../assets/image/clarity_ruble-line.png')}
-                    style={{
-                      width: 30,
-                      height: 30,
-                      resizeMode: 'contain',
-                    }} />
-                  <Text style={styles.infoText}>Запрос{'\n'}стоимости</Text>
-                </View>
-                <View style={styles.info}>
-                  <Image
-                    source={require('../../assets/image/pcichka.png')}
-                    style={{
-                      width: 30,
-                      height: 30,
-                      resizeMode: 'contain',
-                    }} />
-                  <Text style={styles.infoText}>Бронировать</Text>
-                </View>
-              </View>
-              <View style={{ zIndex: -1 }}>
-                <ScrollView
-                  horizontal={true}
-                  showsVerticalScrollIndicator={false}
-                  showsHorizontalScrollIndicator={false}
-                >
-                  {
-                    this.state.user_category_for_product.map((item, index) => {
-                      return (
-                        <TouchableOpacity
-                          key={index}
-                          onPress={async () => {
-                            await this.updateProductAfterClickToCategory(item.category_name, index)
-                           
-                          }}
-                          style={this.state.active == index ? styles.categoryButtonActive : styles.categoryButton}
-                        >
-                          <Text style={this.state.active == index ? styles.categoriesNameActive : styles.categoriesName}>{item.category_name}</Text>
-
-                        </TouchableOpacity>
-                      )
-                    })
-                  }
-                </ScrollView>
-              </View>
-
-
-              {this.state.change_category_loaded &&
-
-                <ActivityIndicator />
-
-              }
-
-
-              {!this.state.change_category_loaded && this.state.products.map((item, index) => {
-                return (
-                  <View key={index} style={{ marginTop: 18 }}>
-                    <Slider2 slid={item.product_image} />
-                    <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, marginTop: 5, marginBottom: 4 }}>{item.name}</Text>
-                    {
-                      item.facades &&
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Фасады : {item.facades}</Text>
-                    }
-                    {
-                      item.frame &&
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Корпус:  {item.frame}</Text>
-                    }
-                    {
-                      item.tabletop &&
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Столешница: {item.tabletop}</Text>
-                    }
-                    {
-                      item.length &&
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Длина: {item.length} метров*</Text>
-                    }
-
-                    {
-                      item.height &&
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Высота: {item.height} метров*</Text>
-                    }
-                    {
-                      item.material &&
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Материал: {item.material}</Text>
-                    }
-                    {
-                      item.description &&
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.description}</Text>
-                    }
-                    {
-                      item.inserciones &&
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.inserciones}</Text>
-                    }
-                    {
-                      item.price &&
-                      <Text style={{ fontFamily: 'Raleway_400Regular', }}>Цена: {item.price} руб.</Text>
-                    }
+                {this.state.change_category_loaded &&
+                  <View style={{ marginTop: 200 }}>
+                    <ActivityIndicator size={100} color={'#2D9EFB'} />
                   </View>
-                )
-              })
-              }
-            </View>
-          </ScrollView>
+                }
+
+
+                {!this.state.change_category_loaded && this.state.products.map((item, index) => {
+                  return (
+                    <View key={index} style={{ marginTop: 18 }}>
+                      <Slider2 slid={item.product_image} />
+                      <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, marginTop: 5, marginBottom: 4 }}>{item.name}</Text>
+                      {
+                        item.facades &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Фасады : {item.facades}</Text>
+                      }
+                      {
+                        item.frame &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Корпус:  {item.frame}</Text>
+                      }
+                      {
+                        item.tabletop &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Столешница: {item.tabletop}</Text>
+                      }
+                      {
+                        item.length &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Длина: {item.length} метров*</Text>
+                      }
+
+                      {
+                        item.height &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Высота: {item.height} метров*</Text>
+                      }
+                      {
+                        item.material &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Материал: {item.material}</Text>
+                      }
+                      {
+                        item.description &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.description}</Text>
+                      }
+                      {
+                        item.inserciones &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Описание: {item.inserciones}</Text>
+                      }
+                      {
+                        item.price &&
+                        <Text style={{ fontFamily: 'Raleway_400Regular', }}>Цена: {item.price} руб.</Text>
+                      }
+                    </View>
+                  )
+                })
+                }
+
+              </View>
+            </ScrollView>
+
+          }
+
         </View>
         <CustomerMainPageNavComponent navigation={this.props.navigation} />
       </SafeAreaView >

@@ -68,10 +68,10 @@ export default class AddProductComponent extends React.Component {
 
     if (result.hasOwnProperty('selected')) {
 
-      console.log(result.selected, 'result.selected')
+      // console.log(result.selected, 'result.selected')
 
       await result.selected.map((element, index) => {
-        console.log(element);
+        // console.log(element);
 
         all_images.push({
           uri: element.uri,
@@ -87,7 +87,7 @@ export default class AddProductComponent extends React.Component {
         type: 'image/jpg',
         name: 'photo.jpg',
       })
-      console.log(result, 'result')
+      // console.log(result, 'result')
     }
 
 
@@ -174,6 +174,10 @@ export default class AddProductComponent extends React.Component {
       tabletop_error: false,
       all_images: [],
 
+      categoryChanged: '',
+      modalBool: false,
+
+      limitError: false
     })
   }
 
@@ -205,7 +209,7 @@ export default class AddProductComponent extends React.Component {
 
     await all_images.map((element, index) => {
 
-      console.log(element);
+      // console.log(element);
 
       this.formdata.append("photo[]", element);
 
@@ -221,15 +225,20 @@ export default class AddProductComponent extends React.Component {
 
     await fetch("http://80.78.246.59/Refectio/public/api/createnewproductProizvoditel", requestOptions)
       .then(response => response.json())
-      .then(result => {
+      .then(async result => {
         console.log(result, 'createnewproductProizvoditel')
 
-        if (result.status === true) {
+        if (result.status === true && result.data.message == "createt new product") {
           this.setState({
             modalBool: true
           })
-          this.clearState()
-          console.log(this.props.id, 'this.props.id')
+          // console.log(this.props.id, 'this.props.id')
+        }
+        else if (result.status === false && result.data.message == "you already have 3 products under this category") {
+          await this.setState({ limitError: true })
+          setTimeout(() => {
+            this.setState({ limitError: false })
+          }, 3000)
         }
         this.formdata = new FormData()
       })
@@ -314,19 +323,18 @@ export default class AddProductComponent extends React.Component {
             <View style={{ flex: 1, backgroundColor: '#fff', justifyContent: 'center', alignItems: 'center' }}>
               <Image style={{ width: 80, height: 80 }} source={require('../../assets/image/flat-color-icons_ok.png')} />
               <Text style={{ textAlign: 'center', marginTop: 22, fontFamily: 'Poppins_500Medium', fontSize: 25, color: '#2D9EFB' }}>Вы успешно{'\n'}добавили продукт</Text>
-              <TouchableOpacity style={{ marginTop: 170 }} onPress={() => {
 
+              <TouchableOpacity style={{ marginTop: 170 }} onPress={async () => {
                 this.props.navigation.navigate("Praductia", {
                   params: this.props.id
                 })
                   &&
-                  this.setState({
-                    modalBool: false
-                  })
+                  await this.clearState()
 
               }}>
                 <BlueButton name='В каталог' />
               </TouchableOpacity>
+
             </View>
           </Modal>
 
@@ -441,7 +449,7 @@ export default class AddProductComponent extends React.Component {
                 <ScrollView nestedScrollEnabled={true} >
                   {
                     this.state.categoryArray.map((item, index) => {
-                      console.log(item)
+                      // console.log(item)
                       return (
                         <TouchableOpacity
                           key={index}
@@ -810,7 +818,10 @@ export default class AddProductComponent extends React.Component {
               </ScrollView>
             }
 
-
+            {
+              this.state.limitError === true &&
+              <Text style={{ color: 'red', textAlign: 'center', marginTop: 10 }}>Превышен лимит добавления товаров в данной категории</Text>
+            }
 
             <TouchableOpacity
               onPress={() => {
