@@ -281,7 +281,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
           logo: res.data[0].logo,
           companyName: res.data[0].company_name,
           site: res.data[0].saite,
-          teleg: res.data[0].telegram,
+          teleg: 't.me/' + res.data[0].telegram,
         })
       })
   }
@@ -630,7 +630,9 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
     fetch("http://80.78.246.59/Refectio/public/api/updateProfileCompanyName", requestOptions)
       .then(response => response.json())
-      .then(result => console.log(result))
+      .then(result => {
+        this.getAuthUserProfile()
+      })
       .catch(error => console.log('error', error));
   }
 
@@ -652,7 +654,9 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
     fetch("http://80.78.246.59/Refectio/public/api/updateSaiteProizvaditel", requestOptions)
       .then(response => response.json())
-      .then(result => console.log(result))
+      .then(result => {
+        this.getAuthUserProfile()
+      })
       .catch(error => console.log('error', error));
   }
 
@@ -663,10 +667,16 @@ export default class CustomerMyAccauntComponent extends React.Component {
     let AuthStr = 'Bearer ' + userToken;
     myHeaders.append("Authorization", AuthStr);
 
-    var formdata = new FormData();
-    formdata.append("saite", this.state.teleg);
+    let telegram = this.state.teleg.replace('t.me/', '');
 
-    var requestOptions = {
+    console.log(telegram, 'telegram')
+
+    let formdata = new FormData();
+    formdata.append("telegram", telegram);
+
+    console.log(formdata);
+
+    let requestOptions = {
       method: 'POST',
       headers: myHeaders,
       body: formdata,
@@ -675,7 +685,9 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
     fetch("http://80.78.246.59/Refectio/public/api/UpdateTelegramChanel", requestOptions)
       .then(response => response.json())
-      .then(result => console.log(result))
+      .then(result => { 
+        this.getAuthUserProfile()
+      })
       .catch(error => console.log('error', error));
   }
 
@@ -1445,7 +1457,20 @@ export default class CustomerMyAccauntComponent extends React.Component {
                           borderRadius: 5,
                         }}
                         value={this.state.teleg}
-                        onChangeText={(text) => this.setState({ teleg: text })} />
+                        onChangeText={(text) => {
+
+                          if (text == 't.me/' || text == 't.me' || text == 't.m' || text == 't.' || text == 't') {
+                            text = 't.me/';
+                            this.setState({ teleg: text });
+                          } else {
+                            // console.log(text, 'text')
+                            let new_text = text.replace('t.me/', '');
+
+                            console.log(new_text, 'text')
+
+                            this.setState({ teleg: `t.me/${new_text}` });
+                          }
+                        }} />
 
                       <TouchableOpacity style={{ position: 'absolute', right: 5, top: 15 }} onPress={() => this.editTeleg()}>
                         <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, color: '#2D9EFB' }}>Сохранить</Text>

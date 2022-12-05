@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Modal, ImageBackground } from "react-native";
+import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Modal, ImageBackground, ActivityIndicator } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
 import Slider from "../slider/Slider";
 import GhostNavComponent from "./GhostNav";
@@ -49,6 +49,8 @@ export default class GhostPageTwoComponent extends React.Component {
       category_name: '',
       category_name_error: false,
 
+      change_category_loaded: false,
+      pressCategory: true,
 
 
     }
@@ -68,24 +70,27 @@ export default class GhostPageTwoComponent extends React.Component {
     })
       .then(response => response.json())
       .then(res => {
-        console.log(res);
         this.setState({
           user: res.data.user,
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
-
+         
         })
-        this.updateProduct(res.data.user_category_for_product[0].category_name)
+
       })
   }
 
-
-
-
-
-
   updateProduct = async (category_name) => {
+
+    await this.setState({
+      change_category_loaded: true,
+    })
+
     let userID = this.props.user_id
+
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem('userToken')
+    myHeaders.append("Authorization", "Bearer " + userToken);
 
 
     let formdata = new FormData();
@@ -94,9 +99,11 @@ export default class GhostPageTwoComponent extends React.Component {
 
     let requestOptions = {
       method: 'POST',
+      headers: myHeaders,
       body: formdata,
       redirect: 'follow'
     };
+
 
     fetch("http://80.78.246.59/Refectio/public/api/filtergetOneProizvoditel", requestOptions)
       .then(response => response.json())
@@ -106,7 +113,8 @@ export default class GhostPageTwoComponent extends React.Component {
 
           this.setState({
             products: [],
-            show_plus_button: false
+            // show_plus_button: false
+            change_category_loaded: false
           })
 
           return false;
@@ -127,13 +135,16 @@ export default class GhostPageTwoComponent extends React.Component {
           data[i].images = product_image;
         }
 
-
         this.setState({
-          user: data.user,
-          user_category_for_product: res.data.user_category_for_product,
-          city_for_sales_user: res.data.city_for_sales_user,
+          // user: data.user,
+          // user_bonus_for_designer: res.data.user_bonus_for_designer,
+          // user_category_for_product: res.data.user_category_for_product,
+          // city_for_sales_user: res.data.city_for_sales_user,
           products: data.products,
-          show_plus_button: false
+          // show_plus_button: false,
+          // extract: data.user[0].extract,
+          // whatsapp: res.data.user[0].watsap_phone
+          change_category_loaded: false
         })
       })
       .catch(error => console.log('error', error));
@@ -143,18 +154,110 @@ export default class GhostPageTwoComponent extends React.Component {
 
 
 
+  updateProductAfterClickToCategory = async (category_name, index) => {
+    await this.setState({
+      change_category_loaded: true,
+    })
+
+
+    if (this.state.pressCategory) {
+      this.setState({
+        pressCategory: false,
+        active: index
+      })
+
+
+        await this.setState({
+          change_category_loaded: true,
+        })
+
+        let userID = this.props.user_id
+
+        let myHeaders = new Headers();
+        let userToken = await AsyncStorage.getItem('userToken')
+        myHeaders.append("Authorization", "Bearer " + userToken);
+
+
+        let formdata = new FormData();
+        formdata.append("category_name", category_name);
+        formdata.append("user_id", userID);
+
+        let requestOptions = {
+          method: 'POST',
+          headers: myHeaders,
+          body: formdata,
+          redirect: 'follow'
+        };
+
+
+        fetch("http://80.78.246.59/Refectio/public/api/filtergetOneProizvoditel", requestOptions)
+          .then(response => response.json())
+          .then(res => {
+
+
+            if (res.status === false) {
+
+              this.setState({
+                products: [],
+                // show_plus_button: false
+                change_category_loaded: false
+              })
+
+              return false;
+            }
+
+            let data = res.data;
+            let new_data_result = [];
+
+            for (let i = 0; i < data.length; i++) {
+
+              if (data[i].product_image.length < 1) {
+                data[i].images = [];
+                continue;
+              }
+
+              let product_image = data[i].product_image;
+
+              data[i].images = product_image;
+            }
+
+            this.setState({
+              // user: data.user,
+              // user_bonus_for_designer: res.data.user_bonus_for_designer,
+              // user_category_for_product: res.data.user_category_for_product,
+              // city_for_sales_user: res.data.city_for_sales_user,
+              products: data.products,
+              // show_plus_button: false,
+              // extract: data.user[0].extract,
+              // whatsapp: res.data.user[0].watsap_phone
+              change_category_loaded: false,
+              pressCategory: true
+            })
+          })
+      // }
+
+    }
+
+    // this.setState({ active: index })
+
+
+
+  }
+
+  loadedDataAfterLoadPage = async () => {
+    await this.getObjectData()
+    await this.updateProduct(this.state.user_category_for_product[0].category_name)
+    await this.setState({ changed: this.state.city_for_sales_user[0].city_name })
+    await this.setState({ active: 0 })
+  }
+
 
   componentDidMount() {
     const { navigation } = this.props;
 
-
-    this.getObjectData()
-
-
-
     this.focusListener = navigation.addListener("focus", () => {
 
-      this.getObjectData()
+      this.loadedDataAfterLoadPage()
 
     });
   }
@@ -163,7 +266,6 @@ export default class GhostPageTwoComponent extends React.Component {
     // Remove the event listener
     if (this.focusListener) {
       this.focusListener();
-      console.log(' END')
     }
   }
 
@@ -176,100 +278,97 @@ export default class GhostPageTwoComponent extends React.Component {
           <ScrollView showsVerticalScrollIndicator={false} style={{ marginTop: 15 }}>
             <View style={styles.campaign}>
               {
-                this.state.user.map((item, index) => {
-                  return (
-                    <View key={index} style={styles.infoCompanyMain}>
-                      <Image
-                        source={{ uri: this.state.urlImage + item.logo }}
+                this.state.user.length > 0 &&
+                <View style={styles.infoCompanyMain}>
+                  <Image
+                    source={{ uri: this.state.urlImage + this.state.user[0].logo }}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      marginRight: 12,
+                      borderColor: '#C8C8C8',
+                      borderWidth: 1,
+                      resizeMode: "cover",
+                      borderRadius: 10,
+                    }}
+                  />
+                  <View style={styles.infoCompany}>
+                    <View>
+                      <Text
                         style={{
-                          width: 100,
-                          height: 100,
-                          marginRight: 12,
-                          borderColor: '#C8C8C8',
-                          borderWidth: 1,
-                          resizeMode: "cover",
-                          borderRadius: 10,
-                        }}
-                      />
-                      <View style={styles.infoCompany}>
-                        <View>
-                          <Text
-                            style={{
-                              fontSize: 20,
-                              fontFamily: 'Raleway_500Medium',
-                            }}>
-                            {item.company_name}
-                          </Text>
-                          <Text
-                            style={{
-                              fontSize: 16,
-                              color: "#A8A8A8",
-                              fontFamily: 'Raleway_500Medium',
-                            }}>
-                            {item.made_in}
-                          </Text>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              marginTop: 4
-                            }}>
-                            {
-                              item.saite !== null &&
-                              <TouchableOpacity onPress={() => {
-                                this.props.navigation.navigate('Modal')
-                              }}>
-                                <Image
-                                  source={require('../../assets/image/globus.png')}
-                                  style={{
-                                    width: 24,
-                                    height: 24,
-                                    marginRight: 14,
-                                  }}
-                                />
-                              </TouchableOpacity>
-                            }
-                            {
-                              item.saite == null &&
-                              <View style={{ height: 24 }}>
+                          fontSize: 20,
+                          fontFamily: 'Raleway_500Medium',
+                        }}>
+                        {this.state.user[0].company_name}
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          color: "#A8A8A8",
+                          fontFamily: 'Raleway_500Medium',
+                        }}>
+                        {this.state.user[0].made_in}
+                      </Text>
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          marginTop: 4
+                        }}>
+                        {
+                          this.state.user[0].saite !== null &&
+                          <TouchableOpacity onPress={() => {
+                            this.props.navigation.navigate('Modal')
+                          }}>
+                            <Image
+                              source={require('../../assets/image/globus.png')}
+                              style={{
+                                width: 24,
+                                height: 24,
+                                marginRight: 14,
+                              }}
+                            />
+                          </TouchableOpacity>
+                        }
+                        {
+                          this.state.user[0].saite == null &&
+                          <View style={{ height: 24 }}>
 
-                              </View>
-                            }
-                            {
-                              item.telegram !== null &&
-                              <TouchableOpacity onPress={() => {
-                                this.props.navigation.navigate('Modal')
-                              }}>
-                                <Image
-                                  source={require('../../assets/image/telegram.png')}
-                                  style={{
-                                    width: 24,
-                                    height: 24,
-                                    marginRight: 14,
-                                  }}
-                                />
-                              </TouchableOpacity>
-                            }
-
-                            {
-                              item.extract !== null &&
-                              <TouchableOpacity onPress={() => {
-                                this.props.navigation.navigate('Modal')
-                              }}>
-                                <Image
-                                  source={require('../../assets/image/sidebar.png')}
-                                  style={{
-                                    width: 18,
-                                    height: 24,
-                                  }}
-                                />
-                              </TouchableOpacity>
-                            }
                           </View>
-                        </View>
+                        }
+                        {
+                          this.state.user[0].telegram !== null &&
+                          <TouchableOpacity onPress={() => {
+                            this.props.navigation.navigate('Modal')
+                          }}>
+                            <Image
+                              source={require('../../assets/image/telegram.png')}
+                              style={{
+                                width: 24,
+                                height: 24,
+                                marginRight: 14,
+                              }}
+                            />
+                          </TouchableOpacity>
+                        }
+
+                        {
+                          this.state.user[0].extract !== null &&
+                          <TouchableOpacity onPress={() => {
+                            this.props.navigation.navigate('Modal')
+                          }}>
+                            <Image
+                              source={require('../../assets/image/sidebar.png')}
+                              style={{
+                                width: 18,
+                                height: 24,
+                              }}
+                            />
+                          </TouchableOpacity>
+                        }
                       </View>
                     </View>
-                  )
-                })
+                  </View>
+                </View>
               }
 
 
@@ -336,34 +435,31 @@ export default class GhostPageTwoComponent extends React.Component {
                 </View>
 
                 {
-                  this.state.user.map((item, index) => {
-                    return (
-                      <View style={styles.checkBox} key={index}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                          <Text style={{
-                            fontSize: 13,
-                            marginRight: 5,
-                            fontFamily: 'Raleway_400Regular',
-                          }}>
-                            Шоурум
-                          </Text>
-                          <View>
-                            {item.show_room == null &&
-                              <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <Rect x="0.2" y="0.2" width="19.6" height="19.6" rx="3.8" stroke="#52A8EF" stroke-width="0.4" />
-                              </Svg>
-                            }
-                            {item.show_room == 'Да' &&
-                              <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <Path d="M4 11.4L7.52941 15.4L16 5" stroke="#52A8EF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                <Rect x="0.2" y="0.2" width="19.6" height="19.6" rx="3.8" stroke="#52A8EF" stroke-width="0.4" />
-                              </Svg>
-                            }
-                          </View>
-                        </View>
+                  this.state.user.length > 0 &&
+                  <View style={styles.checkBox}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }} >
+                      <Text style={{
+                        fontSize: 13,
+                        marginRight: 5,
+                        fontFamily: 'Raleway_400Regular',
+                      }}>
+                        Шоурум
+                      </Text>
+                      <View>
+                        {this.state.user[0].show_room == null &&
+                          <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <Rect x="0.2" y="0.2" width="19.6" height="19.6" rx="3.8" stroke="#52A8EF" stroke-width="0.4" />
+                          </Svg>
+                        }
+                        {this.state.user[0].show_room == 'Да' &&
+                          <Svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <Path d="M4 11.4L7.52941 15.4L16 5" stroke="#52A8EF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <Rect x="0.2" y="0.2" width="19.6" height="19.6" rx="3.8" stroke="#52A8EF" stroke-width="0.4" />
+                          </Svg>
+                        }
                       </View>
-                    )
-                  })
+                    </View>
+                  </View>
                 }
               </View>
 
@@ -425,7 +521,7 @@ export default class GhostPageTwoComponent extends React.Component {
                         <TouchableOpacity
                           key={index}
                           onPress={async () => {
-                            await this.updateProduct(item.category_name)
+                            await this.updateProductAfterClickToCategory(item.category_name)
                             this.setState({ active: index })
                           }}
                           style={this.state.active === index ? styles.categoriesButtonActive : styles.categoriesButton}
@@ -437,10 +533,20 @@ export default class GhostPageTwoComponent extends React.Component {
                     })
                   }
                 </ScrollView>
+
               </View>
+
+
+
+              {this.state.change_category_loaded &&
+                <View style={{ marginTop: 200 }}>
+                  <ActivityIndicator size={100} color={'#2D9EFB'} />
+                </View>
+              }
+
+
               {
-                this.state.products.map((item, index) => {
-                  console.log(item);
+                !this.state.change_category_loaded && this.state.products.map((item, index) => {
                   return (
                     <View key={index} style={{ marginTop: 18 }}>
                       <Slider2 slid={item.product_image} />

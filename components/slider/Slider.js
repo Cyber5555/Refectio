@@ -103,39 +103,69 @@
 
 
 
-import React, { Component, useEffect, useState } from 'react'
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
+import React, { Component, useEffect, useRef, useState } from 'react'
+import { Animated, Dimensions, FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
-import Swiper from 'react-native-swiper'
+// import Swiper from 'react-native-swiper'
 
 
+const width = Dimensions.get('window').width - 25
 
 export default function Slider(props) {
   let urlImage = 'http://80.78.246.59/Refectio/storage/app/uploads/';
   const [imgActive, setInmageActive] = useState(0)
-  const [img, setImg] = useState([])
+  const [images, setImages] = useState([])
 
+  // let images = useRef()
   useEffect(() => {
-    let images = props.slid;
-    setImg(images)
+    setImages(props.slid)
   }, [])
 
-  return (
-    <Swiper style={styles.wrapper} dotStyle={styles.dot} activeDotStyle={styles.dotActive}>
-      {
-        img.map((item, index) => {
-          return (
-            <Image
-              source={{ uri: urlImage + item.image }}
-              style={{ height: '100%', resizeMode: "cover" }}
-              key={index}
-            />
-          )
-        })
-      }
-    </Swiper>
-  )
+  const change = (nativeEvent) => {
+    const slider = Math.ceil(nativeEvent.contentOffset.x / nativeEvent.layoutMeasurement.width);
+    if (slider !== imgActive) {
+      setInmageActive(slider)
+    }
+  }
 
+
+  let sliderItem = ({ item, index }) => {
+    console.log(item.image, 'imageItem');
+    return (
+      <View>
+        <Image
+          source={{ uri: urlImage + item.image }}
+          style={{ height: '100%', width: width, resizeMode: "cover" }}
+        />
+      </View >
+    )
+  }
+
+  return (
+    <View>
+      <FlatList
+        horizontal
+        pagingEnabled
+        style={styles.wrapper}
+        showsHorizontalScrollIndicator={false}
+        data={images}
+        keyExtractor={(item) => item.id}
+        renderItem={sliderItem}
+        onScroll={({ nativeEvent }) => change(nativeEvent)}
+      />
+      <View style={styles.wrapDot}>
+        {
+          images.map((item, index) => (
+            <Pressable
+              style={imgActive === index ? styles.dotActive : styles.dot}
+              key={index}
+            >
+            </Pressable>
+          ))
+        }
+      </View>
+    </View>
+  )
 }
 
 
@@ -144,9 +174,17 @@ export default function Slider(props) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    // width: width,
+    width: width,
     height: 176,
     resizeMode: 'cover'
+  },
+  wrapDot: {
+    position: 'absolute',
+    bottom: 10,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    backgroundColor: '#1571F0',
+    zIndex: 1
   },
   dot: {
     marginBottom: -30,

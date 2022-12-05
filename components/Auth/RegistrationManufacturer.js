@@ -62,8 +62,8 @@ export default class RegistrationManufacturerComponent extends Component {
 
       saite: '',
 
-      telegram: '',
-      tg: 't.me/',
+      telegram: 't.me/',
+      // tg: 't.me/',
 
 
       show_room_arr: [
@@ -179,7 +179,6 @@ export default class RegistrationManufacturerComponent extends Component {
     let with_dots = without_dots.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
     procentArray[index].to = with_dots;
-    console.log(with_dots, 'converted_value')
 
     this.setState({
       procentArray: procentArray
@@ -194,7 +193,6 @@ export default class RegistrationManufacturerComponent extends Component {
     let with_dots = without_dots.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
     procentArray[index].from = with_dots;
-    console.log(with_dots, 'converted_value')
 
     this.setState({
       procentArray: procentArray
@@ -392,6 +390,8 @@ export default class RegistrationManufacturerComponent extends Component {
     }
 
 
+    let telegram =  this.state.telegram.replace('t.me/', '');
+
 
 
     this.form_data.append("company_name", company_name);
@@ -405,11 +405,13 @@ export default class RegistrationManufacturerComponent extends Component {
     this.form_data.append("made_in", made_in);
     this.form_data.append("price_of_metr", price_of_metr);
     this.form_data.append("saite", saite);
-    this.form_data.append("telegram", this.state.telegram);
+    this.form_data.append("telegram", telegram);
     this.form_data.append("show_room", show_room);
     this.form_data.append("sales_city[]", new_sales_city);
     this.form_data.append("product_category[]", new_product_category);
     this.form_data.append("percent_bonus[]", this.state.procentArrayToString);
+
+
 
 
     var requestOptions = {
@@ -611,7 +613,6 @@ export default class RegistrationManufacturerComponent extends Component {
 
     if (this.focusListener) {
       this.focusListener();
-      console.log(' END')
     }
 
   }
@@ -1356,9 +1357,32 @@ export default class RegistrationManufacturerComponent extends Component {
                 }}
                 value={this.state.telegram}
                 onChangeText={(text) => {
-                  this.setState({ telegram: text })
-                }}
 
+                  if(text == 't.me/' || text == 't.me' || text == 't.m' || text == 't.' || text == 't'  ) {
+                    text = 't.me/';
+                    this.setState({ telegram: text });
+                  } else {
+                    let new_text = text.replace('t.me/', '');
+
+
+                    this.setState({ telegram: `t.me/${new_text}` });
+                  }
+
+                  // if(text.indexOf('t.me/') != -1) 
+                  // {
+                  //   let new_text = text.replace('t.me/', '');
+
+                  //   this.setState({ telegram: `t.me/${new_text}` });
+  
+                  // } else {
+                   
+                  //   console.log(text, 'text')
+                  //   let new_text = text.replace('t.me/', '');
+                  //   this.setState({ telegram: `t.me/${new_text}` });
+                  // }
+
+                 
+                }}
               />
 
             </View>

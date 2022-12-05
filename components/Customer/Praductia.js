@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Image, Modal, ImageBackground } from "react-native";
+import { StyleSheet, SafeAreaView, ScrollView, Text, TouchableOpacity, View, Image, Modal, ImageBackground, ActivityIndicator } from "react-native";
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import Slider from "../slider/Slider";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
@@ -33,17 +33,13 @@ export default class PraductiaComponent extends React.Component {
       show_plus_button: false,
 
 
-      delateProductModal: false
+      delateProductModal: false,
+
+      change_category_loaded: false,
+      pressCategory: true
     }
   }
 
-
-  // showMore = async () => {
-  //   let { limit_count_plus, limit_without_cat } = this.state;
-  //   limit_without_cat += limit_count_plus
-  //   await this.setState({ limit_without_cat: limit_without_cat })
-  //   await this.getObjectData()
-  // }
 
 
   enterCheckBox = (id) => {
@@ -81,9 +77,9 @@ export default class PraductiaComponent extends React.Component {
     let userID = this.props.id
 
     // const { limit_without_cat } = this.state
-    console.log(userID, 'useridddd');
+    
 
-   
+
 
     await fetch('http://80.78.246.59/Refectio/public/api/getOneProizvoditel/user_id=' + userID, {
       method: 'GET'
@@ -113,10 +109,9 @@ export default class PraductiaComponent extends React.Component {
           user_bonus_for_designer: res.data.user_bonus_for_designer,
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
-          products: data,
+          // products: data,
           show_plus_button: true
         })
-        this.updateProduct(res.data.user_category_for_product[0].category_name)
       })
   }
 
@@ -142,21 +137,30 @@ export default class PraductiaComponent extends React.Component {
 
     await fetch("http://80.78.246.59/Refectio/public/api/deleteAuthUserProduct", requestOptions)
       .then(response => response.json())
-      .then(result => console.log(result))
+      .then(result => {
+        
+      })
       .catch(error => console.log('error', error));
 
   }
 
 
   updateProduct = async (category_name) => {
+
+    await this.setState({
+      change_category_loaded: true,
+    })
+
+    let userID = this.props.id
+
     let myHeaders = new Headers();
     let userToken = await AsyncStorage.getItem('userToken')
     myHeaders.append("Authorization", "Bearer " + userToken);
 
-    console.log("Bearer " + userToken, 'userToken');
 
     let formdata = new FormData();
     formdata.append("category_name", category_name);
+    formdata.append("user_id", userID);
 
     let requestOptions = {
       method: 'POST',
@@ -165,22 +169,23 @@ export default class PraductiaComponent extends React.Component {
       redirect: 'follow'
     };
 
-    fetch("http://80.78.246.59/Refectio/public/api/GetcategoryOneuserprduct", requestOptions)
+
+    fetch("http://80.78.246.59/Refectio/public/api/filtergetOneProizvoditel", requestOptions)
       .then(response => response.json())
       .then(res => {
-        console.log(res, 'GetcategoryOneuserprduct');
 
         if (res.status === false) {
 
           this.setState({
             products: [],
-            show_plus_button: false
+            // show_plus_button: false
+            change_category_loaded: false
           })
 
           return false;
         }
 
-        let data = res.data.data;
+        let data = res.data;
         let new_data_result = [];
 
         for (let i = 0; i < data.length; i++) {
@@ -195,14 +200,16 @@ export default class PraductiaComponent extends React.Component {
           data[i].images = product_image;
         }
 
-
         this.setState({
-          user: res.data.user,
-          user_bonus_for_designer: res.data.data.user_bonus_for_designer,
+          // user: data.user,
+          // user_bonus_for_designer: res.data.user_bonus_for_designer,
           // user_category_for_product: res.data.user_category_for_product,
-          city_for_sales_user: res.data.data.city_for_sales_user,
-          products: data,
-          show_plus_button: false
+          // city_for_sales_user: res.data.city_for_sales_user,
+          products: data.products,
+          // show_plus_button: false,
+          // extract: data.user[0].extract,
+          // whatsapp: res.data.user[0].watsap_phone
+          change_category_loaded: false
         })
       })
       .catch(error => console.log('error', error));
@@ -212,15 +219,113 @@ export default class PraductiaComponent extends React.Component {
 
 
 
+  updateProductAfterClickToCategory = async (category_name, index) => {
+    await this.setState({
+      change_category_loaded: true,
+    })
+
+
+    if (this.state.pressCategory) {
+      this.setState({
+        pressCategory: false,
+        active: index
+      })
+
+      // let userID = this.props.userID
+      let userID = this.props.id
+
+      await this.setState({
+        change_category_loaded: true,
+      })
+
+
+      let myHeaders = new Headers();
+      let userToken = await AsyncStorage.getItem('userToken')
+      myHeaders.append("Authorization", "Bearer " + userToken);
+
+
+      let formdata = new FormData();
+      formdata.append("category_name", category_name);
+      formdata.append("user_id", userID);
+
+      let requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: formdata,
+        redirect: 'follow'
+      };
+
+
+      fetch("http://80.78.246.59/Refectio/public/api/filtergetOneProizvoditel", requestOptions)
+        .then(response => response.json())
+        .then(res => {
+
+          if (res.status === false) {
+
+            this.setState({
+              products: [],
+              // show_plus_button: false
+              change_category_loaded: false
+            })
+
+            return false;
+          }
+
+          let data = res.data;
+          let new_data_result = [];
+
+          for (let i = 0; i < data.length; i++) {
+
+            if (data[i].product_image.length < 1) {
+              data[i].images = [];
+              continue;
+            }
+
+            let product_image = data[i].product_image;
+
+            data[i].images = product_image;
+          }
+
+          this.setState({
+            // user: data.user,
+            // user_bonus_for_designer: res.data.user_bonus_for_designer,
+            // user_category_for_product: res.data.user_category_for_product,
+            // city_for_sales_user: res.data.city_for_sales_user,
+            products: data.products,
+            // show_plus_button: false,
+            // extract: data.user[0].extract,
+            // whatsapp: res.data.user[0].watsap_phone
+            change_category_loaded: false,
+            pressCategory: true
+          })
+        })
+      // }
+
+    }
+
+    // this.setState({ active: index })
+
+
+
+  }
+
+  loadedDataAfterLoadPage = async () => {
+    await this.getObjectData()
+    await this.updateProduct(this.state.user_category_for_product[0].category_name)
+    await this.setState({ active: 0 })
+  }
+
+
+
   componentDidMount = () => {
 
     const { navigation } = this.props;
 
-    this.getObjectData();
+
 
     this.focusListener = navigation.addListener("focus", () => {
 
-      this.getObjectData()
+      this.loadedDataAfterLoadPage()
 
     });
 
@@ -232,7 +337,6 @@ export default class PraductiaComponent extends React.Component {
 
     if (this.focusListener) {
       this.focusListener();
-      console.log('Bum END')
     }
 
     // this.focusListener();
@@ -355,7 +459,7 @@ export default class PraductiaComponent extends React.Component {
                   return (
                     <TouchableOpacity
                       onPress={async () => {
-                        await this.updateProduct(item.category_name)
+                        await this.updateProductAfterClickToCategory(item.category_name)
                         this.setState({ active: index })
 
                       }}
@@ -372,14 +476,20 @@ export default class PraductiaComponent extends React.Component {
 
             </ScrollView>
           </View>
+
+          {this.state.change_category_loaded &&
+            <View style={{ marginTop: 200 }}>
+              <ActivityIndicator size={100} color={'#2D9EFB'} />
+            </View>
+          }
           <ScrollView showsVerticalScrollIndicator={false}>
             {
-              this.state.products.length === 0 ?
+              !this.state.change_category_loaded && this.state.products.length === 0 ?
                 <View style={{ width: '100%', marginTop: 30 }}>
                   <Text style={{ fontFamily: 'Raleway_400Regular', fontSize: 17, textAlign: 'center' }}>По выбранной категорий нет продуктов</Text>
                 </View>
                 :
-                this.state.products.map((item, index) => {
+                !this.state.change_category_loaded && this.state.products.map((item, index) => {
                   return (
                     <View
                       key={item.id}
@@ -391,7 +501,6 @@ export default class PraductiaComponent extends React.Component {
                       <View key={item.id} style={styles.checkBox}>
                         <TouchableOpacity key={index} style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => {
                           this.enterCheckBox(item.id)
-                          { console.log(item.id) }
                         }}>
                           <View >
                             {this.verifyCheckBox(item.id) === false &&
@@ -411,7 +520,7 @@ export default class PraductiaComponent extends React.Component {
                           </View>
                         </TouchableOpacity>
                       </View>
-                      <Slider slid={item.images} />
+                      <Slider slid={item.product_image} />
 
                       <Text style={{ fontFamily: 'Raleway_600SemiBold', fontSize: 13, marginTop: 5, marginBottom: 4 }}>{item.name}</Text>
                       {

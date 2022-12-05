@@ -175,7 +175,7 @@ export default class AddProductComponent extends React.Component {
       all_images: [],
 
       categoryChanged: '',
-      modalBool: false,
+      // modalBool: false,
 
       limitError: false
     })
@@ -232,12 +232,14 @@ export default class AddProductComponent extends React.Component {
           this.setState({
             modalBool: true
           })
+          this.clearState()
           // console.log(this.props.id, 'this.props.id')
         }
         else if (result.status === false && result.data.message == "you already have 3 products under this category") {
           await this.setState({ limitError: true })
           setTimeout(() => {
             this.setState({ limitError: false })
+            this.clearState()
           }, 3000)
         }
         this.formdata = new FormData()
@@ -328,8 +330,9 @@ export default class AddProductComponent extends React.Component {
                 this.props.navigation.navigate("Praductia", {
                   params: this.props.id
                 })
-                  &&
-                  await this.clearState()
+                await this.setState({modalBool: false})
+                await this.clearState()
+
 
               }}>
                 <BlueButton name='В каталог' />
@@ -381,6 +384,7 @@ export default class AddProductComponent extends React.Component {
               <TextInput
                 underlineColorAndroid="transparent"
                 placeholder="Кухня ЛРАЙ145 МДФ ПВХ Сатин Бежевый/СИСТЕМА"
+                numberOfLines={1}
                 keyboardType="default"
                 style={{
                   borderWidth: 1,

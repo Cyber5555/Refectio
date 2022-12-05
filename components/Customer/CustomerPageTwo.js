@@ -61,7 +61,6 @@ export default class DesignerPageTwoComponent extends React.Component {
           changed: res.data.city_for_sales_user[0].city_name,
           show_room: res.data.user[0].show_room
         })
-        console.log(res.data.user[0].show_room);
       })
 
   }
@@ -85,7 +84,7 @@ export default class DesignerPageTwoComponent extends React.Component {
     // Remove the event listener
     if (this.focusListener) {
       this.focusListener();
-      console.log(' END')
+      // console.log(' END')
     }
   }
 
@@ -711,6 +710,7 @@ export default class DesignerPageTwoComponent extends React.Component {
                         style={{
                           fontSize: 20,
                           fontFamily: 'Raleway_500Medium',
+                          
                         }}>
                         {this.state.user[0].company_name}
                       </Text>
