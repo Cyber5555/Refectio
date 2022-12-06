@@ -59,7 +59,7 @@ export default class CustomerMainPageNavComponent extends React.Component {
                 <Image
                   source={item.images}
                   style={[this.props.active_page == item.text ? styles.navIconsActive : styles.navIcons,
-                  index === 1 ? { width: 40, height: 14, resizeMode: 'contain', marginBottom: 5, marginTop: 5 }
+                  index === 1 ? { width: 40, height: 14, resizeMode: 'contain', marginBottom: 5, marginTop: 9 }
                     : { width: 25, height: 25 }
                   ]}
                 />
@@ -78,7 +78,7 @@ export default class CustomerMainPageNavComponent extends React.Component {
 const styles = StyleSheet.create({
   navBar: {
     width: '100%',
-    height: 50,
+    height: 60,
     backgroundColor: '#fff',
     flexDirection: 'row',
     justifyContent: 'space-evenly',
@@ -88,11 +88,13 @@ const styles = StyleSheet.create({
   },
   navIcons: {
     tintColor: '#44BBEB',
+    marginTop: 4
     // resizeMode: "center",
 
   },
   navIconsActive: {
     tintColor: '#52A8EF',
+    marginTop: 4
     // resizeMode: "center",
   },
   navText: {

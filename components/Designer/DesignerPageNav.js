@@ -61,7 +61,7 @@ export default class DesignerPageNavComponent extends React.Component {
                 <Image
                   source={item.images}
                   style={[this.props.active_page == item.text ? styles.navIconsActive : styles.navIcons,
-                  index === 1 ? { width: 40, height: 14,resizeMode: 'contain', marginBottom: 5, marginTop: 5 }
+                  index === 1 ? { width: 40, height: 14, resizeMode: 'contain', marginBottom: 5, marginTop: 9 }
                     : { width: 25, height: 25 }
                   ]}
                 />
@@ -78,7 +78,7 @@ export default class DesignerPageNavComponent extends React.Component {
 const styles = StyleSheet.create({
   navBar: {
     width: '100%',
-    height: 50,
+    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     alignItems: 'center',
@@ -90,12 +90,14 @@ const styles = StyleSheet.create({
     tintColor: '#44BBEB',
     width: 25,
     height: 25,
+    marginTop: 4
     // resizeMode: "center",
   },
   navIconsActive: {
     tintColor: '#52A8EF',
     width: 25,
     height: 25,
+    marginTop: 4
     // resizeMode: "center",
   },
   navText: {

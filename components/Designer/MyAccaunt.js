@@ -13,7 +13,6 @@ export default class MyAccauntComponent extends React.Component {
     this.state = {
       keyboardOpen: false,
 
-      role_id: '',
       userToken: '',
 
       phone: '',
@@ -38,11 +37,7 @@ export default class MyAccauntComponent extends React.Component {
     let AuthStr = 'Bearer ' + userToken;
     myHeaders.append("Authorization", AuthStr);
 
-    // await this.setState({
-    //   userToken: userToken,
-    //   role_id: 
-    // })
-
+    
     let requestOptions = {
       method: 'POST',
       headers: myHeaders,
@@ -52,7 +47,6 @@ export default class MyAccauntComponent extends React.Component {
     fetch("http://80.78.246.59/Refectio/public/api/UserLogout", requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result, 'jnjel')
         if (result.status === true) {
           let foundUser = {
             userToken: userToken,
@@ -298,7 +292,7 @@ export default class MyAccauntComponent extends React.Component {
           <ScrollView style={{ flex: 1, position: 'relative' }} showsVerticalScrollIndicator={false}>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 27, }}>
-              <Text style={{ fontSize: 20, fontFamily: 'Poppins_500Medium', }}>{this.state.chcngeName} {this.state.chcngeSurname}</Text>
+              <Text style={{ fontSize: 20, fontFamily: 'Poppins_600SemiBold', }}>{this.state.chcngeName} {this.state.chcngeSurname}</Text>
               <TouchableOpacity onPress={() => this.setState({ chcngeNameModal: true })}>
                 <Image
                   source={require('../../assets/image/ep_edit.png')}

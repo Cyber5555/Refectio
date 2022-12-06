@@ -130,7 +130,6 @@ export default function Slider(props) {
 
 
   let sliderItem = ({ item, index }) => {
-    console.log(item.image, 'imageItem');
     return (
       <View>
         <Image

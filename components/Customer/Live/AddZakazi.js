@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput } from "react-native";
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, TextInput, Keyboard } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
 import ArrowGrayComponent from "../../../assets/image/ArrowGray";
 import CustomerMainPageNavComponent from "../CustomerMainPageNav";
@@ -9,9 +9,67 @@ export default class AddZakaziComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      imgBool: false
+      imgBool: false,
+      keyboardOpen: false
     }
   }
+
+
+
+
+
+  componentDidMount() {
+    const { navigation } = this.props;
+    // this.getAuthUserProfile()
+
+
+    this.focusListener = navigation.addListener("focus", () => {
+
+      // this.getAuthUserProfile()
+
+    });
+
+    this.keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      this._keyboardDidShow,
+    );
+    this.keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      this._keyboardDidHide,
+    );
+  }
+
+
+  componentWillUnmount() {
+
+    if (this.focusListener) {
+      this.focusListener();
+      console.log(' END')
+    }
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+
+  _keyboardDidShow = (event) => {
+    this.setState({
+
+      keyboardOpen: true
+    })
+
+  }
+
+  _keyboardDidHide = (event) => {
+    this.setState({
+
+      keyboardOpen: false
+
+    })
+
+  }
+
+
+
   render() {
     return (
       <SafeAreaView style={styles.safeArea}>
@@ -129,7 +187,10 @@ export default class AddZakaziComponent extends React.Component {
             <Text style={styles.goBackText}>Отмена</Text>
           </TouchableOpacity>
         </View>
-        <CustomerMainPageNavComponent active_page={'Заказы'} navigation={this.props.navigation} />
+        {
+          this.state.keyboardOpen === false &&
+          <CustomerMainPageNavComponent active_page={'Заказы'} navigation={this.props.navigation} />
+        }
       </SafeAreaView>
     )
   }

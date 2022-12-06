@@ -427,17 +427,18 @@ export default class CustomerMainPageComponent extends React.Component {
                             marginRight: 12,
                             borderColor: '#C8C8C8',
                             borderWidth: 1,
+                            borderRadius: 10
                           }}
                         />
                         <View style={styles.infoCompany}>
-                          <View style={{width: '70%'}}>
+                          <View style={{ width: '70%' }}>
                             <Text
                               numberOfLines={1}
                               style={{
                                 fontSize: 20,
                                 fontFamily: 'Raleway_700Bold',
                                 marginBottom: 6,
-                                
+
                               }}>
                               {item.company_name}
                             </Text>

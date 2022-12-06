@@ -5,7 +5,6 @@ import Slider from "../slider/Slider";
 import CustomerMainPageNavComponent from "./CustomerMainPageNav";
 import Svg, { Path, Rect } from "react-native-svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// import ShowMore from "../Component/Buttons/ShowMore";
 import BlueButton from "../Component/Buttons/BlueButton";
 
 
@@ -26,11 +25,8 @@ export default class PraductiaComponent extends React.Component {
       city_for_sales_user: [],
       products: [],
 
-      // limit_without_cat: 2,
-      // limit_count_plus: 2,
 
 
-      show_plus_button: false,
 
 
       delateProductModal: false,
@@ -76,8 +72,7 @@ export default class PraductiaComponent extends React.Component {
   getObjectData = async () => {
     let userID = this.props.id
 
-    // const { limit_without_cat } = this.state
-    
+
 
 
 
@@ -89,19 +84,24 @@ export default class PraductiaComponent extends React.Component {
 
         let data = res.data.products;
         let new_data_result = [];
+        if (data.length === 0) {
+          data = []
+        } else {
+          for (let i = 0; i < data.length; i++) {
 
-        for (let i = 0; i < data.length; i++) {
+            if (data[i].product_image.length < 1) {
+              data[i].images = [];
+              continue;
+            }
 
-          if (data[i].product_image.length < 1) {
-            data[i].images = [];
-            continue;
+            let product_image = data[i].product_image;
+
+            data[i].images = product_image;
+
           }
 
-          let product_image = data[i].product_image;
-
-          data[i].images = product_image;
-
         }
+
 
 
         this.setState({
@@ -109,8 +109,6 @@ export default class PraductiaComponent extends React.Component {
           user_bonus_for_designer: res.data.user_bonus_for_designer,
           user_category_for_product: res.data.user_category_for_product,
           city_for_sales_user: res.data.city_for_sales_user,
-          // products: data,
-          show_plus_button: true
         })
       })
   }
@@ -137,8 +135,23 @@ export default class PraductiaComponent extends React.Component {
 
     await fetch("http://80.78.246.59/Refectio/public/api/deleteAuthUserProduct", requestOptions)
       .then(response => response.json())
-      .then(result => {
-        
+      .then(async result => {
+        console.log(result);
+
+        if (result.status === true) {
+          await this.setState({
+            delateProductModal: false,
+            delateSortBy: [],
+            products: []
+          })
+          await this.updateProduct(this.state.user_category_for_product[0].category_name)
+            &&
+            await this.getObjectData()
+
+        }
+
+
+
       })
       .catch(error => console.log('error', error));
 
@@ -178,7 +191,6 @@ export default class PraductiaComponent extends React.Component {
 
           this.setState({
             products: [],
-            // show_plus_button: false
             change_category_loaded: false
           })
 
@@ -188,27 +200,27 @@ export default class PraductiaComponent extends React.Component {
         let data = res.data;
         let new_data_result = [];
 
-        for (let i = 0; i < data.length; i++) {
+        if (data.length === 0) {
+          data = []
+        }
+        else {
 
-          if (data[i].product_image.length < 1) {
-            data[i].images = [];
-            continue;
+          for (let i = 0; i < data.length; i++) {
+
+            if (data[i].product_image.length < 1) {
+              data[i].images = [];
+              continue;
+            }
+
+            let product_image = data[i].product_image;
+
+            data[i].images = product_image;
           }
-
-          let product_image = data[i].product_image;
-
-          data[i].images = product_image;
         }
 
+
         this.setState({
-          // user: data.user,
-          // user_bonus_for_designer: res.data.user_bonus_for_designer,
-          // user_category_for_product: res.data.user_category_for_product,
-          // city_for_sales_user: res.data.city_for_sales_user,
           products: data.products,
-          // show_plus_button: false,
-          // extract: data.user[0].extract,
-          // whatsapp: res.data.user[0].watsap_phone
           change_category_loaded: false
         })
       })
@@ -231,7 +243,6 @@ export default class PraductiaComponent extends React.Component {
         active: index
       })
 
-      // let userID = this.props.userID
       let userID = this.props.id
 
       await this.setState({
@@ -264,7 +275,6 @@ export default class PraductiaComponent extends React.Component {
 
             this.setState({
               products: [],
-              // show_plus_button: false
               change_category_loaded: false
             })
 
@@ -274,36 +284,35 @@ export default class PraductiaComponent extends React.Component {
           let data = res.data;
           let new_data_result = [];
 
-          for (let i = 0; i < data.length; i++) {
+          if (data.length === 0) {
+            data = []
+          }
+          else {
 
-            if (data[i].product_image.length < 1) {
-              data[i].images = [];
-              continue;
+            for (let i = 0; i < data.length; i++) {
+
+              if (data[i].product_image.length < 1) {
+                data[i].images = [];
+                continue;
+              }
+
+              let product_image = data[i].product_image;
+
+              data[i].images = product_image;
             }
-
-            let product_image = data[i].product_image;
-
-            data[i].images = product_image;
           }
 
+
           this.setState({
-            // user: data.user,
-            // user_bonus_for_designer: res.data.user_bonus_for_designer,
-            // user_category_for_product: res.data.user_category_for_product,
-            // city_for_sales_user: res.data.city_for_sales_user,
             products: data.products,
-            // show_plus_button: false,
-            // extract: data.user[0].extract,
-            // whatsapp: res.data.user[0].watsap_phone
             change_category_loaded: false,
             pressCategory: true
           })
         })
-      // }
+
 
     }
 
-    // this.setState({ active: index })
 
 
 
@@ -321,7 +330,7 @@ export default class PraductiaComponent extends React.Component {
 
     const { navigation } = this.props;
 
-
+    this.loadedDataAfterLoadPage()
 
     this.focusListener = navigation.addListener("focus", () => {
 
@@ -333,13 +342,11 @@ export default class PraductiaComponent extends React.Component {
 
   componentWillUnmount() {
 
-    // Remove the event listener
 
     if (this.focusListener) {
       this.focusListener();
     }
 
-    // this.focusListener();
 
   }
 
@@ -352,22 +359,31 @@ export default class PraductiaComponent extends React.Component {
           <Modal visible={this.state.delateProductModal}>
             <ImageBackground
               style={{ flex: 1, justifyContent: 'center', alignItems: 'center', }}
-              source={require('../../assets/image/blurBg.png')}>
+              source={require('../../assets/image/blurBg.png')}
+            >
+
               <View style={{ backgroundColor: '#FFFFFF', width: '90%', borderRadius: 20, position: 'relative' }}>
-                <TouchableOpacity style={{ position: 'absolute', right: 18, top: 18 }}>
+
+                <TouchableOpacity
+                  style={{ position: 'absolute', right: 18, top: 18 }}
+                  onPress={() => {
+                    this.setState({ delateProductModal: false })
+                  }}>
                   <Image source={require('../../assets/image/ixs.png')} style={{ width: 22.5, height: 22.5 }} />
                 </TouchableOpacity>
+
                 <Text style={{ fontFamily: 'Poppins_500Medium', fontSize: 22, textAlign: 'center', marginTop: 70, color: '#2D9EFB' }}> Удаление продукции</Text>
+
                 <Text style={{ textAlign: 'center', fontFamily: 'Poppins_400Regular', marginTop: 30, fontSize: 16 }}>Подтвердите удаление выбранной{'\n'}продукции</Text>
+
                 <TouchableOpacity
                   onPress={async () => {
                     await this.delateProduct()
-                    await this.getObjectData()
-                    this.setState({ delateProductModal: false })
                   }}
                   style={{ alignSelf: 'center', marginTop: 67 }}>
                   <BlueButton name='Подтвердить' />
                 </TouchableOpacity>
+
                 <TouchableOpacity
                   onPress={() => {
                     this.setState({ delateProductModal: false })
@@ -377,7 +393,9 @@ export default class PraductiaComponent extends React.Component {
                     Отменить
                   </Text>
                 </TouchableOpacity>
+
               </View>
+
             </ImageBackground>
           </Modal>
 
@@ -429,7 +447,9 @@ export default class PraductiaComponent extends React.Component {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                this.setState({ delateProductModal: true })
+                if (this.state.delateSortBy.length > 0) {
+                  this.setState({ delateProductModal: true })
+                }
               }}
               style={{
                 position: 'absolute',
@@ -484,7 +504,7 @@ export default class PraductiaComponent extends React.Component {
           }
           <ScrollView showsVerticalScrollIndicator={false}>
             {
-              !this.state.change_category_loaded && this.state.products.length === 0 ?
+              this.state.products.length === 0 ?
                 <View style={{ width: '100%', marginTop: 30 }}>
                   <Text style={{ fontFamily: 'Raleway_400Regular', fontSize: 17, textAlign: 'center' }}>По выбранной категорий нет продуктов</Text>
                 </View>
@@ -564,12 +584,6 @@ export default class PraductiaComponent extends React.Component {
                   )
                 })
             }
-            {/* {
-              this.state.show_plus_button &&
-              <TouchableOpacity style={{ width: '100%', alignItems: 'center', marginBottom: 20 }} onPress={() => this.showMore()}>
-                <ShowMore />
-              </TouchableOpacity>
-            } */}
           </ScrollView>
         </View>
         <CustomerMainPageNavComponent navigation={this.props.navigation} />

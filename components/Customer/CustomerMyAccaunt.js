@@ -92,7 +92,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
     await fetch("http://80.78.246.59/Refectio/public/api/getCityApi", requestOptions)
       .then((response) => (response.json()))
       .then((res) => {
-        console.log(res);
         if (res.status === true) {
           this.setState({ sOpenCityDropDown3: !this.state.sOpenCityDropDown3 })
         }
@@ -189,7 +188,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
     await fetch("http://80.78.246.59/Refectio/public/api/AllCountry", requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result)
         this.setState({ made_in_array: result.data })
       })
       .catch(error => console.log('error', error));
@@ -445,7 +443,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
     let with_dots = without_dots.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
     procentArray[index].start_price = with_dots;
-    console.log(with_dots, 'converted_value')
 
     this.setState({
       procentArray: procentArray
@@ -460,7 +457,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
     let with_dots = without_dots.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
     procentArray[index].before_price = with_dots;
-    console.log(with_dots, 'converted_value')
 
     this.setState({
       procentArray: procentArray
@@ -506,7 +502,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
     if (this.focusListener) {
       this.focusListener();
-      console.log(' END')
     }
 
     this.keyboardDidShowListener.remove();
@@ -577,7 +572,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
     items.category_name = items.name;
     items.category_id = items.id
 
-    console.log(items);
     let filterSort = this.state.categoryArray;
 
     let find = true
@@ -669,12 +663,10 @@ export default class CustomerMyAccauntComponent extends React.Component {
 
     let telegram = this.state.teleg.replace('t.me/', '');
 
-    console.log(telegram, 'telegram')
 
     let formdata = new FormData();
     formdata.append("telegram", telegram);
 
-    console.log(formdata);
 
     let requestOptions = {
       method: 'POST',
@@ -728,7 +720,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
     fetch("http://80.78.246.59/Refectio/public/api/updateLogoProizvoditel", requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result, 'resssssssssssssssssssssssssssssssssssss');
         if (result.status === true) {
           this.getAuthUserProfile()
         }
@@ -758,7 +749,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
     fetch("http://80.78.246.59/Refectio/public/api/UserLogout", requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result, 'jnjel')
         if (result.status === true) {
           let foundUser = {
             userToken: userToken,
@@ -1025,7 +1015,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
                     showsHorizontalScrollIndicator={false}>
                     {
                       this.state.categoryArray.map((item, index) => {
-                        console.log(item);
                         return (
                           <View
                             key={index}
@@ -1466,7 +1455,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
                             // console.log(text, 'text')
                             let new_text = text.replace('t.me/', '');
 
-                            console.log(new_text, 'text')
 
                             this.setState({ teleg: `t.me/${new_text}` });
                           }

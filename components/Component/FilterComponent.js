@@ -468,12 +468,12 @@ export default class FilterComponent extends React.Component {
                   borderRadius: 5,
                   position: 'relative',
                   height: 45,
-                  backgroundColor: '#52A8EF'
-
+                  backgroundColor: '#52A8EF',
+                  justifyContent: 'center'
                 }}
                 onPress={() => this.setState({ sOpenCityDropDown: !this.state.sOpenCityDropDown })}
               >
-                <Text style={{ color: "#FFFFFF", fontFamily: 'Raleway_600SemiBold' }}>{this.state.city_name == '' ? 'Выберите город' : this.state.city_name}</Text>
+                <Text style={{ color: "#FFFFFF", fontFamily: 'Raleway_600SemiBold',lineHeight: 18 }}>{this.state.city_name == '' ? 'Выберите город' : this.state.city_name}</Text>
                 <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
                   {!this.state.sOpenCityDropDown &&
                     <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">

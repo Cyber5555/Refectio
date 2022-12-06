@@ -12,7 +12,7 @@ export default class GhostNavComponent extends React.Component {
     this.state = {
       navBar: [
         { images: require('../../assets/image/home.png'), text: 'Главная', change: 'GhostPage', id: 1 },
-        { images: require('../../assets/image/akar-icons_phone.png'), text: 'Поддержка', change: 'GhostPage', id: 2 },
+        { images: require('../../assets/image/LIVE.png'), text: 'Заказы', change: 'ZakaziLive', id: 2 },
         { images: require('../../assets/image/akar-icons_heart.png'), text: 'Избранное', change: 'Modal', id: 3 },
         { images: require('../../assets/image/carbon_user-avatar.png'), text: 'Профиль', change: 'AuthScreen', id: 4 }
       ],
@@ -64,7 +64,10 @@ export default class GhostNavComponent extends React.Component {
               } key={index}>
                 <Image
                   source={item.images}
-                  style={this.props.active_page == item.text ? styles.navIconsActive : styles.navIcons}
+                  style={[this.props.active_page == item.text ? styles.navIconsActive : styles.navIcons,
+                  index === 1 ? { width: 40, height: 14, resizeMode: 'contain', marginBottom: 5, marginTop: 5 }
+                    : { width: 25, height: 25 }
+                  ]}
                 />
                 <Text key={index} style={this.props.active_page == item.text ? styles.navTextActive : styles.navText}>{item.text}</Text>
               </TouchableOpacity>
@@ -79,7 +82,7 @@ export default class GhostNavComponent extends React.Component {
 const styles = StyleSheet.create({
   navBar: {
     width: '100%',
-    height: 50,
+    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -91,11 +94,13 @@ const styles = StyleSheet.create({
     tintColor: '#44BBEB',
     width: 25,
     height: 25,
+    marginTop: 4
   },
   navIconsActive: {
     tintColor: '#52A8EF',
     width: 25,
     height: 25,
+    marginTop: 4
   },
   navText: {
     color: '#000',

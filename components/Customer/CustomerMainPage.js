@@ -427,6 +427,7 @@ export default class CustomerMainPageComponent extends React.Component {
                             marginRight: 12,
                             borderColor: '#C8C8C8',
                             borderWidth: 1,
+                            borderRadius: 10
                           }}
                         />
                         <View style={styles.infoCompany}>
@@ -521,7 +522,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F3F3F3',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 15
+    borderRadius: 15,
   },
   myComponyName: {
     fontSize: 22,

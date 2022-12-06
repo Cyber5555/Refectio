@@ -472,6 +472,7 @@ export default class GhostPageComponent extends React.Component {
                             marginRight: 12,
                             borderColor: '#C8C8C8',
                             borderWidth: 1,
+                            borderRadius: 10
                           }}
                         />
                         <View style={styles.infoCompany}>

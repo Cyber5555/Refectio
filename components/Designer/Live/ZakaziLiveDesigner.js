@@ -69,7 +69,7 @@ export default class ZakaziLiveDesignerComponent extends React.Component {
 
           <Text style={styles.pageName}>Заказы Live</Text>
 
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 13, marginBottom: 5 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 13, marginBottom: 5 }}>
 
             <TouchableOpacity style={styles.activePage}>
               <Text style={{
@@ -130,7 +130,7 @@ export default class ZakaziLiveDesignerComponent extends React.Component {
                   <View style={{ paddingLeft: 10, justifyContent: 'space-between', height: 82 }}>
                     <Text style={styles.nickName}>Алекс  Зингмирдиннов</Text>
 
-                    <Text style={styles.vnestiDanniy}>Внести данные</Text>
+                    {/* <Text style={styles.vnestiDanniy}>Внести данные</Text> */}
                   </View>
 
                 </TouchableOpacity>
@@ -212,17 +212,20 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_500Medium'
   },
   activePage: {
-    paddingHorizontal: 47,
+    width: '47%',
     paddingVertical: 8,
     backgroundColor: '#378DFE',
+    alignItems: 'center',
     borderRadius: 10,
+    // marginRight: 10
   },
   arxivePage: {
-    paddingHorizontal: 60,
+    width: '47%',
     paddingVertical: 8,
     borderColor: '#E6E6E6',
     borderWidth: 1,
-    borderRadius: 10
+    borderRadius: 10,
+    alignItems: 'center'
   },
   clounImg: {
     width: 82,

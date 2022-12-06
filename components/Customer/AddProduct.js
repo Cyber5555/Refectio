@@ -15,6 +15,7 @@ export default class AddProductComponent extends React.Component {
       keyboardOpen: false,
       category: false,
       categoryChanged: '',
+      categoryChanged_error: '',
       categoryId: '',
       img: null,
 
@@ -22,7 +23,6 @@ export default class AddProductComponent extends React.Component {
       name_error: false,
 
       frame: "",
-      frame_error: false,
 
       facades: "",
       facades_error: false,
@@ -43,11 +43,17 @@ export default class AddProductComponent extends React.Component {
       tabletop: "",
       tabletop_error: false,
       all_images: [],
+      all_images_error: false,
 
       categoryArray: [],
 
       modalBool: false,
-      status: false
+
+
+      buttonSend: true,
+
+
+
     }
   }
   formdata = new FormData();
@@ -146,7 +152,7 @@ export default class AddProductComponent extends React.Component {
 
 
   clearState = async () => {
-    this.setState({
+    await this.setState({
 
       name: "",
       name_error: false,
@@ -226,21 +232,59 @@ export default class AddProductComponent extends React.Component {
     await fetch("http://80.78.246.59/Refectio/public/api/createnewproductProizvoditel", requestOptions)
       .then(response => response.json())
       .then(async result => {
-        console.log(result, 'createnewproductProizvoditel')
+        await console.log(result, 'createnewproductProizvoditel')
 
-        if (result.status === true && result.data.message == "createt new product") {
-          this.setState({
+        if (result.status === true) {
+          await this.setState({
+            buttonSend: false,
             modalBool: true
           })
-          this.clearState()
-          // console.log(this.props.id, 'this.props.id')
+            &&
+            await this.clearState()
         }
-        else if (result.status === false && result.data.message == "you already have 3 products under this category") {
-          await this.setState({ limitError: true })
-          setTimeout(() => {
-            this.setState({ limitError: false })
-            this.clearState()
-          }, 3000)
+
+        else if (result.status !== true) {
+          if (result.hasOwnProperty('category_name')) {
+            this.setState({
+              categoryChanged_error: true
+            })
+          }
+          else {
+            this.setState({
+              categoryChanged_error: false
+            })
+          }
+
+          if (result.hasOwnProperty('name')) {
+            this.setState({
+              name_error: true
+            })
+          }
+          else {
+            this.setState({
+              name_error: false
+            })
+          }
+
+          if (result.hasOwnProperty('photo')) {
+            this.setState({
+              all_images_error: true
+            })
+          }
+          else {
+            this.setState({
+              all_images_error: false
+            })
+          }
+
+          if (result.data?.message == "you already have 3 products under this category") {
+            await this.setState({ limitError: true })
+            let set = setTimeout(() => {
+              this.setState({ limitError: false })
+              this.clearState()
+              clearTimeout(set)
+            }, 3000)
+          }
         }
         this.formdata = new FormData()
       })
@@ -330,7 +374,7 @@ export default class AddProductComponent extends React.Component {
                 this.props.navigation.navigate("Praductia", {
                   params: this.props.id
                 })
-                await this.setState({modalBool: false})
+                await this.setState({ modalBool: false })
                 await this.clearState()
 
 
@@ -370,14 +414,14 @@ export default class AddProductComponent extends React.Component {
           <ScrollView showsVerticalScrollIndicator={false}>
             <View>
               <Text
-                style={{
+                style={[{
                   fontFamily: 'Poppins_500Medium',
                   lineHeight: 23,
                   fontSize: 16,
                   color: '#5B5B5B',
                   marginBottom: 5,
                   marginTop: 25
-                }}
+                }, this.state.name_error ? { color: 'red' } : { color: '#5B5B5B' }]}
               >
                 Имя продукции
               </Text>
@@ -386,13 +430,13 @@ export default class AddProductComponent extends React.Component {
                 placeholder="Кухня ЛРАЙ145 МДФ ПВХ Сатин Бежевый/СИСТЕМА"
                 numberOfLines={1}
                 keyboardType="default"
-                style={{
+                style={[{
                   borderWidth: 1,
-                  borderColor: '#F5F5F5',
                   padding: 10,
                   width: '100%',
                   borderRadius: 5,
-                }}
+
+                }, this.state.name_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                 value={this.state.name}
                 onChangeText={(text) => this.setState({ name: text })}
               />
@@ -400,14 +444,14 @@ export default class AddProductComponent extends React.Component {
 
             <View>
               <Text
-                style={{
+                style={[{
                   fontFamily: 'Poppins_500Medium',
                   lineHeight: 23,
                   fontSize: 16,
                   color: '#5B5B5B',
                   marginBottom: 5,
                   marginTop: 12
-                }}
+                }, this.state.categoryChanged_error ? { color: 'red' } : { color: '#5B5B5B' }]}
               >
                 Категории
               </Text>
@@ -416,7 +460,7 @@ export default class AddProductComponent extends React.Component {
                   position: 'relative',
                 }}>
                 <TouchableOpacity
-                  style={{
+                  style={[{
                     borderWidth: 1,
                     borderColor: '#F5F5F5',
                     padding: 10,
@@ -425,7 +469,7 @@ export default class AddProductComponent extends React.Component {
                     position: 'relative',
                     height: 45,
                     marginRight: 12
-                  }}
+                  }, this.state.categoryChanged_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                   onPress={() => {
                     // if (this.state.categoryChanged == '') {
                     //   this.setState({ categoryChanged: '' })
@@ -770,12 +814,14 @@ export default class AddProductComponent extends React.Component {
               </View>
             }
             <Text
-              style={{
+              style={[{
                 fontSize: 16,
                 fontFamily: 'Poppins_500Medium',
                 marginTop: 15
-              }}>
-              Фотографии продукта
+              }, this.state.all_images_error ? { color: 'red' } : { color: '#5B5B5B' }]}>
+
+              {this.state.all_images_error ? 'Загрузите фотографию' : 'Фотографии продукта'}
+
             </Text>
 
             <TouchableOpacity
@@ -829,8 +875,9 @@ export default class AddProductComponent extends React.Component {
 
             <TouchableOpacity
               onPress={() => {
-                this.sendProduct()
-                console.log(this.state.modalBool);
+                if (this.state.buttonSend === true) {
+                  this.sendProduct()
+                }
               }}
               style={{
                 alignSelf: 'center',
