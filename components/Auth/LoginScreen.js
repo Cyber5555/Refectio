@@ -186,15 +186,28 @@ export default class LoginScreenComponent extends Component {
             onPress={() => this.goToAuthScreen()}
             style={{
               position: 'absolute',
-              left: 15,
-              top: 18,
+              left: 10,
+              top: 23,
               zIndex: 100
             }}>
             <ArrowGrayComponent />
           </TouchableOpacity>
+          <View
+            style={{
+              width: '100%',
+              height: 130,
+            }}></View>
+
           <Image
-            source={require('../../assets/image/Refectio.png')}
-            style={styles.logo}
+            source={require('../../assets/image/RefectioWallpaper.png')}
+            style={{
+              width: '95%',
+              height: 135,
+              resizeMode: 'center',
+              position: 'absolute',
+              right: 0,
+              top: 23,
+            }}
           />
 
           <Text style={styles.vxod}>Вход</Text>
@@ -312,6 +325,7 @@ const styles = StyleSheet.create({
     lineHeight: 54,
     fontSize: 32,
     color: '#2D9EFB',
+    marginTop: 10
 
   },
   fiealdset: {

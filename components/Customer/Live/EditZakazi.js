@@ -71,7 +71,7 @@ export default class EditZakaziComponent extends React.Component {
               style={[styles.nazvania,
               this.state.password_confirmation_error ? { borderColor: 'red', } : { borderColor: '#F5F5F5', }
               ]}
-              value={this.state.password_confirmation}
+              
               onChangeText={(value) => { this.setState({ password_confirmation: value }) }}
             />
           </View>
@@ -88,11 +88,11 @@ export default class EditZakaziComponent extends React.Component {
               <TextInput
                 underlineColorAndroid="transparent"
                 placeholder="22.08.2023"
+                keyboardType="number-pad"
                 style={[styles.nazvania,
                 this.state.password_confirmation_error ? { borderColor: 'red', } : { borderColor: '#F5F5F5', }
                 ]}
-                value={this.state.password_confirmation}
-                onChangeText={(value) => { this.setState({ password_confirmation: value }) }}
+                
               />
             </View>
 
@@ -108,11 +108,10 @@ export default class EditZakaziComponent extends React.Component {
               <TextInput
                 underlineColorAndroid="transparent"
                 placeholder="15.11.2023"
+                keyboardType="number-pad"
                 style={[styles.nazvania,
                 this.state.password_confirmation_error ? { borderColor: 'red', } : { borderColor: '#F5F5F5', }
                 ]}
-                value={this.state.password_confirmation}
-                onChangeText={(value) => { this.setState({ password_confirmation: value }) }}
               />
             </View>
           </View>

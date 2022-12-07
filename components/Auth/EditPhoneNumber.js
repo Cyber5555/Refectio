@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Modal } from "react-native";
+import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Modal, KeyboardAvoidingView, } from "react-native";
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import Svg, { Path, Rect } from "react-native-svg";
 import BlueButton from "../Component/Buttons/BlueButton"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaskInput from "react-native-mask-input";
-
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default class EditPhoneNumberComponent extends React.Component {
   constructor(props) {
@@ -56,15 +56,18 @@ export default class EditPhoneNumberComponent extends React.Component {
   }
   render() {
     return (
-      <SafeAreaView style={{ backgroundColor: 'white', flex: 1, }} >
-        <View style={{ flex: 1, paddingHorizontal: 25, position: 'relative' }}>
+      <SafeAreaView
+        style={{ backgroundColor: 'white', flex: 1, }}
+      >
+
+        <KeyboardAwareScrollView style={{ flex: 1, paddingHorizontal: 25,position: 'relative' }}>
 
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('CustomerMyAccaunt')}
             style={{
               position: 'absolute',
               top: 18.29,
-              left: 15,
+              left: -10,
               zIndex: 100,
             }}>
             <ArrowGrayComponent />
@@ -112,6 +115,7 @@ export default class EditPhoneNumberComponent extends React.Component {
 
               <MaskInput
                 underlineColorAndroid="transparent"
+                autoFocus={false}
                 keyboardType="phone-pad"
                 placeholder="+7 (975) 991-99-99"
                 style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, borderColor: '#F5F5F5' },
@@ -130,7 +134,7 @@ export default class EditPhoneNumberComponent extends React.Component {
 
           </View>
           <TouchableOpacity
-            style={{ alignSelf: 'center', position: 'absolute', bottom: '10%' }}
+            style={{ alignSelf: 'center', marginTop: '30%' }}
             onPress={() => {
               if (this.state.phone !== '') {
                 this.sendPhoneNumber()
@@ -138,7 +142,8 @@ export default class EditPhoneNumberComponent extends React.Component {
             }}>
             <BlueButton name="Подтвердить" />
           </TouchableOpacity>
-        </View>
+        </KeyboardAwareScrollView>
+
       </SafeAreaView>
     )
   }

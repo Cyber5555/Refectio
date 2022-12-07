@@ -26,7 +26,7 @@ export default class ConfirmateZakazComponent extends React.Component {
             <TouchableOpacity
               style={styles.goBack}
               onPress={() => {
-                this.props.navigation.navigate('ZakaziLiveDesigner')
+                this.props.navigation.navigate('AddZakazchikDesigner')
               }}>
               <ArrowGrayComponent />
             </TouchableOpacity>
@@ -63,7 +63,7 @@ export default class ConfirmateZakazComponent extends React.Component {
             <TouchableOpacity
               style={styles.nextPage}
               onPress={() => {
-                this.props.navigation.navigate('ConfirmateZakaz')
+                this.props.navigation.navigate('ZakaziLiveDesigner')
               }}>
               <BlueButton name="Готово" />
             </TouchableOpacity>
@@ -71,7 +71,7 @@ export default class ConfirmateZakazComponent extends React.Component {
             <TouchableOpacity
               style={styles.cancelButton}
               onPress={() => {
-                this.props.navigation.navigate('ConfirmateZakaz')
+                this.props.navigation.navigate('AddZakazchikDesigner')
               }}>
               <Text style={styles.cancelButtonText}>
                 Отмена

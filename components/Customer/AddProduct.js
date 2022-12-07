@@ -220,76 +220,84 @@ export default class AddProductComponent extends React.Component {
       this.formdata.append("photo[]", element);
 
     })
+    if (
+      this.state.all_images.length > 0 && this.state.name !== '' && this.state.categoryChanged !== ''
+    ) {
+      this.setState({ buttonSend: true });
+    }
+
+    if (this.state.buttonSend) {
 
 
-    let requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: this.formdata,
-      redirect: 'follow'
-    };
 
-    await fetch("http://80.78.246.59/Refectio/public/api/createnewproductProizvoditel", requestOptions)
-      .then(response => response.json())
-      .then(async result => {
-        await console.log(result, 'createnewproductProizvoditel')
+      let requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: this.formdata,
+        redirect: 'follow'
+      };
 
-        if (result.status === true) {
-          await this.setState({
-            buttonSend: false,
-            modalBool: true
-          })
-            &&
-            await this.clearState()
-        }
+      await fetch("http://80.78.246.59/Refectio/public/api/createnewproductProizvoditel", requestOptions)
+        .then(response => response.json())
+        .then(async result => {
+          await console.log(result, 'createnewproductProizvoditel')
 
-        else if (result.status !== true) {
-          if (result.hasOwnProperty('category_name')) {
-            this.setState({
-              categoryChanged_error: true
+          if (result.status === true) {
+            await this.setState({
+              buttonSend: false,
+              modalBool: true
             })
-          }
-          else {
-            this.setState({
-              categoryChanged_error: false
-            })
+              &&
+              await this.clearState()
           }
 
-          if (result.hasOwnProperty('name')) {
-            this.setState({
-              name_error: true
-            })
-          }
-          else {
-            this.setState({
-              name_error: false
-            })
-          }
+          else if (result.status !== true) {
+            if (result.hasOwnProperty('category_name')) {
+              this.setState({
+                categoryChanged_error: true
+              })
+            }
+            else {
+              this.setState({
+                categoryChanged_error: false
+              })
+            }
 
-          if (result.hasOwnProperty('photo')) {
-            this.setState({
-              all_images_error: true
-            })
-          }
-          else {
-            this.setState({
-              all_images_error: false
-            })
-          }
+            if (result.hasOwnProperty('name')) {
+              this.setState({
+                name_error: true
+              })
+            }
+            else {
+              this.setState({
+                name_error: false
+              })
+            }
 
-          if (result.data?.message == "you already have 3 products under this category") {
-            await this.setState({ limitError: true })
-            let set = setTimeout(() => {
-              this.setState({ limitError: false })
-              this.clearState()
-              clearTimeout(set)
-            }, 3000)
-          }
-        }
-        this.formdata = new FormData()
-      })
-      .catch(error => console.log('error', error));
+            if (result.hasOwnProperty('photo')) {
+              this.setState({
+                all_images_error: true
+              })
+            }
+            else {
+              this.setState({
+                all_images_error: false
+              })
+            }
 
+            if (result.data?.message == "you already have 3 products under this category") {
+              await this.setState({ limitError: true })
+              let set = setTimeout(() => {
+                this.setState({ limitError: false })
+                this.clearState()
+                clearTimeout(set)
+              }, 3000)
+            }
+          }
+          this.formdata = new FormData()
+        })
+        .catch(error => console.log('error', error));
+    }
 
   }
 
@@ -875,9 +883,9 @@ export default class AddProductComponent extends React.Component {
 
             <TouchableOpacity
               onPress={() => {
-                if (this.state.buttonSend === true) {
-                  this.sendProduct()
-                }
+
+                this.sendProduct()
+
               }}
               style={{
                 alignSelf: 'center',

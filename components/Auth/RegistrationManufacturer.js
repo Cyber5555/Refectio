@@ -390,7 +390,7 @@ export default class RegistrationManufacturerComponent extends Component {
     }
 
 
-    let telegram =  this.state.telegram.replace('t.me/', '');
+    let telegram = this.state.telegram.replace('t.me/', '');
 
 
 
@@ -729,14 +729,21 @@ export default class RegistrationManufacturerComponent extends Component {
         }}
       >
         <View style={{ width: '100%', }}>
+          <View
+            style={{
+              width: '100%',
+              height: 130,
+            }}></View>
+
           <Image
             source={require('../../assets/image/RefectioWallpaper.png')}
             style={{
               width: '95%',
-              height: 125,
-              resizeMode: 'contain',
-              marginTop: 20,
-              alignSelf: 'flex-end',
+              height: 135,
+              resizeMode: 'center',
+              position: 'absolute',
+              right: 0,
+              top: 23,
             }}
           />
           <View
@@ -750,7 +757,7 @@ export default class RegistrationManufacturerComponent extends Component {
               style={{
                 position: 'absolute',
                 left: 10,
-                top: 20,
+                top: 23,
                 zIndex: 100,
               }}
               onPress={() => this.goToRegistredScreen()}>
@@ -1358,7 +1365,7 @@ export default class RegistrationManufacturerComponent extends Component {
                 value={this.state.telegram}
                 onChangeText={(text) => {
 
-                  if(text == 't.me/' || text == 't.me' || text == 't.m' || text == 't.' || text == 't'  ) {
+                  if (text == 't.me/' || text == 't.me' || text == 't.m' || text == 't.' || text == 't') {
                     text = 't.me/';
                     this.setState({ telegram: text });
                   } else {
@@ -1373,15 +1380,15 @@ export default class RegistrationManufacturerComponent extends Component {
                   //   let new_text = text.replace('t.me/', '');
 
                   //   this.setState({ telegram: `t.me/${new_text}` });
-  
+
                   // } else {
-                   
+
                   //   console.log(text, 'text')
                   //   let new_text = text.replace('t.me/', '');
                   //   this.setState({ telegram: `t.me/${new_text}` });
                   // }
 
-                 
+
                 }}
               />
 

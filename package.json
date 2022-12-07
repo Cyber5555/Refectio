@@ -40,6 +40,7 @@
     "react-native-fast-image": "^8.6.1",
     "react-native-file-download": "^0.0.10",
     "react-native-fs": "^2.20.0",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-mask-input": "^1.2.2",
     "react-native-mask-text": "^0.13.1",
     "react-native-masked-text": "^1.13.0",

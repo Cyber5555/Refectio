@@ -28,7 +28,7 @@ export default class RegistrationUserScreenComponent extends Component {
 
       phone: '',
       phone_error: false,
-
+      phone_exist: false,
 
       password: '',
       password_error: false,
@@ -37,7 +37,10 @@ export default class RegistrationUserScreenComponent extends Component {
       password_confirmation_error: false,
 
       diplom_photo: null,
+      diplom_photo_error: false,
+
       selfi_photo: null,
+      selfi_photo_error: false,
 
       i_agree: false,
       i_agree_error: false,
@@ -129,7 +132,16 @@ export default class RegistrationUserScreenComponent extends Component {
     await fetch('http://80.78.246.59/Refectio/public/api/DizainerRegister', requestOptions,)
       .then(response => response.json())
       .then(res => {
-        console.log(res);
+        if (res.status === false && res.message == 'phone arledy exist') {
+          this.setState({
+            phone_exist: true
+          })
+        }
+        else {
+          this.setState({
+            phone_exist: false
+          })
+        }
         if (res.success === false && res.message == 'Validation errors') {
           if (res.data.hasOwnProperty('name')) {
             this.setState({
@@ -181,27 +193,45 @@ export default class RegistrationUserScreenComponent extends Component {
             })
           }
 
+          if (res.data.hasOwnProperty('diplom_photo')) {
+            this.setState({
+              diplom_photo_error: true
+            })
+          } else {
+            this.setState({
+              diplom_photo_error: false
+            })
+          }
+
+          if (res.data.hasOwnProperty('selfi_photo')) {
+            this.setState({
+              selfi_photo_error: true
+            })
+          } else {
+            this.setState({
+              selfi_photo_error: false
+            })
+          }
+
           return false;
 
         }
-        else if (res.status === false && res.message == 'i_agree required true') {
-
-          this.setState({
-            i_agree_error: true
-          })
-
-
-        }
-        else if (res.success === false && res.message == 'phone arledy exist') {
-
-          this.setState({
-            phone_error: true
-          })
+        else if (res.status === false) {
+          if (res.message == 'i_agree required true') {
+            this.setState({
+              i_agree_error: true
+            })
+          }
+          else {
+            this.setState({
+              i_agree_error: true
+            })
+          }
 
 
-          return false
 
         }
+
 
 
         else if (res.status === false && res.message == 'user@ chi ancel hamari verifykacia') {
@@ -244,14 +274,21 @@ export default class RegistrationUserScreenComponent extends Component {
         }}
       >
         <View style={{ width: '100%', }}>
+          <View
+            style={{
+              width: '100%',
+              height: 130,
+            }}></View>
+
           <Image
             source={require('../../assets/image/RefectioWallpaper.png')}
             style={{
               width: '95%',
-              height: 125,
-              resizeMode: 'contain',
-              marginTop: 20,
-              alignSelf: 'flex-end',
+              height: 135,
+              resizeMode: 'center',
+              position: 'absolute',
+              right: 0,
+              top: 23,
             }}
           />
           <View
@@ -265,7 +302,7 @@ export default class RegistrationUserScreenComponent extends Component {
               style={{
                 position: 'absolute',
                 left: 10,
-                top: 20,
+                top: 23,
                 zIndex: 100,
               }}
               onPress={() => this.goToRegistredScreen()}>
@@ -357,10 +394,10 @@ export default class RegistrationUserScreenComponent extends Component {
                   marginTop: 27,
                   marginBottom: 5
                 },
-                this.state.phone_error ? { color: 'red' } : { color: '#5B5B5B' }
+                this.state.phone_error || this.state.phone_exist ? { color: 'red' } : { color: '#5B5B5B' }
                 ]}
               >
-                Номер телефона
+                {this.state.phone_exist ? 'Этот телефонный номер уже\nзарегистрирован за другим пользователем' : 'Номер телефона'}
               </Text>
 
               <MaskInput
@@ -449,14 +486,14 @@ export default class RegistrationUserScreenComponent extends Component {
 
             <View>
               <Text
-                style={{
+                style={[{
                   color: '#888888',
                   fontSize: 15,
                   lineHeight: 18,
                   marginLeft: 25,
                   marginTop: 27,
                   fontFamily: 'Raleway_500Medium',
-                }}
+                }, this.state.diplom_photo_error ? { color: 'red' } : { color: '#888888' }]}
               >
                 Загрузите фото диплома/сертификата
               </Text>
@@ -488,14 +525,14 @@ export default class RegistrationUserScreenComponent extends Component {
 
             <View>
               <Text
-                style={{
+                style={[{
                   color: '#888888',
                   fontSize: 15,
                   lineHeight: 18,
                   marginLeft: 25,
                   marginTop: 15,
                   fontFamily: 'Raleway_500Medium',
-                }}
+                }, this.state.selfi_photo_error ? { color: 'red' } : { color: '#888888' }]}
               >
                 Загрузите селфи с правами или паспортом
               </Text>
@@ -540,16 +577,11 @@ export default class RegistrationUserScreenComponent extends Component {
             <View style={styles.checkBox}>
               <TouchableOpacity style={{ marginRight: 10 }} onPress={() => { this.setState({ i_agree: !this.state.i_agree }) }}>
                 <View>
-                  {this.state.i_agree === false && this.state.i_agree_error === false &&
+                  {this.state.i_agree === false &&
                     <Svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <Rect x="1" y="1" width="26" height="26" rx="3" stroke="#B5D8FE" stroke-width="2" />
+                      <Rect x="1" y="1" width="26" height="26" rx="3" stroke={this.state.i_agree_error ? 'red' : '#B5D8FE'} stroke-width="2" />
                     </Svg>
 
-                  }
-                  {this.state.i_agree_error === true && this.state.i_agree !== true &&
-                    <Svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <Rect x="1" y="1" width="26" height="26" rx="3" stroke="red" stroke-width="2" />
-                    </Svg>
                   }
                   {this.state.i_agree === true &&
                     <Svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">

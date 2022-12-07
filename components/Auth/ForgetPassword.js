@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { Component } from "react";
 import { SafeAreaView, View, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Modal } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import MaskInput from "react-native-mask-input";
 import ArrowGrayComponent from "../../assets/image/ArrowGray";
 import BlueButton from "../Component/Buttons/BlueButton";
@@ -53,7 +54,7 @@ export default class ForgetPasswordComponent extends Component {
 
   render() {
     return (
-      <SafeAreaView
+      <KeyboardAwareScrollView
         style={{ backgroundColor: 'white', flex: 1, }}
       >
         <View style={{ flex: 1, paddingHorizontal: 25 }}>
@@ -135,7 +136,7 @@ export default class ForgetPasswordComponent extends Component {
             </TouchableOpacity>
           </View>
         </View>
-      </SafeAreaView>
+      </KeyboardAwareScrollView>
     )
   }
 }

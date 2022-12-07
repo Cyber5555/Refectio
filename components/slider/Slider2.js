@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, memo } from 'react';
-import { StyleSheet, View, Image, Dimensions, ScrollView, Pressable, TouchableOpacity, Modal, Text, ActivityIndicator, FlatList, Animated } from 'react-native';
+import { StyleSheet, View, Image, Dimensions, ScrollView, Pressable, TouchableOpacity, Modal, Text, ActivityIndicator, FlatList, Animated, Platform } from 'react-native';
 
 import Swiper from "react-native-swiper"
 
@@ -65,7 +65,7 @@ export default function Slider2(props) {
             }}>
             <Image
               source={require('../../assets/image/ixs.png')}
-              style={{ tintColor: 'white', width: 30, height: 30 }}
+              style={[{ tintColor: 'white', width: 30, height: 30 }, Platform.OS == 'ios' ? {marginTop: 25}: '']}
             />
 
           </TouchableOpacity>

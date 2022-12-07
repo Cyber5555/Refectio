@@ -37,7 +37,7 @@ export default class MyAccauntComponent extends React.Component {
     let AuthStr = 'Bearer ' + userToken;
     myHeaders.append("Authorization", AuthStr);
 
-    
+
     let requestOptions = {
       method: 'POST',
       headers: myHeaders,
@@ -236,7 +236,14 @@ export default class MyAccauntComponent extends React.Component {
 
 
           <Modal visible={this.state.chcngeNameModal}>
-            <ImageBackground source={require('../../assets/image/blurBg.png')} style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <ImageBackground
+              source={require('../../assets/image/blurBg.png')}
+              style={[{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingTop: 40,
+              }, this.state.keyboardOpen ? { justifyContent: 'flex-start' } : { justifyContent: 'center' }]}>
               <View style={{ width: '90%', backgroundColor: '#fff', borderRadius: 20, position: 'relative' }}>
                 <TouchableOpacity style={{ position: 'absolute', right: 18, top: 18 }} onPress={() => this.setState({ chcngeNameModal: false })}>
                   <Image
@@ -434,10 +441,11 @@ export default class MyAccauntComponent extends React.Component {
 
           </ScrollView>
         </View>
-        {this.state.keyboardOpen === false &&
+        {
+          this.state.keyboardOpen === false &&
           <DesignerPageNavComponent active_page={'Профиль'} navigation={this.props.navigation} />
         }
-      </SafeAreaView>
+      </SafeAreaView >
     )
   }
 }

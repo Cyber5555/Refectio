@@ -9,12 +9,27 @@ export default class AddZakazchikDesignerComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      cityItems: ['chuchmenia', 'hoktemberyan', 'ttvashen'],
+      cityItems: [
+        { name: 'Кухни' },
+        { name: 'Прихожие' },
+        { name: 'Мебель для ванной' },
+        { name: 'Мебель для спальни' },
+        { name: 'Гардеробные' },
+        { name: 'Гостиные' },
+        { name: 'Детские' },
+        { name: 'Кабинеты' },
+        { name: 'Межкомнатные перегородки' },
+        { name: 'Островные павильоны' },
+        { name: 'Зоны ресепшн' },
+        { name: 'Выставочные стенды' },
+      ],
+
       users: [1, 1, 1, 1,],
       allIcons: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,],
       iconsModal: false,
       iconItems: false,
-      takeIt: false
+      takeIt: false,
+      OpenCityDropDown: false
     }
   }
 
@@ -123,7 +138,7 @@ export default class AddZakazchikDesignerComponent extends React.Component {
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"
-                placeholder="Шкаф «Ансамбль»"
+                // placeholder="Шкаф «Ансамбль»"
                 style={[styles.nazvania,
                 this.state.password_confirmation_error ? { borderColor: 'red', } : { borderColor: '#F5F5F5', }
                 ]}
@@ -142,7 +157,7 @@ export default class AddZakazchikDesignerComponent extends React.Component {
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"
-                placeholder="Шкаф «Ансамбль»"
+                // placeholder="Шкаф «Ансамбль»"
                 style={[styles.nazvania,
                 this.state.password_confirmation_error ? { borderColor: 'red', } : { borderColor: '#F5F5F5', }
                 ]}
@@ -166,7 +181,7 @@ export default class AddZakazchikDesignerComponent extends React.Component {
               <TouchableOpacity
                 style={[styles.selectButton, this.state.sales_city_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                 onPress={() => {
-                  // this.getCityApi()
+                  this.setState({ OpenCityDropDown: !this.state.OpenCityDropDown })
                 }}
               >
                 <Text style={styles.selectedText}>
@@ -175,13 +190,13 @@ export default class AddZakazchikDesignerComponent extends React.Component {
 
                 <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
                   {
-                    !this.state.sOpenCityDropDown3 &&
+                    !this.state.OpenCityDropDown &&
                     <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <Path d="M1 1L9 9L17 1" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </Svg>
                   }
                   {
-                    this.state.sOpenCityDropDown3 &&
+                    this.state.OpenCityDropDown &&
                     <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <Path d="M1 9L9 1L17 9" stroke="#888888" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </Svg>
@@ -190,7 +205,7 @@ export default class AddZakazchikDesignerComponent extends React.Component {
                 </View>
               </TouchableOpacity>
               <View
-                style={this.state.sOpenCityDropDown3 ? styles.sOpenCityDropDownActive : styles.sOpenCityDropDown}>
+                style={this.state.OpenCityDropDown ? styles.OpenCityDropDownActive : styles.OpenCityDropDown}>
                 <ScrollView nestedScrollEnabled={true} >
                   {
                     this.state.cityItems.map((item, index) => {
@@ -233,7 +248,9 @@ export default class AddZakazchikDesignerComponent extends React.Component {
                       onPress={() => {
                         this.setState({ takeIt: index })
                       }}>
-                      <Text style={[styles.takeItText, this.state.takeIt === index ? { color: '#FFFFFF' } : { color: '#838383' }]}>Выбрать</Text>
+                      <Text style={[styles.takeItText, this.state.takeIt === index ? { color: '#FFFFFF' } : { color: '#838383' }]}>
+                        {this.state.takeIt === index ? 'Выбрано' : 'Выбрать'}
+                      </Text>
                     </TouchableOpacity>
                   </View>
                 ))
@@ -325,12 +342,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 30
   },
-  sOpenCityDropDown: {
+  OpenCityDropDown: {
     width: '100%',
     height: 0,
     zIndex: 100
   },
-  sOpenCityDropDownActive: {
+  OpenCityDropDownActive: {
     width: '100%',
     height: 120,
     elevation: 2,

@@ -1,6 +1,6 @@
 
 import React, { Component } from "react";
-import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Pressable } from "react-native";
+import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Pressable, Platform } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
 import { Modal } from "react-native";
 
@@ -143,7 +143,7 @@ export default class FilterComponent extends React.Component {
       city_name: city_name,
       show_room: show_room,
     };
-    
+
     this.props.handler(filter_data);
 
 
@@ -197,7 +197,7 @@ export default class FilterComponent extends React.Component {
       >
 
         <View style={styles.modalWindow}>
-          <View style={styles.filterIX}>
+          <View style={[styles.filterIX, Platform.OS == 'ios' ? { marginTop: 20 } : '']}>
             <Text style={{ fontSize: 26, color: "#333333", fontFamily: 'Poppins_500Medium', }}>Фильтр</Text>
             <Pressable onPress={() => { this.props.resetFilterData() }}>
               <Svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -473,7 +473,7 @@ export default class FilterComponent extends React.Component {
                 }}
                 onPress={() => this.setState({ sOpenCityDropDown: !this.state.sOpenCityDropDown })}
               >
-                <Text style={{ color: "#FFFFFF", fontFamily: 'Raleway_600SemiBold',lineHeight: 18 }}>{this.state.city_name == '' ? 'Выберите город' : this.state.city_name}</Text>
+                <Text style={{ color: "#FFFFFF", fontFamily: 'Raleway_600SemiBold', lineHeight: 18 }}>{this.state.city_name == '' ? 'Выберите город' : this.state.city_name}</Text>
                 <View style={{ position: 'absolute', right: 17, bottom: 18 }}>
                   {!this.state.sOpenCityDropDown &&
                     <Svg width="18" height="10" viewBox="0 0 18 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -625,6 +625,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: '5%',
     paddingBottom: '2%',
+
   },
   firstFilter: {
     borderWidth: 1,

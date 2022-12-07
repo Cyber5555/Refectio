@@ -23,15 +23,22 @@ export default class RegisteredScreenComponent extends Component {
   render() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: 'white', }}>
-        <View style={{ flex: 1, backgroundColor: 'white', position: 'relative' }}>
+        <View style={{ flex: 1, backgroundColor: 'white', }}>
+          <View
+            style={{
+              width: '100%',
+              height: 130,
+            }}></View>
+
           <Image
             source={require('../../assets/image/Refectio.png')}
             style={{
               width: '95%',
-              height: 125,
-              resizeMode: 'contain',
-              alignSelf: 'flex-end',
-              marginTop: '5%',
+              height: 135,
+              resizeMode: 'center',
+              position: 'absolute',
+              right: 0,
+              top: 23,
             }}
           />
 
@@ -39,8 +46,8 @@ export default class RegisteredScreenComponent extends Component {
           <TouchableOpacity
             style={{
               position: 'absolute',
-              top: 13.29,
-              left: 11.66,
+              top: 23,
+              left: 10,
               zIndex: 1,
             }}
             onPress={() => this.goToAuthScreen()}>

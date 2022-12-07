@@ -5,6 +5,7 @@ import Svg, { Path, Rect } from "react-native-svg";
 import BlueButton from "../Component/Buttons/BlueButton"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaskInput from "react-native-mask-input";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 
 export default class EditPhoneNumberDesignerComponent extends React.Component {
@@ -54,14 +55,14 @@ export default class EditPhoneNumberDesignerComponent extends React.Component {
   render() {
     return (
       <SafeAreaView style={{ backgroundColor: 'white', flex: 1, }} >
-        <View style={{ flex: 1, paddingHorizontal: 25, position: 'relative' }}>
+        <KeyboardAwareScrollView style={{ flex: 1, paddingHorizontal: 25, position: 'relative' }}>
 
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate('MyAccaunt')}
             style={{
               position: 'absolute',
               top: 18.29,
-              left: 15,
+              left: -10,
               zIndex: 100,
             }}>
             <ArrowGrayComponent />
@@ -128,10 +129,10 @@ export default class EditPhoneNumberDesignerComponent extends React.Component {
 
 
           </View>
-          <TouchableOpacity style={{ alignSelf: 'center', position: 'absolute', bottom: '10%' }} onPress={() => this.sendPhoneNumber()}>
+          <TouchableOpacity style={{ alignSelf: 'center', marginTop: '30%' }} onPress={() => this.sendPhoneNumber()}>
             <BlueButton name="Подтвердить" />
           </TouchableOpacity>
-        </View>
+        </KeyboardAwareScrollView>
       </SafeAreaView>
     )
   }
