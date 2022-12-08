@@ -117,9 +117,8 @@ export default class MyAccauntComponent extends React.Component {
       headers: myHeaders
     })
       .then(response => response.json())
-      .then(res => {
-        console.log(res);
-        this.setState({
+      .then(async res => {
+        await this.setState({
           phone: res.data[0].phone,
           chcngeName: res.data[0].name,
           chcngeSurname: res.data[0].surname,
@@ -149,13 +148,14 @@ export default class MyAccauntComponent extends React.Component {
 
     fetch("http://80.78.246.59/Refectio/public/api/UpdateProfileNameSurnameDesigner", requestOptions)
       .then(response => response.json())
-      .then(result => {
+      .then(async result => {
         if (result.status === true) {
-          this.setState({
+          await this.setState({
             chcngeName: '',
             chcngeSurname: '',
             chcngeNameModal: false
           })
+          await this.getAuthUserProfile()
         }
       })
       .catch(error => console.log('error', error));
@@ -200,8 +200,8 @@ export default class MyAccauntComponent extends React.Component {
 
     fetch("http://80.78.246.59/Refectio/public/api/UpdateProfileDiplomDesigner", requestOptions)
       .then(response => response.json())
-      .then(result => {
-        console.log(result);
+      .then(async result => {
+        await this.getAuthUserProfile()
       })
       .catch(error => console.log('error', error));
 
@@ -265,7 +265,7 @@ export default class MyAccauntComponent extends React.Component {
                       borderRadius: 6,
                       padding: 10,
                     }}
-                    placeholder={this.state.chcngeSurname}
+                    placeholder={this.state.chcngeName}
                     value={this.state.chcngeName}
                     onChangeText={(value) => this.setState({ chcngeName: value })}
                   />
@@ -299,7 +299,7 @@ export default class MyAccauntComponent extends React.Component {
           <ScrollView style={{ flex: 1, position: 'relative' }} showsVerticalScrollIndicator={false}>
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 27, }}>
-              <Text style={{ fontSize: 20, fontFamily: 'Poppins_600SemiBold', }}>{this.state.chcngeName} {this.state.chcngeSurname}</Text>
+              <Text numberOfLines={1} style={{ fontSize: 20,width: '85%', fontFamily: 'Poppins_600SemiBold', }}>{this.state.chcngeName} {this.state.chcngeSurname}</Text>
               <TouchableOpacity onPress={() => this.setState({ chcngeNameModal: true })}>
                 <Image
                   source={require('../../assets/image/ep_edit.png')}

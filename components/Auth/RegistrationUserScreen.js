@@ -48,6 +48,9 @@ export default class RegistrationUserScreenComponent extends Component {
 
       accessToken: null,
 
+
+      value_length: ''
+
     }
   }
   handleForm = (key, value) => {
@@ -406,11 +409,14 @@ export default class RegistrationUserScreenComponent extends Component {
                 placeholder="+7 (975) 991-99-99"
                 style={[{ borderWidth: 1, padding: 10, width: '85%', borderRadius: 5, marginLeft: 25 },
                 this.state.phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
-                value={this.state.phone}
-                onChangeText={(masked, unmasked, obfuscated) => {
-                  this.setState({ phone: masked }); // you can use the unmasked value as well
-                }}
                 mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
+                value={this.state.phone}
+                onChangeText={(masked) => {
+                  this.setState({
+                    value_length: masked,
+                    phone: masked,
+                  });
+                }}
               />
             </View>
 
@@ -626,10 +632,13 @@ export default class RegistrationUserScreenComponent extends Component {
                   marginVertical: 25
                 }}
 
-                onPress={() => {
-                  // this.validation()
-                  // this.state.validate && this.state.checked ? alert(true) : ''
-                  this.DizainerRegisterApi()
+                onPress={async () => {
+                  if (this.state.value_length.length < 18 && this.state.value_length !== '') {
+                    this.setState({ phone_error: true })
+                  }
+                  else {
+                    await this.DizainerRegisterApi()
+                  }
                 }}
               >
                 <BlueButton

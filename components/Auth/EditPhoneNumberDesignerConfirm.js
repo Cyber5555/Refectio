@@ -115,7 +115,7 @@ export default class EditPhoneNumberDesignerConfirmComponent extends React.Compo
   }
 
   goToCustomerPage = async () => {
-
+    console.log(this.props);
     clearInterval(this.interval);
     await this.setState({
       timerMinut: 1,
@@ -247,7 +247,7 @@ export default class EditPhoneNumberDesignerConfirmComponent extends React.Compo
       timerSecond: 60,
       modalVisible: false
     })
-    this.props.navigation.navigate('CustomerMyAccaunt')
+    this.props.navigation.navigate('MyAccaunt')
   }
 
   render() {

@@ -20,6 +20,7 @@ export default class EditPasswordDesignerCompnent extends React.Component {
 
       password_confirmation: '',
       password_confirmation_bool: true,
+      password_confirmation_error: false,
 
       modal: false
     };
@@ -54,13 +55,46 @@ export default class EditPasswordDesignerCompnent extends React.Component {
         if (result.status === true) {
           this.setState({ modal: true })
         }
+        else if (result.success === false) {
+          if (result.data.old_password == 'The old password field is required.') {
+            this.setState({ old_password_error: true })
+          }
+          else {
+            this.setState({ old_password_error: false })
+          }
+          if (result.data.password == 'The password field is required.' || result.data.password[0] == 'The password must be at least 6 characters.') {
+            this.setState({ password_error: true })
+          }
+          else {
+            this.setState({ password_error: false })
+          }
+          if (result.data.password_confirmation == 'The password confirmation field is required.') {
+            this.setState({ password_confirmation_error: true })
+          }
+          else {
+            this.setState({ password_confirmation_error: false })
+          }
+          if (result.data.password == 'The password confirmation does not match.') {
+            this.setState({ password_confirmation_error: true })
+          }
+          else {
+            this.setState({ password_confirmation_error: false })
+          }
+
+        }
+        if (result.status === false) {
+          if (result.data.message == 'wrong password') {
+            this.setState({ old_password_error: true })
+          }
+          else {
+            this.setState({ old_password_error: false })
+          }
+        }
       })
       .catch(error => console.log('error', error));
   }
 
-  goToCustomerPage = () => {
-    this.props.navigation.navigate('MyAccaunt');
-  }
+
   render() {
     return (
       <SafeAreaView style={{ backgroundColor: 'white', flex: 1, }} >
@@ -92,7 +126,10 @@ export default class EditPasswordDesignerCompnent extends React.Component {
                 style={{
                   marginTop: 170
                 }}
-                onPress={() => { this.goToCustomerPage() }}>
+                onPress={async () => {
+                  await this.props.navigation.navigate('MyAccaunt');
+                  await this.setState({ modal: false });
+                }}>
                 <BlueButton name="Вернуться" />
               </TouchableOpacity>
             </View>
@@ -143,13 +180,13 @@ export default class EditPasswordDesignerCompnent extends React.Component {
               marginTop: 30,
             }}>
               <Text
-                style={{
+                style={[{
                   fontFamily: 'Poppins_500Medium',
                   lineHeight: 23,
                   fontSize: 16,
                   color: '#5B5B5B',
                   marginBottom: 5,
-                }}
+                }, this.state.old_password_error ? { color: 'red' } : { color: '#5B5B5B' }]}
               >
                 Старый пароль
               </Text>
@@ -195,13 +232,13 @@ export default class EditPasswordDesignerCompnent extends React.Component {
               marginTop: 30,
             }}>
               <Text
-                style={{
+                style={[{
                   fontFamily: 'Poppins_500Medium',
                   lineHeight: 23,
                   fontSize: 16,
                   color: '#5B5B5B',
                   marginBottom: 5,
-                }}
+                }, this.state.password_error ? { color: 'red' } : { color: '#5B5B5B' }]}
               >
                 Новый пароль
               </Text>
@@ -210,13 +247,13 @@ export default class EditPasswordDesignerCompnent extends React.Component {
               underlineColorAndroid="transparent"
               placeholder="**********"
               secureTextEntry={this.state.password_bool}
-              style={{
+              style={[{
                 borderWidth: 1,
                 borderColor: '#F5F5F5',
                 padding: 10,
                 width: '100%',
                 borderRadius: 5,
-              }}
+              }, this.state.password_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
               value={this.state.password}
               onChangeText={(Pas) => this.setState({ password: Pas })}
             />
@@ -247,13 +284,13 @@ export default class EditPasswordDesignerCompnent extends React.Component {
               marginTop: 30,
             }}>
               <Text
-                style={{
+                style={[{
                   fontFamily: 'Poppins_500Medium',
                   lineHeight: 23,
                   fontSize: 16,
-                  color: '#5B5B5B',
+
                   marginBottom: 5,
-                }}
+                }, this.state.password_confirmation_error ? { color: 'red', } : { color: '#5B5B5B', }]}
               >
                 Повтор нового пароля
               </Text>
@@ -262,13 +299,12 @@ export default class EditPasswordDesignerCompnent extends React.Component {
               underlineColorAndroid="transparent"
               placeholder="**********"
               secureTextEntry={this.state.password_confirmation_bool}
-              style={{
+              style={[{
                 borderWidth: 1,
-                borderColor: '#F5F5F5',
                 padding: 10,
                 width: '100%',
                 borderRadius: 5,
-              }}
+              }, this.state.password_confirmation_error ? { borderColor: 'red', } : { borderColor: '#F5F5F5', }]}
               value={this.state.password_confirmation}
               onChangeText={(confPas) => this.setState({ password_confirmation: confPas })}
             />

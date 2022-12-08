@@ -44,7 +44,7 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
     myHeaders.append("Content-Type", "multipart/form-data");
     myHeaders.append("Authorization", AouthStr);
 
-
+    console.log(userToken);
 
     let formdata = new FormData();
     formdata.append("code", this.state.code);

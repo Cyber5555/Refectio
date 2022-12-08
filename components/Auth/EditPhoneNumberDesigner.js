@@ -13,6 +13,8 @@ export default class EditPhoneNumberDesignerComponent extends React.Component {
     super(props)
     this.state = {
       phone: '',
+      phone_error: false,
+      value_length: ''
     };
   }
 
@@ -34,6 +36,9 @@ export default class EditPhoneNumberDesignerComponent extends React.Component {
       redirect: 'follow'
     };
 
+
+
+
     await fetch("http://80.78.246.59/Refectio/public/api/newnumberDesigner", requestOptions)
       .then(response => response.json())
       .then(result => {
@@ -45,13 +50,19 @@ export default class EditPhoneNumberDesignerComponent extends React.Component {
             params: this.state.phone
           });
         }
+        else if (result.status === false) {
+          if (result.message == 'phone required') {
+            this.setState({ phone_error: true })
+          }
+          else {
+            this.setState({ phone_error: false })
+          }
+        }
       })
       .catch(error => console.log('error', error));
   }
 
-  goToCustomerPage = () => {
-    this.props.navigation.navigate('LoginScreen');
-  }
+
   render() {
     return (
       <SafeAreaView style={{ backgroundColor: 'white', flex: 1, }} >
@@ -96,14 +107,14 @@ export default class EditPhoneNumberDesignerComponent extends React.Component {
 
             <View>
               <Text
-                style={{
+                style={[{
                   fontFamily: 'Poppins_500Medium',
                   lineHeight: 23,
                   fontSize: 15,
                   marginTop: 56,
                   marginBottom: 5,
                   color: '#5B5B5B'
-                }}
+                }, this.state.phone_error ? { color: 'red' } : { color: '#5B5B5B' }]}
               >
                 Новый номер телефона
               </Text>
@@ -111,16 +122,21 @@ export default class EditPhoneNumberDesignerComponent extends React.Component {
                 underlineColorAndroid="transparent"
                 keyboardType="phone-pad"
                 placeholder="+7 (975) 991-99-99"
-                style={{
+                style={[{
                   borderWidth: 1,
                   padding: 10,
                   width: '100%',
                   borderRadius: 5,
-                  borderColor: '#F5F5F5'
-                }}
+                }, this.state.phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                 mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
                 value={this.state.phone}
-                onChangeText={(value) => { this.setState({ phone: value }) }}
+                onChangeText={(value) => {
+                  this.setState({
+                    value_length: value,
+                    phone: value
+                  })
+
+                }}
               />
             </View>
 
@@ -129,7 +145,16 @@ export default class EditPhoneNumberDesignerComponent extends React.Component {
 
 
           </View>
-          <TouchableOpacity style={{ alignSelf: 'center', marginTop: '30%' }} onPress={() => this.sendPhoneNumber()}>
+          <TouchableOpacity
+            style={{ alignSelf: 'center', marginTop: '30%' }}
+            onPress={() => {
+              if (this.state.value_length.length < 18) {
+                this.setState({ phone_error: true })
+              }
+              else {
+                this.sendPhoneNumber()
+              }
+            }}>
             <BlueButton name="Подтвердить" />
           </TouchableOpacity>
         </KeyboardAwareScrollView>

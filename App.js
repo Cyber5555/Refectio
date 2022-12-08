@@ -115,12 +115,12 @@ function EditPhoneNumber({ navigation }) {
     <EditPhoneNumberComponent navigation={navigation} />
   );
 }
-function EditPhoneNumberConfirm({ route, navigation }) {
+function EditPhoneNumberConfirmFunc({ route, navigation }) {
 
   const { params } = route.params
 
   return (
-    <EditPhoneNumberConfirmComponen phoneNumb={params} navigation={navigation} />
+    <EditPhoneNumberConfirmComponent phoneNumb={params} navigation={navigation} />
   );
 }
 
@@ -629,7 +629,7 @@ export default function App() {
                       tabBarStyle: { display: 'none' }
                     })}
                   />
-                  <Tab.Screen name="EditPhoneNumberConfirm" component={EditPhoneNumberConfirm}
+                  <Tab.Screen name="EditPhoneNumberConfirm" component={EditPhoneNumberConfirmFunc}
                     options={({ route }) => ({
                       tabBarButton: () => null,
                       tabBarStyle: { display: 'none' }

@@ -194,16 +194,16 @@ export default class CustomerRewardsComponent extends Component {
             </Text>
           </View>
 
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginBottom: 15 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 }}>
 
-            <TouchableOpacity style={{ paddingHorizontal: 24, paddingVertical: 8, borderColor: '#E6E6E6', borderWidth: 1, borderRadius: 10 }}
+            <TouchableOpacity style={{ width: '48%', alignItems: 'center', paddingVertical: 8, borderColor: '#E6E6E6', borderWidth: 1, borderRadius: 10 }}
               onPress={() => {
                 this.props.navigation.navigate('CheckDesigner')
               }}>
               <Text style={{ fontFamily: 'Raleway_600SemiBold', color: '#333333', fontSize: 15 }}>Мои дизайнеры</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={{ paddingHorizontal: 20, paddingVertical: 8, backgroundColor: '#378DFE', borderRadius: 10, }}>
+            <TouchableOpacity style={{ width: '48%', alignItems: 'center', paddingVertical: 8, backgroundColor: '#378DFE', borderRadius: 10, }}>
               <Text style={{ fontFamily: 'Raleway_600SemiBold', color: '#fff', fontSize: 15 }}>Вознаграждения</Text>
             </TouchableOpacity>
 

@@ -97,7 +97,9 @@ export default class RegistrationManufacturerComponent extends Component {
       ],
       procentArrayToString: [],
 
-      valid_error: false
+      valid_error: false,
+
+      value_length: ''
     }
   }
 
@@ -860,11 +862,14 @@ export default class RegistrationManufacturerComponent extends Component {
                 placeholder="+7 (975) 991-99-99"
                 style={[{ borderWidth: 1, padding: 10, width: '100%', borderRadius: 5, },
                 this.state.phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
-                value={this.state.phone}
-                onChangeText={(masked, unmasked, obfuscated) => {
-                  this.setState({ phone: masked }); // you can use the unmasked value as well
-                }}
                 mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
+                value={this.state.phone}
+                onChangeText={(masked) => {
+                  this.setState({
+                    value_length: masked,
+                    phone: masked
+                  });
+                }}
               />
             </View>
 
@@ -890,11 +895,11 @@ export default class RegistrationManufacturerComponent extends Component {
                   borderRadius: 5,
                 }, this.state.watsap_phone_error ? { borderColor: 'red' } : { borderColor: '#F5F5F5' }]}
                 placeholder="+7 (975) 991-99-99"
+                mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
                 value={this.state.watsap_phone}
                 onChangeText={(value) => {
                   this.setState({ watsap_phone: value })
                 }}
-                mask={['+', '7', ' ', '(', /\d/, /\d/, /\d/, ')', ' ', /\d/, /\d/, /\d/, '-', /\d/, /\d/, '-', /\d/, /\d/,]}
               />
             </View>
 
@@ -1762,7 +1767,12 @@ export default class RegistrationManufacturerComponent extends Component {
                   marginVertical: 25
                 }}
                 onPress={async () => {
-                  await this.getMainApi()
+                  if (this.state.value_length.length < 18 && this.state.value_length !== '') {
+                    this.setState({ phone_error: true })
+                  }
+                  else {
+                    await this.getMainApi()
+                  }
                 }}
               >
                 <BlueButton
