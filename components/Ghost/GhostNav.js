@@ -12,7 +12,7 @@ export default class GhostNavComponent extends React.Component {
     this.state = {
       navBar: [
         { images: require('../../assets/image/home.png'), text: 'Главная', change: 'GhostPage', id: 1 },
-        { images: require('../../assets/image/LIVE.png'), text: 'Заказы', change: 'ZakaziLive', id: 2 },
+        { images: require('../../assets/image/LIVE.png'), text: 'Заказы', change: 'GhostPage', id: 2 },
         { images: require('../../assets/image/akar-icons_heart.png'), text: 'Избранное', change: 'Modal', id: 3 },
         { images: require('../../assets/image/carbon_user-avatar.png'), text: 'Профиль', change: 'AuthScreen', id: 4 }
       ],

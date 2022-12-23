@@ -1,11 +1,10 @@
 {
   "expo": {
-    "name": "Refection",
-    "slug": "Refection",
-    "version": "1.0.0",
+    "name": "Refectio",
+    "slug": "refectio",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
     "splash": {
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
@@ -18,14 +17,21 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.JustCode.Refection"
+      "bundleIdentifier": "com.JustCode.Refectio",
+      "buildNumber": "3.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.JustCode.Refection"
+      "package": "com.a200796a.Refectio",
+      "versionCode": 3,
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -38,9 +44,10 @@
         }
       ]
     ],
+    "description": "",
     "extra": {
       "eas": {
-        "projectId": "064900e5-0c4a-4cac-8717-08d3102cf71f"
+        "projectId": "7111f220-8cca-4662-a2aa-7efbdb6d0a6a"
       }
     }
   }
