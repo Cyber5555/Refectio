@@ -1,7 +1,18 @@
 import React from "react";
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import ArrowGrayComponent from "../../../assets/image/ArrowGray";
 import DesignerPageNavComponent from "../DesignerPageNav";
+
+
+
 
 export default class LiveZakazchikSinglDesignerComponent extends React.Component {
   constructor(props) {
@@ -72,7 +83,6 @@ export default class LiveZakazchikSinglDesignerComponent extends React.Component
     )
   }
 }
-
 
 const styles = StyleSheet.create({
   safeArea: {

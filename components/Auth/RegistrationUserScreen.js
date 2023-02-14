@@ -341,7 +341,7 @@ export default class RegistrationUserScreenComponent extends Component {
                   marginBottom: 5
                 }, this.state.name_error ? { color: 'red' } : { color: '#5B5B5B' }]}
               >
-                Имя
+                Имя*
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"
@@ -369,7 +369,7 @@ export default class RegistrationUserScreenComponent extends Component {
                 this.state.surname_error ? { color: 'red' } : { color: '#5B5B5B' }
                 ]}
               >
-                Фамилия
+                Фамилия*
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"
@@ -399,7 +399,7 @@ export default class RegistrationUserScreenComponent extends Component {
                 this.state.phone_error || this.state.phone_exist ? { color: 'red' } : { color: '#5B5B5B' }
                 ]}
               >
-                {this.state.phone_exist ? 'Этот телефонный номер уже\nзарегистрирован за другим пользователем' : 'Номер телефона'}
+                {this.state.phone_exist ? 'Этот телефонный номер уже\nзарегистрирован за другим пользователем' : 'Номер телефона*'}
               </Text>
 
               <MaskInput
@@ -433,7 +433,7 @@ export default class RegistrationUserScreenComponent extends Component {
                 this.state.password_error ? { color: 'red', } : { color: '#5B5B5B', }
                 ]}
               >
-                Пароль (минимум 6 символов)
+                Пароль (минимум 6 символов)*
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"
@@ -467,7 +467,7 @@ export default class RegistrationUserScreenComponent extends Component {
                 this.state.password_confirmation_error ? { color: 'red', } : { color: '#5B5B5B', }
                 ]}
               >
-                Повторите пароль
+                Повторите пароль*
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"
@@ -500,7 +500,7 @@ export default class RegistrationUserScreenComponent extends Component {
                   fontFamily: 'Raleway_500Medium',
                 }, this.state.diplom_photo_error ? { color: 'red' } : { color: '#888888' }]}
               >
-                Загрузите фото диплома/сертификата
+                Загрузите фото диплома/сертификата*
               </Text>
             </View>
             <View style={{ marginTop: 16, flexDirection: "row", alignItems: 'center' }}>
@@ -539,7 +539,7 @@ export default class RegistrationUserScreenComponent extends Component {
                   fontFamily: 'Raleway_500Medium',
                 }, this.state.selfi_photo_error ? { color: 'red' } : { color: '#888888' }]}
               >
-                Загрузите селфи с правами или паспортом
+                Загрузите селфи с правами или паспортом*
               </Text>
               <Text
                 style={{
