@@ -59,7 +59,6 @@ export default class EditPhoneNumberDesignerConfirmComponent extends React.Compo
     await fetch(`${APP_URL}updatePhoneNumberProizvoditel`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result);
         if (result.status === true) {
 
 
@@ -115,7 +114,6 @@ export default class EditPhoneNumberDesignerConfirmComponent extends React.Compo
   }
 
   goToCustomerPage = async () => {
-    console.log(this.props);
     clearInterval(this.interval);
     await this.setState({
       timerMinut: 1,
@@ -159,7 +157,6 @@ export default class EditPhoneNumberDesignerConfirmComponent extends React.Compo
 
     this.interval = setInterval(() => {
 
-      console.log(this.state.timerSecond)
       if (this.state.timerSecond == 0) {
 
         clearInterval(this.interval);
@@ -198,7 +195,6 @@ export default class EditPhoneNumberDesignerConfirmComponent extends React.Compo
         body: this.props.phoneNumb,
         redirect: 'follow'
       };
-      console.log(this.props.phoneNumb);
       await fetch(`${APP_URL}updateCodeIntestTable`, requestOptions)
         .then(response => response.json())
         .then(result => {
@@ -215,7 +211,6 @@ export default class EditPhoneNumberDesignerConfirmComponent extends React.Compo
 
           }
 
-          console.log(result)
         })
     }
   }
@@ -231,7 +226,6 @@ export default class EditPhoneNumberDesignerConfirmComponent extends React.Compo
 
     this.focusListener = navigation.addListener("focus", () => {
 
-      console.log(this.props.phoneNumb, 'hamarrrrrrr');
       clearInterval(this.interval);
       this.timer()
       // this.timer()

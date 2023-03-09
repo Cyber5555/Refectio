@@ -44,7 +44,6 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
     myHeaders.append("Content-Type", "multipart/form-data");
     myHeaders.append("Authorization", AouthStr);
 
-    console.log(userToken);
 
     let formdata = new FormData();
     formdata.append("code", this.state.code);
@@ -59,7 +58,6 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
     await fetch(`${APP_URL}updatePhoneNumberProizvoditel`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result);
         if (result.status === true) {
 
 
@@ -159,7 +157,6 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
 
     this.interval = setInterval(() => {
 
-      console.log(this.state.timerSecond)
       if (this.state.timerSecond == 0) {
 
         clearInterval(this.interval);
@@ -198,7 +195,6 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
         body: this.props.phoneNumb,
         redirect: 'follow'
       };
-      console.log(this.props.phoneNumb);
       await fetch(`${APP_URL}updateCodeIntestTable`, requestOptions)
         .then(response => response.json())
         .then(result => {
@@ -215,7 +211,6 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
 
           }
 
-          console.log(result)
         })
     }
   }
@@ -231,7 +226,6 @@ export default class EditPhoneNumberConfirmComponent extends React.Component {
 
     this.focusListener = navigation.addListener("focus", () => {
 
-      console.log(this.props.phoneNumb, 'hamarrrrrrr');
       clearInterval(this.interval);
       this.timer()
       // this.timer()

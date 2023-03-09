@@ -12,6 +12,8 @@ import {
   Pressable,
   Modal,
   ImageBackground,
+  FlatList,
+  ActivityIndicator,
 } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
 import Slider from "../slider/Slider";
@@ -37,39 +39,86 @@ export default class CustomerMainPageComponent extends React.Component {
 
       searchUser: "",
       searchUserButton: false,
+
+      page: 1,
+      isLoading: false,
+      isLastPage: false,
     };
 
     this.handler = this.handler.bind(this);
     this.resetFilterData = this.resetFilterData.bind(this);
   }
 
+  clearAllData = () => {
+    this.setState({
+      filter: false,
+      keyboardOpen: false,
+      getAllProducts: [],
+      countMeshok: 0,
+      logo: "",
+      name: "",
+
+      firstLogin: "",
+
+      searchUser: "",
+      searchUserButton: false,
+
+      page: 1,
+      isLoading: false,
+      isLastPage: false,
+    });
+  };
+
   getProductsFunction = async () => {
+    const { page, getAllProducts, isLastPage } = this.state;
+
     this.setState({
       searchUserButton: false,
       searchUser: "",
     });
 
-    await fetch(`${APP_URL}GetAllProduct`, {
+    if (isLastPage) {
+      return;
+    }
+    this.setState({ isLoading: true });
+    await fetch(`${APP_URL}GetAllProduct?page=${page}`, {
       method: "GET",
     })
       .then((response) => response.json())
       .then((res) => {
-        let data = res.data.data;
-        let new_data_result = [];
+        if (res.status === true) {
+          let data = res.data.data.data;
+          // console.log(data);
 
-        for (let i = 0; i < data.length; i++) {
-          if (data[i].user_product_limit1.length < 1) {
-            data[i].images = [];
-            continue;
+          if (data?.length > 0) {
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].user_product_limit1.length < 1) {
+                data[i].images = [];
+                continue;
+              }
+
+              let product_image = data[i].user_product_limit1[0].product_image;
+
+              data[i].images = product_image;
+            }
+
+            this.setState({
+              getAllProducts: [...getAllProducts, ...data],
+              page: page + 1,
+              isLoading: false,
+            });
+          } else {
+            this.setState({
+              isLastPage: true,
+              isLoading: false,
+            });
           }
-
-          let product_image = data[i].user_product_limit1[0].product_image;
-
-          data[i].images = product_image;
+        } else {
+          this.setState({
+            isLastPage: true,
+            isLoading: false,
+          });
         }
-        this.setState({
-          getAllProducts: data,
-        });
       })
       .catch((error) => console.log("error", error));
   };
@@ -117,8 +166,6 @@ export default class CustomerMainPageComponent extends React.Component {
   };
 
   handler(filter_data) {
-    console.log("click to handler", filter_data);
-
     let meshok = filter_data.meshok;
     let category_name =
       filter_data.category_name.length > 0
@@ -159,18 +206,29 @@ export default class CustomerMainPageComponent extends React.Component {
           return false;
         }
         let data = res.data.user;
-        let new_data_result = [];
+
+        let filtered_category_name = res.data.returnCategoryNameArray[0];
+
         for (let i = 0; i < data.length; i++) {
           if (data[i].user_product_limit1.length < 1) {
             data[i].images = [];
             continue;
           }
-
           let product_image = data[i].user_product_limit1[0].product_image;
-
           data[i].images = product_image;
-        }
 
+          if (res.data.returnCategoryNameArray.length > 0) {
+            let new_user_product_limit = data[i].user_product_limit1;
+
+            new_user_product_limit.filter((item, index) => {
+              if (item.category_name === filtered_category_name) {
+                let product_image = item.product_image;
+                data[i].images = product_image;
+                console.log("startt", data[i].images, "enddddd");
+              }
+            });
+          }
+        }
         this.setState({
           getAllProducts: data,
           filter: false,
@@ -202,9 +260,6 @@ export default class CustomerMainPageComponent extends React.Component {
   componentDidMount() {
     const { navigation } = this.props;
 
-    this.getAuthUserProfile();
-    this.getProductsFunction();
-
     this.focusListener = navigation.addListener("focus", () => {
       this.getAuthUserProfile();
       this.getProductsFunction();
@@ -224,6 +279,7 @@ export default class CustomerMainPageComponent extends React.Component {
     if (this.focusListener) {
       this.focusListener();
       console.log("Bum END");
+      this.clearAllData();
     }
 
     this.keyboardDidShowListener.remove();
@@ -254,7 +310,6 @@ export default class CustomerMainPageComponent extends React.Component {
     })
       .then((response) => response.json())
       .then((res) => {
-        console.log(res);
         this.setState({
           logo: res?.data[0].logo,
           name: res?.data[0].name,
@@ -278,11 +333,114 @@ export default class CustomerMainPageComponent extends React.Component {
     })
       .then((response) => response.json())
       .then((res) => {
-        console.log(res);
         if (res.status == true) {
           this.setState({ firstLogin: "2" });
         }
       });
+  };
+
+  renderItem = ({ item, index }) => {
+    let count = item.meshok;
+    return (
+      item.user_product_limit1.length !== 0 && (
+        <View key={index} style={styles.campaign}>
+          <TouchableOpacity
+            onPress={async () => {
+              await this.props.navigation.navigate("DesignerPageTwo", {
+                params: item.id,
+              });
+              await this.clearAllData();
+            }}
+          >
+            <View style={styles.infoCompanyMain}>
+              <Image
+                source={{ uri: this.state.urlImage + item.logo }}
+                style={{
+                  width: 70,
+                  height: 70,
+                  marginRight: 12,
+                  borderColor: "#C8C8C8",
+                  borderWidth: 1,
+                  borderRadius: 10,
+                }}
+              />
+              <View style={styles.infoCompany}>
+                <View style={{ width: "70%" }}>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      fontSize: 20,
+                      fontFamily: "Raleway_700Bold",
+                      marginBottom: 6,
+                    }}
+                  >
+                    {item.company_name}
+                  </Text>
+                  {count !== null ? (
+                    <View style={{ flexDirection: "row" }}>
+                      {[...new Array(Number(count))].map((value, i) => (
+                        <Image
+                          key={i}
+                          source={require("../../assets/image/meshok.png")}
+                          style={{
+                            width: 15,
+                            height: 20.5,
+                            marginRight: 3,
+                          }}
+                        />
+                      ))}
+                    </View>
+                  ) : (
+                    <View style={{ width: 15, height: 20.5 }}></View>
+                  )}
+                </View>
+
+                <Text
+                  key={index}
+                  style={{
+                    fontSize: 16,
+                    color: "#A8A8A8",
+                    fontFamily: "Raleway_500Medium",
+                    paddingTop: 5,
+                  }}
+                >
+                  {item.made_in}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <View>
+            <ScrollView
+              horizontal={true}
+              showsVerticalScrollIndicator={false}
+              showsHorizontalScrollIndicator={false}
+            >
+              {item.user_category_product.map((ite, ind) => {
+                return (
+                  <Text key={ite.id} style={styles.categoriesName}>
+                    {ite.category_name}
+                  </Text>
+                );
+              })}
+            </ScrollView>
+          </View>
+          <Slider slid={item.images} />
+        </View>
+      )
+    );
+  };
+
+  renderFooter = () => {
+    if (!this.state.isLoading) return null;
+    return (
+      <View style={{ marginVertical: 10 }}>
+        <ActivityIndicator size={50} color={"#C2C2C2"} />
+      </View>
+    );
+  };
+
+  handleLoadMore = () => {
+    this.getProductsFunction();
   };
 
   render() {
@@ -447,106 +605,25 @@ export default class CustomerMainPageComponent extends React.Component {
               </Svg>
             </TouchableOpacity>
           </View>
-          <ScrollView showsVerticalScrollIndicator={false}>
-            {this.state.getAllProducts.length == 0 && (
+
+          {this.state.getAllProducts.length == 0 &&
+            this.state.isLoading === false && (
               <Text
                 style={{ fontSize: 20, marginTop: 50, textAlign: "center" }}
               >
                 Данных не найдено
               </Text>
             )}
-            {this.state.getAllProducts.map((item, index) => {
-              let count = item.meshok;
-              return (
-                item.user_product_limit1.length !== 0 && (
-                  <View key={index} style={styles.campaign}>
-                    <TouchableOpacity
-                      onPress={async () => {
-                        this.props.navigation.navigate("DesignerPageTwo", {
-                          params: item.id,
-                        });
-                      }}
-                    >
-                      <View style={styles.infoCompanyMain}>
-                        <Image
-                          source={{ uri: this.state.urlImage + item.logo }}
-                          style={{
-                            width: 70,
-                            height: 70,
-                            marginRight: 12,
-                            borderColor: "#C8C8C8",
-                            borderWidth: 1,
-                            borderRadius: 10,
-                          }}
-                        />
-                        <View style={styles.infoCompany}>
-                          <View style={{ width: "70%" }}>
-                            <Text
-                              numberOfLines={1}
-                              style={{
-                                fontSize: 20,
-                                fontFamily: "Raleway_700Bold",
-                                marginBottom: 6,
-                              }}
-                            >
-                              {item.company_name}
-                            </Text>
-                            {count !== null ? (
-                              <View style={{ flexDirection: "row" }}>
-                                {[...new Array(Number(count))].map(
-                                  (value, i) => (
-                                    <Image
-                                      key={i}
-                                      source={require("../../assets/image/meshok.png")}
-                                      style={{
-                                        width: 15,
-                                        height: 20.5,
-                                        marginRight: 3,
-                                      }}
-                                    />
-                                  )
-                                )}
-                              </View>
-                            ) : (
-                              <View style={{ width: 15, height: 20.5 }}></View>
-                            )}
-                          </View>
 
-                          <Text
-                            key={index}
-                            style={{
-                              fontSize: 16,
-                              color: "#A8A8A8",
-                              fontFamily: "Raleway_500Medium",
-                              paddingTop: 5,
-                            }}
-                          >
-                            {item.made_in}
-                          </Text>
-                        </View>
-                      </View>
-                    </TouchableOpacity>
-                    <View>
-                      <ScrollView
-                        horizontal={true}
-                        showsVerticalScrollIndicator={false}
-                        showsHorizontalScrollIndicator={false}
-                      >
-                        {item.user_category_product.map((ite, ind) => {
-                          return (
-                            <Text key={ite.id} style={styles.categoriesName}>
-                              {ite.category_name}
-                            </Text>
-                          );
-                        })}
-                      </ScrollView>
-                    </View>
-                    <Slider slid={item.images} />
-                  </View>
-                )
-              );
-            })}
-          </ScrollView>
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            renderItem={this.renderItem}
+            data={this.state.getAllProducts}
+            keyExtractor={(item, index) => index.toString()}
+            onEndReached={this.handleLoadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={this.renderFooter}
+          />
         </View>
         {this.state.keyboardOpen === false && (
           <DesignerPageNavComponent

@@ -37,6 +37,8 @@ export default class MyAccauntComponent extends React.Component {
       changeName: "",
       changeSurname: "",
       changeNameModal: false,
+
+      delate_accaunt: false
     };
   }
 
@@ -195,6 +197,29 @@ export default class MyAccauntComponent extends React.Component {
         await this.getAuthUserProfile();
       })
       .catch((error) => console.log("error", error));
+  };
+
+  delateAccaunt = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem("userToken");
+    let AuthStr = "Bearer " + userToken;
+
+    myHeaders.append("Authorization", AuthStr);
+
+    let requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    fetch(`${APP_URL}deleteMyAccount`, requestOptions)
+      .then((response) => response.json())
+      .then(async (result) => {
+        if (result.status === true && result.message === "Account Deleted") {
+          await this.logouth();
+          await this.setState({ delate_accaunt: false });
+        }
+      });
   };
 
   render() {
@@ -471,7 +496,7 @@ export default class MyAccauntComponent extends React.Component {
                 justifyContent: "center",
                 alignItems: "center",
                 alignSelf: "center",
-                marginBottom: 40,
+                marginBottom: 20,
                 marginTop: 100,
               }}
             >
@@ -483,6 +508,123 @@ export default class MyAccauntComponent extends React.Component {
                 }}
               >
                 Выйти
+              </Text>
+            </TouchableOpacity>
+
+            <Modal
+              visible={this.state.delate_accaunt}
+              transparent
+              animationType="slide"
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <View
+                  style={{
+                    width: "80%",
+                    borderRadius: 20,
+                    backgroundColor: "white",
+                    shadowOffset: { height: 10, width: 10 },
+                    elevation: 10,
+                    shadowColor: "black",
+                    shadowOpacity: 0.5,
+                    position: "relative",
+                    padding: 20,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: "Poppins_500Medium",
+                      textAlign: "center",
+                      marginVertical: 20,
+                    }}
+                  >
+                    Вы уверены, что хотите удалить свой акаунт?{"\n"} Все данные
+                    будут утеряны.
+                  </Text>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-around",
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{
+                        paddingVertical: 10,
+                        width: "40%",
+                        alignItems: "center",
+                        backgroundColor: "#52A8EF",
+                        borderRadius: 10,
+                      }}
+                      onPress={async () => {
+                        await this.delateAccaunt();
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          fontFamily: "Poppins_400Regular",
+                        }}
+                      >
+                        Да, уверен.
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        paddingVertical: 10,
+                        width: "40%",
+                        alignItems: "center",
+                        backgroundColor: "#52A8EF",
+                        borderRadius: 10,
+                      }}
+                      onPress={() => {
+                        this.setState({ delate_accaunt: false });
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          fontFamily: "Poppins_400Regular",
+                        }}
+                      >
+                        Отмена.
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
+
+            <TouchableOpacity
+              onPress={() => {
+                this.setState({ delate_accaunt: true });
+              }}
+              style={{
+                width: 165,
+                height: 38,
+                backgroundColor: "#B5D8FE",
+                borderRadius: 15,
+                justifyContent: "center",
+                alignItems: "center",
+                alignSelf: "center",
+                marginVertical: 20,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#fff",
+                  fontSize: 18,
+                  fontFamily: "Poppins_500Medium",
+                }}
+              >
+                Удалить
               </Text>
             </TouchableOpacity>
           </ScrollView>

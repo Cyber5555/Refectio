@@ -71,7 +71,7 @@ export default class PraductiaComponent extends React.Component {
   };
 
   getObjectData = async () => {
-    let userID = this.props.id;
+    let userID = this.props.user_id;
 
     await fetch(`${APP_URL}getOneProizvoditel/user_id=` + userID, {
       method: "GET",
@@ -79,7 +79,6 @@ export default class PraductiaComponent extends React.Component {
       .then((response) => response.json())
       .then((res) => {
         let data = res.data.products;
-        console.log(res);
         if (res.status === false) {
           data = [];
         } else {
@@ -125,8 +124,6 @@ export default class PraductiaComponent extends React.Component {
     await fetch(`${APP_URL}deleteAuthUserProduct`, requestOptions)
       .then((response) => response.json())
       .then(async (result) => {
-        console.log(result);
-
         if (result.status === true) {
           await this.setState({
             delateProductModal: false,
@@ -145,9 +142,7 @@ export default class PraductiaComponent extends React.Component {
     await this.setState({
       change_category_loaded: true,
     });
-
-    let userID = this.props.id;
-
+    let userID = this.props.user_id;
     let myHeaders = new Headers();
     let userToken = await AsyncStorage.getItem("userToken");
     myHeaders.append("Authorization", "Bearer " + userToken);
@@ -211,7 +206,7 @@ export default class PraductiaComponent extends React.Component {
         active: index,
       });
 
-      let userID = this.props.id;
+      let userID = this.props.user_id;
 
       await this.setState({
         change_category_loaded: true,
@@ -279,8 +274,6 @@ export default class PraductiaComponent extends React.Component {
 
   componentDidMount = () => {
     const { navigation } = this.props;
-
-    this.loadedDataAfterLoadPage();
 
     this.focusListener = navigation.addListener("focus", () => {
       this.loadedDataAfterLoadPage();
@@ -423,21 +416,21 @@ export default class PraductiaComponent extends React.Component {
             <TouchableOpacity
               onPress={() => {
                 this.props.navigation.navigate("AddProduct", {
-                  params: this.props.id,
+                  params: this.props.user_id,
                 });
               }}
               style={{
                 position: "absolute",
                 zIndex: 100,
                 right: 55,
-                bottom: -5,
+                bottom: 3,
               }}
             >
               <Image
                 source={require("../../assets/image/plus.png")}
                 style={{
-                  width: 30,
-                  height: 30,
+                  width: 25,
+                  height: 25,
                 }}
               />
             </TouchableOpacity>
@@ -451,15 +444,16 @@ export default class PraductiaComponent extends React.Component {
                 position: "absolute",
                 zIndex: 100,
                 right: 15,
-                bottom: -5,
+                bottom: 5,
               }}
             >
               <Image
                 source={require("../../assets/image/karzina.png")}
                 style={{
-                  width: 30,
-                  height: 30,
+                  width: 25,
+                  height: 25,
                 }}
+                resizeMode={"contain"}
               />
             </TouchableOpacity>
           </View>
@@ -506,7 +500,7 @@ export default class PraductiaComponent extends React.Component {
 
           {this.state.change_category_loaded && (
             <View style={{ marginTop: 200 }}>
-              <ActivityIndicator size={100} color={"#2D9EFB"} />
+              <ActivityIndicator size={100} color={"#C2C2C2"} />
             </View>
           )}
           <ScrollView showsVerticalScrollIndicator={false}>
@@ -605,17 +599,39 @@ export default class PraductiaComponent extends React.Component {
                       </TouchableOpacity>
                     </View>
                     <Slider slid={item.product_image} />
-
-                    <Text
+                    <View
                       style={{
-                        fontFamily: "Raleway_600SemiBold",
-                        fontSize: 13,
-                        marginTop: 5,
-                        marginBottom: 4,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        marginTop: 10,
                       }}
                     >
-                      {item.name}
-                    </Text>
+                      <Text
+                        style={{
+                          fontFamily: "Raleway_600SemiBold",
+                          fontSize: 13,
+                          marginTop: 5,
+                          marginBottom: 4,
+                        }}
+                      >
+                        {item.name}
+                      </Text>
+
+                      <TouchableOpacity
+                        onPress={() => {
+                          this.props.navigation.navigate("EditProduct", {
+                            product_id: item.id,
+                            user_id: item.user_id,
+                          });
+                        }}
+                      >
+                        <Image
+                          source={require("../../assets/image/ep_edit.png")}
+                          style={{ width: 22, height: 22 }}
+                        />
+                      </TouchableOpacity>
+                    </View>
                     {item.facades && (
                       <Text style={{ fontFamily: "Raleway_400Regular" }}>
                         Фасады : {item.facades}
@@ -686,6 +702,8 @@ const styles = StyleSheet.create({
     zIndex: 100,
     right: 8,
     top: 8,
+    flexDirection: "row",
+    alignItems: "center",
   },
   slideButton: {
     backgroundColor: "#F5F5F5",
@@ -693,7 +711,7 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   slideButtonActive: {
-    backgroundColor: "#1571F0",
+    backgroundColor: "#94D8F4",
     borderRadius: 8,
     marginRight: 6,
   },

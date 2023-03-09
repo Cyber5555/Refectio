@@ -57,7 +57,6 @@ export default class ForgetPasswordTelComponent extends React.Component {
     await fetch(`${APP_URL}resetpasswordcode`, requestOptions)
       .then(response => response.json())
       .then(result => {
-        console.log(result);
         if (result.status === true) {
 
 
@@ -144,7 +143,6 @@ export default class ForgetPasswordTelComponent extends React.Component {
 
     this.interval = setInterval(() => {
 
-      console.log(this.state.timerSecond)
       if (this.state.timerSecond == 0) {
 
         clearInterval(this.interval);
@@ -169,7 +167,6 @@ export default class ForgetPasswordTelComponent extends React.Component {
   }
 
   updateCodeSend = async () => {
-    console.log(this.state.timerBool);
     if (this.state.timerBool === true) {
       let myHeaders = new Headers();
       let storagePhone = await AsyncStorage.getItem('phone')
@@ -184,11 +181,9 @@ export default class ForgetPasswordTelComponent extends React.Component {
         body: formdata,
         redirect: 'follow'
       };
-      console.log(storagePhone);
       await fetch(`${APP_URL}sendcodeforphone`, requestOptions)
         .then(response => response.json())
         .then(async result => {
-          console.log(result);
           if (result.status) {
 
             await this.setState({
@@ -200,7 +195,6 @@ export default class ForgetPasswordTelComponent extends React.Component {
 
           }
 
-          console.log(result)
         })
     }
   }
@@ -217,7 +211,6 @@ export default class ForgetPasswordTelComponent extends React.Component {
     this.focusListener = navigation.addListener("focus", () => {
       let storagePhone = AsyncStorage.getItem('phone')
 
-      console.log(storagePhone, 'hamarrrrrrr');
       clearInterval(this.interval);
       this.timer()
       // this.timer()

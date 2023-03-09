@@ -18,7 +18,6 @@ import CustomerMainPageNavComponent from "./CustomerMainPageNav";
 import Svg, { Path, Rect } from "react-native-svg";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import MaskInput from "react-native-mask-input";
 import { APP_URL, APP_IMAGE_URL } from "@env";
 
 export default class AddProductComponent extends React.Component {
@@ -57,6 +56,7 @@ export default class AddProductComponent extends React.Component {
       tabletop_error: false,
       all_images: [],
       all_images_error: false,
+      max_image_error: false,
 
       categoryArray: [],
 
@@ -72,9 +72,12 @@ export default class AddProductComponent extends React.Component {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
       quality: 0.5,
+      selectionLimit: 10,
     });
     if (!result.canceled) {
-      this.setState({ img: result.assets[0].uri });
+      this.setState({ img: result.assets[0].uri, all_images_error: false });
+    } else {
+      this.setState({ all_images_error: true });
     }
 
     let all_images = this.state.all_images;
@@ -92,27 +95,68 @@ export default class AddProductComponent extends React.Component {
         type: "image/jpg",
         name: "photo.jpg",
       });
-      // console.log(result, 'result')
     }
 
     this.setState({
       all_images: all_images,
       all_images_error: false,
     });
+  };
 
-    // console.log(this.formdata);
+  clearAllData = () => {
+    this.setState({
+      keyboardOpen: false,
+      category: false,
+      categoryChanged: "",
+      categoryChanged_error: "",
+      categoryId: "",
+      img: null,
+
+      name: "",
+      name_error: false,
+
+      frame: "",
+
+      facades: "",
+      facades_error: false,
+
+      length: "",
+      length_error: false,
+
+      height: "",
+      height_error: false,
+
+      price: "",
+      price_error: false,
+
+      material: "",
+      inserciones: "",
+      description: "",
+
+      tabletop: "",
+      tabletop_error: false,
+      all_images: [],
+      all_images_error: false,
+      max_image_error: false,
+
+      categoryArray: [],
+
+      modalBool: false,
+
+      buttonSend: true,
+
+      limitError: false,
+    });
   };
 
   delateSelectedImage = async (index) => {
-    let { all_images } = this.state;
-    // all_images.find()
-
-    // if (ind > -1) { // only splice array when item is found
-    //   all_images.splice(ind, 1); // 2nd parameter means remove one item only
-    // }
-    // console.log(ind);
+    let { all_images, max_image_error } = this.state;
 
     let new_all_images = [];
+
+    if (all_images.length <= 11) {
+      this.setState({ max_image_error: false });
+    }
 
     for (let i = 0; i < all_images.length; i++) {
       if (i == index) {
@@ -143,41 +187,6 @@ export default class AddProductComponent extends React.Component {
       });
   };
 
-  clearState = async () => {
-    await this.setState({
-      name: "",
-      name_error: false,
-
-      frame: "",
-      frame_error: false,
-
-      facades: "",
-      facades_error: false,
-
-      length: "",
-      length_error: false,
-
-      height: "",
-      height_error: false,
-
-      price: "",
-      price_error: false,
-
-      material: "",
-      inserciones: "",
-      description: "",
-
-      tabletop: "",
-      tabletop_error: false,
-      all_images: [],
-
-      categoryChanged: "",
-      // modalBool: false,
-
-      limitError: false,
-    });
-  };
-
   sendProduct = async () => {
     let { all_images } = this.state;
     let myHeaders = new Headers();
@@ -199,17 +208,22 @@ export default class AddProductComponent extends React.Component {
     this.formdata.append("inserciones", this.state.inserciones);
     this.formdata.append("description", this.state.description);
 
-    await all_images.map((element, index) => {
-      // console.log(element);
-
-      this.formdata.append("photo[]", element);
-    });
+    if (this.state.all_images.length === 0) {
+      this.setState({ buttonSend: false, all_images_error: true });
+    } else if (this.state.all_images.length > 10) {
+      this.setState({ max_image_error: true });
+    }
     if (
       this.state.all_images.length > 0 &&
+      this.state.all_images.length <= 10 &&
       this.state.name !== "" &&
       this.state.categoryChanged !== ""
     ) {
-      this.setState({ buttonSend: true });
+      await all_images.map((element, index) => {
+        this.formdata.append("photo[]", element);
+      });
+
+      this.setState({ buttonSend: true, max_image_error: false });
     }
 
     if (this.state.buttonSend) {
@@ -223,13 +237,11 @@ export default class AddProductComponent extends React.Component {
       await fetch(`${APP_URL}createnewproductProizvoditel`, requestOptions)
         .then((response) => response.json())
         .then(async (result) => {
-          await console.log(result, "createnewproductProizvoditel");
-
           if (result.status === true) {
             (await this.setState({
               buttonSend: false,
               modalBool: true,
-            })) && (await this.clearState());
+            })) && (await this.clearAllData());
           } else if (result.status !== true) {
             if (result.hasOwnProperty("category_name")) {
               this.setState({
@@ -268,7 +280,7 @@ export default class AddProductComponent extends React.Component {
               await this.setState({ limitError: true });
               let set = setTimeout(() => {
                 this.setState({ limitError: false });
-                this.clearState();
+                this.clearAllData();
                 clearTimeout(set);
               }, 3000);
             }
@@ -361,11 +373,10 @@ export default class AddProductComponent extends React.Component {
               <TouchableOpacity
                 style={{ marginTop: 170 }}
                 onPress={async () => {
-                  this.props.navigation.navigate("Praductia", {
-                    params: this.props.id,
+                  await this.props.navigation.navigate("Praductia", {
+                    params: this.props.user_id,
                   });
-                  await this.setState({ modalBool: false });
-                  await this.clearState();
+                  await this.clearAllData();
                 }}
               >
                 <BlueButton name="В каталог" />
@@ -376,8 +387,9 @@ export default class AddProductComponent extends React.Component {
           <TouchableOpacity
             onPress={() => {
               this.props.navigation.navigate("Praductia", {
-                params: this.props.id,
+                params: this.props.user_id,
               });
+              this.clearAllData();
             }}
             style={{
               position: "absolute",
@@ -417,7 +429,7 @@ export default class AddProductComponent extends React.Component {
                     : { color: "#5B5B5B" },
                 ]}
               >
-                Имя продукции
+                Имя продукции*
               </Text>
               <TextInput
                 underlineColorAndroid="transparent"
@@ -429,8 +441,10 @@ export default class AddProductComponent extends React.Component {
                   {
                     borderWidth: 1,
                     padding: 10,
+                    paddingRight: 0,
                     width: "100%",
                     borderRadius: 5,
+                    fontSize: 13.5,
                   },
                   this.state.name_error
                     ? { borderColor: "red" }
@@ -438,8 +452,7 @@ export default class AddProductComponent extends React.Component {
                 ]}
                 value={this.state.name}
                 onChangeText={(text) => {
-                  this.setState({ name_error: false });
-                  this.setState({ name: text });
+                  this.setState({ name: text, name_error: false });
                 }}
               />
             </View>
@@ -460,7 +473,7 @@ export default class AddProductComponent extends React.Component {
                     : { color: "#5B5B5B" },
                 ]}
               >
-                Категории
+                Категории*
               </Text>
               <View
                 style={{
@@ -487,7 +500,10 @@ export default class AddProductComponent extends React.Component {
                     // if (this.state.categoryChanged == '') {
                     //   this.setState({ categoryChanged: '' })
                     // }
-                    this.setState({ category: !this.state.category });
+                    this.setState({
+                      category: !this.state.category,
+                      categoryChanged_error: false,
+                    });
                   }}
                 >
                   <Text
@@ -546,7 +562,6 @@ export default class AddProductComponent extends React.Component {
               >
                 <ScrollView nestedScrollEnabled={true}>
                   {this.state.categoryArray.map((item, index) => {
-                    // console.log(item)
                     return (
                       <TouchableOpacity
                         key={index}
@@ -680,7 +695,7 @@ export default class AddProductComponent extends React.Component {
                 <TextInput
                   underlineColorAndroid="transparent"
                   placeholder="8 метров"
-                  keyboardType="number-pad"
+                  keyboardType="numeric"
                   style={{
                     borderWidth: 1,
                     borderColor: "#F5F5F5",
@@ -914,6 +929,7 @@ export default class AddProductComponent extends React.Component {
                       marginRight: 5,
                     }}
                     value={this.state.price}
+                    maxLength={9}
                     onChangeText={(text) => {
                       let without_dots = text.split(".").join("");
                       let with_dots = without_dots
@@ -944,7 +960,7 @@ export default class AddProductComponent extends React.Component {
             >
               {this.state.all_images_error
                 ? "Загрузите фотографию"
-                : "Фотографии продукта"}
+                : "Фотографии продукта*"}
             </Text>
 
             <TouchableOpacity
@@ -1034,6 +1050,13 @@ export default class AddProductComponent extends React.Component {
                 style={{ color: "red", textAlign: "center", marginTop: 10 }}
               >
                 Превышен лимит добавления товаров в данной категории
+              </Text>
+            )}
+            {this.state.max_image_error === true && (
+              <Text
+                style={{ color: "red", textAlign: "center", marginTop: 10 }}
+              >
+                Максимальное количество из. 10 шт
               </Text>
             )}
 

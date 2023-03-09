@@ -113,11 +113,6 @@ export default class RegistrationManufacturerComponent extends Component {
     };
   }
 
-  // validateEmail = (mask) => {
-  //   var re = /^ [0 - 9]{ 2}:[0-5][0-9]:[0-5][0-9]$"/;
-  //   return re.test(mask);
-  // };
-
   removeInputRow = () => {
     let { procentArray } = this.state;
 
@@ -211,6 +206,7 @@ export default class RegistrationManufacturerComponent extends Component {
 
     this.setState({
       procentArray: procentArray,
+      valid_error: false,
     });
   };
 
@@ -277,6 +273,7 @@ export default class RegistrationManufacturerComponent extends Component {
   };
 
   getCityApi = async () => {
+    this.setState({ sales_city_error: false });
     let requestOptions = {
       method: "GET",
       redirect: "follow",
@@ -313,7 +310,12 @@ export default class RegistrationManufacturerComponent extends Component {
       quality: 1,
     });
     if (!result.canceled) {
-      this.setState({ logo: result.assets[0].uri });
+      this.setState({
+        logo: result.assets[0].uri,
+        logo_error: false,
+      });
+    } else {
+      this.setState({ logo_error: true, logo: null });
     }
 
     this.form_data.append("logo", {
@@ -324,6 +326,7 @@ export default class RegistrationManufacturerComponent extends Component {
   };
 
   getCountry = async () => {
+    this.setState({ made_in_error: false });
     let requestOptions = {
       method: "GET",
       redirect: "follow",
@@ -405,7 +408,6 @@ export default class RegistrationManufacturerComponent extends Component {
       .then(async (res) => {
         res = res.data;
 
-        console.log(res);
         if (res.success === false && res.message == "Validation errors") {
           if (res.data.hasOwnProperty("company_name")) {
             this.setState({
@@ -563,18 +565,20 @@ export default class RegistrationManufacturerComponent extends Component {
           res.status === false &&
           res.message == "user@ chi ancel hamari verifykacia"
         ) {
+          console.log(res);
           this.props.navigation.navigate("ConfirmTelScreen", {
-            params: res.data.token,
+            params: res.token,
           });
           this.form_data = new FormData();
 
           return false;
         } else if (res.status === true) {
-          await this.clearAllStates();
-
+          console.log(res);
+          
           this.props.navigation.navigate("ConfirmTelScreen", {
-            params: res.data.token,
+            params: res.token,
           });
+          await this.clearAllStates();
 
           return false;
         }
@@ -679,6 +683,7 @@ export default class RegistrationManufacturerComponent extends Component {
       procentArrayToString: [],
 
       valid_error: false,
+      logo_error: false,
     });
 
     this.form_data = new FormData();
@@ -703,7 +708,7 @@ export default class RegistrationManufacturerComponent extends Component {
           <View
             style={{
               width: "100%",
-              height: 130,
+              height: 150,
             }}
           ></View>
 
@@ -712,7 +717,7 @@ export default class RegistrationManufacturerComponent extends Component {
             style={{
               width: "95%",
               height: 135,
-              resizeMode: "center",
+              resizeMode: "contain",
               position: "absolute",
               right: 0,
               top: 23,
@@ -742,7 +747,6 @@ export default class RegistrationManufacturerComponent extends Component {
                 position: "absolute",
                 color: "#2D9EFB",
                 fontSize: 36,
-                lineHeight: 54,
                 left: 19,
                 top: 58,
                 fontFamily: "Poppins_500Medium",
@@ -791,7 +795,10 @@ export default class RegistrationManufacturerComponent extends Component {
                 ]}
                 value={this.state.company_name}
                 onChangeText={(value) => {
-                  this.setState({ company_name: value });
+                  this.setState({
+                    company_name: value,
+                    company_name_error: false,
+                  });
                 }}
               />
             </View>
@@ -830,7 +837,10 @@ export default class RegistrationManufacturerComponent extends Component {
                 ]}
                 value={this.state.individual_number}
                 onChangeText={(value) => {
-                  this.setState({ individual_number: value });
+                  this.setState({
+                    individual_number: value,
+                    individual_number_error: false,
+                  });
                 }}
               />
             </View>
@@ -896,6 +906,8 @@ export default class RegistrationManufacturerComponent extends Component {
                   this.setState({
                     value_length: masked,
                     phone: masked,
+                    phone_error: false,
+                    phone_exist: false,
                   });
                 }}
               />
@@ -955,7 +967,10 @@ export default class RegistrationManufacturerComponent extends Component {
                 ]}
                 value={this.state.watsap_phone}
                 onChangeText={(value) => {
-                  this.setState({ watsap_phone: value });
+                  this.setState({
+                    watsap_phone: value,
+                    watsap_phone_error: false,
+                  });
                 }}
               />
             </View>
@@ -1189,13 +1204,14 @@ export default class RegistrationManufacturerComponent extends Component {
                     borderRadius: 5,
                     position: "relative",
                   },
-                  this.state.price_of_metr_error
+                  this.state.product_category_error
                     ? { borderColor: "red" }
                     : { borderColor: "#F5F5F5" },
                 ]}
                 onPress={() =>
                   this.setState({
                     sOpenCityDropDown: !this.state.sOpenCityDropDown,
+                    product_category_error: false,
                   })
                 }
               >
@@ -1509,7 +1525,10 @@ export default class RegistrationManufacturerComponent extends Component {
                 ]}
                 value={this.state.price_of_metr}
                 onChangeText={(value) =>
-                  this.setState({ price_of_metr: value })
+                  this.setState({
+                    price_of_metr: value,
+                    price_of_metr_error: false,
+                  })
                 }
               />
             </View>
@@ -1601,19 +1620,6 @@ export default class RegistrationManufacturerComponent extends Component {
 
                     this.setState({ telegram: `t.me/${new_text}` });
                   }
-
-                  // if(text.indexOf('t.me/') != -1)
-                  // {
-                  //   let new_text = text.replace('t.me/', '');
-
-                  //   this.setState({ telegram: `t.me/${new_text}` });
-
-                  // } else {
-
-                  //   console.log(text, 'text')
-                  //   let new_text = text.replace('t.me/', '');
-                  //   this.setState({ telegram: `t.me/${new_text}` });
-                  // }
                 }}
               />
             </View>
@@ -1653,7 +1659,7 @@ export default class RegistrationManufacturerComponent extends Component {
                 ]}
                 value={this.state.password}
                 onChangeText={(value) => {
-                  this.setState({ password: value });
+                  this.setState({ password: value, password_error: false });
                 }}
               />
             </View>
@@ -1694,7 +1700,10 @@ export default class RegistrationManufacturerComponent extends Component {
                 ]}
                 value={this.state.password_confirmation}
                 onChangeText={(value) => {
-                  this.setState({ password_confirmation: value });
+                  this.setState({
+                    password_confirmation: value,
+                    password_confirmation_error: false,
+                  });
                 }}
               />
             </View>
@@ -1974,7 +1983,7 @@ export default class RegistrationManufacturerComponent extends Component {
                       underlineColorAndroid="transparent"
                       placeholderTextColor={"#aaaaaa"}
                       placeholder={""}
-                      maxLength={10}
+                      maxLength={9}
                       value={item.to !== "datark" ? item.to : ""}
                       onChangeText={async (value) => {
                         await this.changeTo(value, index);
@@ -2009,7 +2018,7 @@ export default class RegistrationManufacturerComponent extends Component {
                         this.state.procentArray.length <= 1 ? "9.999.999" : ""
                       }
                       placeholderTextColor={"#aaaaaa"}
-                      maxLength={10}
+                      maxLength={9}
                       value={item.from !== "datark" ? item.from : ""}
                       onChangeText={async (value) => {
                         await this.changeFrom(value, index);
@@ -2089,13 +2098,18 @@ export default class RegistrationManufacturerComponent extends Component {
 
             <View>
               <Text
-                style={{
-                  color: "#5B5B5B",
-                  fontSize: 15,
-                  lineHeight: 18,
-                  marginTop: 27,
-                  fontFamily: "Poppins_500Medium",
-                }}
+                style={[
+                  {
+                    color: "#5B5B5B",
+                    fontSize: 15,
+                    lineHeight: 18,
+                    marginTop: 27,
+                    fontFamily: "Poppins_500Medium",
+                  },
+                  this.state.logo_error === true
+                    ? { color: "red" }
+                    : { color: "#5B5B5B" },
+                ]}
               >
                 Загрузите аватар/логотип*
               </Text>
@@ -2128,8 +2142,8 @@ export default class RegistrationManufacturerComponent extends Component {
                   Загрузить
                 </Text>
               </TouchableOpacity>
-              {this.state.logo == null && <></>}
-              {this.state.logo && (
+              {this.state.logo === null && <></>}
+              {this.state.logo !== null && this.state.logo_error === false && (
                 <Image
                   source={require("../../assets/image/changed.png")}
                   style={{ width: 32, height: 32 }}

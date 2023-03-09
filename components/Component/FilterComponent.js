@@ -1,6 +1,6 @@
 
 import React, { Component } from "react";
-import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, TextInput, ScrollView, StyleSheet, Pressable, Platform } from "react-native";
+import { SafeAreaView, View, Image, Text, Touchable, TouchableOpacity, ScrollView, StyleSheet, Pressable, Platform } from "react-native";
 import Svg, { Path, Rect } from "react-native-svg";
 import { Modal } from "react-native";
 import { APP_URL, APP_IMAGE_URL } from "@env"

@@ -23,7 +23,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import BlueButton from "../Component/Buttons/BlueButton";
 import { AuthContext } from "../AuthContext/context";
 import * as ImagePicker from "expo-image-picker";
-import MaskInput from "react-native-mask-input";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { APP_URL, APP_IMAGE_URL } from "@env";
 
@@ -86,6 +85,8 @@ export default class CustomerMyAccauntComponent extends React.Component {
       ],
 
       delate_category: false,
+
+      delate_accaunt: false,
     };
   }
   static contextType = AuthContext;
@@ -542,8 +543,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
     this.setState({ gorodArray: filterSort });
   };
 
-  // categoryyyyyyyyy starttttttttttttt
-
   categoryAdd = async (items, index) => {
     items.category_name = items.name;
     items.category_id = items.id;
@@ -567,7 +566,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
     let myHeaders = new Headers();
     let userToken = await AsyncStorage.getItem("userToken");
     let AuthStr = "Bearer " + userToken;
-    console.log(AuthStr);
     myHeaders.append("Authorization", AuthStr);
     await fetch(
       `${APP_URL}validationcategoryId/category_id=${items.category_id}`,
@@ -613,10 +611,10 @@ export default class CustomerMyAccauntComponent extends React.Component {
     let AuthStr = "Bearer " + userToken;
     myHeaders.append("Authorization", AuthStr);
 
-    var formdata = new FormData();
+    let formdata = new FormData();
     formdata.append("company_name", this.state.companyName);
 
-    var requestOptions = {
+    let requestOptions = {
       method: "POST",
       headers: myHeaders,
       body: formdata,
@@ -643,11 +641,10 @@ export default class CustomerMyAccauntComponent extends React.Component {
       saite = null;
     }
 
-    var formdata = new FormData();
+    let formdata = new FormData();
     formdata.append("saite", saite);
 
-    console.log(formdata, "saite");
-    var requestOptions = {
+    let requestOptions = {
       method: "POST",
       headers: myHeaders,
       body: formdata,
@@ -704,7 +701,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
     let AuthStr = "Bearer " + userToken;
     myHeaders.append("Authorization", AuthStr);
 
-    var formdata = new FormData();
+    let formdata = new FormData();
 
     formdata.append("logo", {
       uri: result.assets[0].uri,
@@ -712,7 +709,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
       name: "photo.jpg",
     });
 
-    var requestOptions = {
+    let requestOptions = {
       method: "POST",
       headers: myHeaders,
       body: formdata,
@@ -759,6 +756,29 @@ export default class CustomerMyAccauntComponent extends React.Component {
         }
       })
       .catch((error) => console.log("error", error));
+  };
+
+  delateAccaunt = async () => {
+    let myHeaders = new Headers();
+    let userToken = await AsyncStorage.getItem("userToken");
+    let AuthStr = "Bearer " + userToken;
+
+    myHeaders.append("Authorization", AuthStr);
+
+    let requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      redirect: "follow",
+    };
+
+    fetch(`${APP_URL}deleteMyAccount`, requestOptions)
+      .then((response) => response.json())
+      .then(async (result) => {
+        if (result.status === true && result.message === "Account Deleted") {
+          await this.logouth();
+          await this.setState({ delate_accaunt: false });
+        }
+      });
   };
 
   render() {
@@ -1795,7 +1815,6 @@ export default class CustomerMyAccauntComponent extends React.Component {
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
             {this.state.authUserState.map((item, index) => {
-              console.log(item);
               return (
                 <View key={index} style={{ flexDirection: "row" }}>
                   <Image
@@ -2476,6 +2495,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                               underlineColorAndroid="transparent"
                               placeholderTextColor={"#aaaaaa"}
                               placeholder={""}
+                              maxLength={9}
                               value={
                                 item.start_price !== "datark"
                                   ? item.start_price
@@ -2509,6 +2529,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                                   ? false
                                   : true
                               }
+                              maxLength={9}
                               keyboardType={"number-pad"}
                               style={styles.procentInput}
                               underlineColorAndroid="transparent"
@@ -2637,7 +2658,7 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 justifyContent: "center",
                 alignItems: "center",
                 alignSelf: "center",
-                marginVertical: 40,
+                marginTop: 40,
               }}
             >
               <Text
@@ -2648,6 +2669,123 @@ export default class CustomerMyAccauntComponent extends React.Component {
                 }}
               >
                 Выйти
+              </Text>
+            </TouchableOpacity>
+
+            <Modal
+              visible={this.state.delate_accaunt}
+              transparent
+              animationType="slide"
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <View
+                  style={{
+                    width: "80%",
+                    borderRadius: 20,
+                    backgroundColor: "white",
+                    shadowOffset: { height: 10, width: 10 },
+                    elevation: 10,
+                    shadowColor: "black",
+                    shadowOpacity: 0.5,
+                    position: "relative",
+                    padding: 20,
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: "Poppins_500Medium",
+                      textAlign: "center",
+                      marginVertical: 20,
+                    }}
+                  >
+                    Вы уверены, что хотите удалить свой акаунт?{"\n"} Все данные
+                    будут утеряны.
+                  </Text>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-around",
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{
+                        paddingVertical: 10,
+                        width: "40%",
+                        alignItems: "center",
+                        backgroundColor: "#52A8EF",
+                        borderRadius: 10,
+                      }}
+                      onPress={async () => {
+                        await this.delateAccaunt();
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          fontFamily: "Poppins_400Regular",
+                        }}
+                      >
+                        Да, уверен.
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={{
+                        paddingVertical: 10,
+                        width: "40%",
+                        alignItems: "center",
+                        backgroundColor: "#52A8EF",
+                        borderRadius: 10,
+                      }}
+                      onPress={() => {
+                        this.setState({ delate_accaunt: false });
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "white",
+                          fontFamily: "Poppins_400Regular",
+                        }}
+                      >
+                        Отмена.
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
+
+            <TouchableOpacity
+              onPress={() => {
+                this.setState({ delate_accaunt: true });
+              }}
+              style={{
+                width: 165,
+                height: 38,
+                backgroundColor: "#B5D8FE",
+                borderRadius: 15,
+                justifyContent: "center",
+                alignItems: "center",
+                alignSelf: "center",
+                marginVertical: 20,
+              }}
+            >
+              <Text
+                style={{
+                  color: "#fff",
+                  fontSize: 18,
+                  fontFamily: "Poppins_500Medium",
+                }}
+              >
+                Удалить
               </Text>
             </TouchableOpacity>
           </ScrollView>

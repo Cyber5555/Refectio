@@ -2,7 +2,7 @@
   "expo": {
     "name": "Refectio",
     "slug": "Refectio",
-    "version": "5.0.0",
+    "version": "9.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -20,7 +20,7 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "buildNumber": "5.0.0",
+      "buildNumber": "9.0.0",
       "bundleIdentifier": "com.JustCode.Refectio"
     },
     "android": {
@@ -29,7 +29,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.JustCode.Refectio",
-      "versionCode": 5,
+      "versionCode": 9,
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ]

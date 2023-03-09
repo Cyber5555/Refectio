@@ -50,7 +50,7 @@ export default class ConfirmTelScreenComponent extends Component {
     let form = new FormData()
     form.append( "phone_veryfi_code", phone_veryfi_code)
 
-    console.log(phone_veryfi_code);
+  
 
     let request = {
 
@@ -160,7 +160,6 @@ export default class ConfirmTelScreenComponent extends Component {
 
     this.interval = setInterval(() => {
 
-      // console.log(this.state.timerSecond)
       if (this.state.timerSecond == 0) {
 
         clearInterval(this.interval);
@@ -187,9 +186,8 @@ export default class ConfirmTelScreenComponent extends Component {
   updateCodeSend = async () => {
     if (this.state.timerBool == true) {
       let token = this.props.token
-      // console.log(token);
       let AuthStr = "Bearer " + token;
-
+console.log(token);
       let requestOptions = {
         url: `${APP_URL}sendCallUser`,
         method: 'POST',
@@ -200,7 +198,6 @@ export default class ConfirmTelScreenComponent extends Component {
         .then(result => {
 
           result = result.data
-          console.log(result);
           if (result.status) {
 
             this.setState({
@@ -212,7 +209,6 @@ export default class ConfirmTelScreenComponent extends Component {
 
           }
 
-          // console.log(result)
         })
     }
   }
@@ -225,6 +221,7 @@ export default class ConfirmTelScreenComponent extends Component {
     clearInterval(this.interval);
 
     // this.callToPhone()
+    console.log(this.props);
 
     this.focusListener = navigation.addListener("focus", () => {
 
@@ -265,9 +262,8 @@ export default class ConfirmTelScreenComponent extends Component {
 
   callToPhone = async () => {
     let token = this.props.token
-    // console.log(token);
     let AuthStr = "Bearer " + token;
-
+console.log(token);
     let requestOptions = {
       method: 'POST',
       url: `${APP_URL}sendCallUser`,
@@ -287,9 +283,7 @@ export default class ConfirmTelScreenComponent extends Component {
   }
 
 
-  goToDesignerPage = async () => {
-
-  }
+  
   render() {
     const { pin1, pin2, pin3, pin4, } = this.state
     return (
