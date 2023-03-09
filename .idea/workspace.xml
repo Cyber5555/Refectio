@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="3a9d4ae7-5ffe-4c23-97d4-7a6d2a41c3e4" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Auth/AuthScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Auth/AuthScreen.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Auth/RegistrationManufacturer.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Auth/RegistrationManufacturer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Customer/CustomerMyAccaunt.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Customer/CustomerMyAccaunt.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Ghost/GhostNav.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Ghost/GhostNav.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eas.json" beforeDir="false" afterPath="$PROJECT_DIR$/eas.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2KXxsHjc5TCT4tbGsWXIgWZwfv6" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3a9d4ae7-5ffe-4c23-97d4-7a6d2a41c3e4" name="Default Changelist" comment="" />
+      <created>1674134934096</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1674134934096</updated>
+      <workItem from="1674134942467" duration="9176000" />
+      <workItem from="1675688267407" duration="5755000" />
+      <workItem from="1675795310524" duration="595000" />
+      <workItem from="1675839189086" duration="594000" />
+      <workItem from="1675960039582" duration="605000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="549" y="163" key="FileChooserDialogImpl" timestamp="1674138275628">
+      <screen x="0" y="0" width="1536" height="816" />
+    </state>
+    <state x="549" y="163" key="FileChooserDialogImpl/0.0.1536.816@0.0.1536.816" timestamp="1674138275628" />
+  </component>
+</project>
