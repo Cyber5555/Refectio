@@ -1,35 +1,32 @@
 {
   "expo": {
-    "name": "Refectio",
-    "slug": "refectio",
-    "version": "4.0.0",
+    "name": "Refection",
+    "slug": "Refection",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
     "splash": {
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.JustCode.Refectio",
-      "buildNumber": "4.0.0"
+      "supportsTablet": false,
+      "buildNumber": "1.0.0",
+      "bundleIdentifier": "com.JustCode.Refection"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#ffffff"
       },
-      "package": "com.a200796a.Refectio",
-      "versionCode": 4,
+      "package": "com.JustCode.Refection",
+      "versionCode": 1,
       "permissions": [
-        "android.permission.CAMERA",
-        "android.permission.ACCESS_FINE_LOCATION",
         "android.permission.RECORD_AUDIO"
       ]
     },
@@ -42,13 +39,16 @@
         {
           "photosPermission": "The app accesses your photos to let you share them with your friends."
         }
+      ],
+      [
+        "expo-apple-authentication"
       ]
     ],
-    "description": "",
     "extra": {
       "eas": {
-        "projectId": "7111f220-8cca-4662-a2aa-7efbdb6d0a6a"
+        "projectId": "2dd5dcd9-1b64-49b8-b777-8c6a9ebc4076"
       }
-    }
+    },
+    "owner": "a200796a"
   }
 }

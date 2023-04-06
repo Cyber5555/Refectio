@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { SafeAreaView, View, Image, TouchableOpacity } from "react-native";
 import LogoComponent from "../../assets/image/Logo";
 import BlueButton from "../Component/Buttons/BlueButton";
-
+import ArrowGrayComponent from "../../assets/image/ArrowGray";
 export default class AuthScreenComponent extends Component {
   constructor(props) {
     super(props)
@@ -26,12 +26,28 @@ export default class AuthScreenComponent extends Component {
       }}>
 
 
+
+
         <View
           style={{
-            marginTop: 20
+            marginTop: 20,
+            width: '100%',
+            alignItems: 'center',
+            position: 'relative',
           }}>
           <LogoComponent />
+
+          <TouchableOpacity
+            onPress={() => { this.props.navigation.navigate('GhostPage') }}
+            style={{
+              position: 'absolute',
+              left: 15,
+            }}>
+            <ArrowGrayComponent />
+          </TouchableOpacity>
+
         </View>
+
 
         <Image
           source={require('../../assets/image/Logosss.png')}
