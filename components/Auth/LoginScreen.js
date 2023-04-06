@@ -81,18 +81,18 @@ export default class LoginScreenComponent extends Component {
     });
   };
 
-  componentDidMount() {
-    // const { navigation } = this.props;
-    // this.focusListener = navigation.addListener("focus", () => {
-    this.checkAvailable();
-    // });
-  }
+  // componentDidMount() {
+  //   // const { navigation } = this.props;
+  //   // this.focusListener = navigation.addListener("focus", () => {
+  //   this.checkAvailable();
+  //   // });
+  // }
 
-  checkAvailable = async () => {
-    const isAvailable = await AppleAuthentication.isAvailableAsync();
-    await this.setState({ appleAuthAvailable: isAvailable });
-    console.log(isAvailable, "isAvailable");
-  };
+  // checkAvailable = async () => {
+  //   const isAvailable = await AppleAuthentication.isAvailableAsync();
+  //   await this.setState({ appleAuthAvailable: isAvailable });
+  //   console.log(isAvailable, "isAvailable");
+  // };
 
   register = async () => {
     try {
@@ -127,43 +127,43 @@ export default class LoginScreenComponent extends Component {
     }
   };
 
-  loginUserFromApple = async () => {
-    fetch(`${APP_URL}loginuserFromApple`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: this.state.login,
-        apple_id: this.state.apple_id,
-      }),
-    })
-      .then((response) => response.json())
-      .then((res) => {
-        let userToken = res.message.token;
-        if (res.status == false) {
-          if (res.message.message == "user does not exist") {
-            this.setState({
-              no_user: true,
-            });
-          } else {
-            this.setState({
-              no_user: false,
-            });
-          }
-        } else {
-          if (res.message.user.active == "2") {
-            let foundUser = {
-              userToken: userToken,
-              userRole: res.message.role_id,
-            };
-            this.context.signIn(foundUser);
-          } else if (res.message.user.active == "1") {
-            this.setState({ moderacia: true });
-          }
-        }
-      });
-  };
+  // loginUserFromApple = async () => {
+  //   fetch(`${APP_URL}loginuserFromApple`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       email: this.state.login,
+  //       apple_id: this.state.apple_id,
+  //     }),
+  //   })
+  //     .then((response) => response.json())
+  //     .then((res) => {
+  //       let userToken = res.message.token;
+  //       if (res.status == false) {
+  //         if (res.message.message == "user does not exist") {
+  //           this.setState({
+  //             no_user: true,
+  //           });
+  //         } else {
+  //           this.setState({
+  //             no_user: false,
+  //           });
+  //         }
+  //       } else {
+  //         if (res.message.user.active == "2") {
+  //           let foundUser = {
+  //             userToken: userToken,
+  //             userRole: res.message.role_id,
+  //           };
+  //           this.context.signIn(foundUser);
+  //         } else if (res.message.user.active == "1") {
+  //           this.setState({ moderacia: true });
+  //         }
+  //       }
+  //     });
+  // };
 
   sendLoginData = async () => {
     fetch(`${APP_URL}loginuser`, {
@@ -237,7 +237,7 @@ export default class LoginScreenComponent extends Component {
             alignItems: "center",
           }}
         >
-          {Platform.OS === "ios" && (
+          {/* {Platform.OS === "ios" && (
             <Modal visible={this.state.designer_or_manufacturer}>
               <View
                 style={{
@@ -350,7 +350,7 @@ export default class LoginScreenComponent extends Component {
                 </View>
               </View>
             </Modal>
-          )}
+          )} */}
           <Modal visible={this.state.moderacia}>
             <ImageBackground
               style={{
@@ -423,7 +423,8 @@ export default class LoginScreenComponent extends Component {
           </Modal>
 
           <TouchableOpacity
-            onPress={() => this.setState({ designer_or_manufacturer: true })}
+            // onPress={() => this.setState({ designer_or_manufacturer: true })}
+            onPress={() => this.props.navigation.goBack()}
             style={{
               position: "absolute",
               left: 10,
@@ -454,7 +455,7 @@ export default class LoginScreenComponent extends Component {
           />
 
           <Text style={styles.vxod}>Вход</Text>
-
+{/* 
           {Platform.OS === "ios" && this.state.i_am_designer === true ? (
             <View style={{ width: "85%" }}>
               <Text
@@ -507,7 +508,7 @@ export default class LoginScreenComponent extends Component {
                 />
               )}
             </View>
-          ) : (
+          ) : ( */}
             <View style={{ width: "85%", marginBottom: 15 }}>
               <Text
                 style={[
@@ -567,7 +568,7 @@ export default class LoginScreenComponent extends Component {
                 ]}
               />
             </View>
-          )}
+          {/* )} */}
           {this.state.i_am_designer !== true && (
             <View style={{ position: "relative", width: "85%" }}>
               <Text
@@ -617,7 +618,7 @@ export default class LoginScreenComponent extends Component {
             </View>
           )}
 
-          {this.state.i_am_designer === true ? (
+          {/* {this.state.i_am_designer === true ? (
             <TouchableOpacity
               style={{
                 justifyContent: "center",
@@ -631,7 +632,7 @@ export default class LoginScreenComponent extends Component {
             >
               <BlueButton name="Войти" />
             </TouchableOpacity>
-          ) : (
+          ) : ( */}
             <TouchableOpacity
               style={{
                 justifyContent: "center",
@@ -666,8 +667,8 @@ export default class LoginScreenComponent extends Component {
             >
               <BlueButton name="Войти" />
             </TouchableOpacity>
-          )}
-          {!this.state.i_am_designer && (
+          {/* )} */}
+          {/* {!this.state.i_am_designer && ( */}
             <View
               style={{
                 justifyContent: "center",
@@ -693,7 +694,7 @@ export default class LoginScreenComponent extends Component {
                 </Text>
               </TouchableOpacity>
             </View>
-          )}
+          {/* )} */}
         </View>
       </SafeAreaView>
     );

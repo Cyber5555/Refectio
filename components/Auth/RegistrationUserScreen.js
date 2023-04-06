@@ -121,94 +121,94 @@ export default class RegistrationUserScreenComponent extends Component {
     });
   };
 
-  DizainerRegisterForApple = async () => {
-    const { name, surname, apple_id, i_agree, appleRegisterEmail, role_id } =
-      this.state;
+  // DizainerRegisterForApple = async () => {
+  //   const { name, surname, apple_id, i_agree, appleRegisterEmail, role_id } =
+  //     this.state;
 
-    this.form_data.append("apple_id", apple_id);
-    this.form_data.append("email", appleRegisterEmail);
-    this.form_data.append("name", name);
-    this.form_data.append("surname", surname);
-    this.form_data.append("role_id", role_id);
-    this.form_data.append("i_agree", i_agree);
+  //   this.form_data.append("apple_id", apple_id);
+  //   this.form_data.append("email", appleRegisterEmail);
+  //   this.form_data.append("name", name);
+  //   this.form_data.append("surname", surname);
+  //   this.form_data.append("role_id", role_id);
+  //   this.form_data.append("i_agree", i_agree);
 
-    let requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "multipart/form-data" },
-      body: this.form_data,
-      redirect: "follow",
-    };
+  //   let requestOptions = {
+  //     method: "POST",
+  //     headers: { "Content-Type": "multipart/form-data" },
+  //     body: this.form_data,
+  //     redirect: "follow",
+  //   };
 
-    await fetch(`${APP_URL}DizainerRegisterForApple`, requestOptions)
-      .then((response) => response.json())
-      .then((res) => {
-        // if (res.success === false) {
-        if (res.hasOwnProperty("name")) {
-          this.setState({
-            name_error: true,
-          });
-        } else {
-          this.setState({
-            name_error: false,
-          });
-        }
+  //   await fetch(`${APP_URL}DizainerRegisterForApple`, requestOptions)
+  //     .then((response) => response.json())
+  //     .then((res) => {
+  //       // if (res.success === false) {
+  //       if (res.hasOwnProperty("name")) {
+  //         this.setState({
+  //           name_error: true,
+  //         });
+  //       } else {
+  //         this.setState({
+  //           name_error: false,
+  //         });
+  //       }
 
-        if (res.hasOwnProperty("surname")) {
-          this.setState({
-            surname_error: true,
-          });
-        } else {
-          this.setState({
-            surname_error: false,
-          });
-        }
+  //       if (res.hasOwnProperty("surname")) {
+  //         this.setState({
+  //           surname_error: true,
+  //         });
+  //       } else {
+  //         this.setState({
+  //           surname_error: false,
+  //         });
+  //       }
 
-        if (res.hasOwnProperty("apple_id")) {
-          this.setState({
-            appleRegisterEmail_error: true,
-          });
-        } else {
-          this.setState({
-            appleRegisterEmail_error: false,
-          });
-        }
-        if (res.hasOwnProperty("email")) {
-          this.setState({
-            appleRegisterEmail_error: true,
-          });
-        } else {
-          this.setState({
-            appleRegisterEmail_error: false,
-          });
-        }
-        if (res.hasOwnProperty("diplom_photo")) {
-          this.setState({
-            diplom_photo_error: true,
-          });
-        } else {
-          this.setState({
-            diplom_photo_error: false,
-          });
-        }
+  //       if (res.hasOwnProperty("apple_id")) {
+  //         this.setState({
+  //           appleRegisterEmail_error: true,
+  //         });
+  //       } else {
+  //         this.setState({
+  //           appleRegisterEmail_error: false,
+  //         });
+  //       }
+  //       if (res.hasOwnProperty("email")) {
+  //         this.setState({
+  //           appleRegisterEmail_error: true,
+  //         });
+  //       } else {
+  //         this.setState({
+  //           appleRegisterEmail_error: false,
+  //         });
+  //       }
+  //       if (res.hasOwnProperty("diplom_photo")) {
+  //         this.setState({
+  //           diplom_photo_error: true,
+  //         });
+  //       } else {
+  //         this.setState({
+  //           diplom_photo_error: false,
+  //         });
+  //       }
 
-        // return false;
-        // }
-        // else if (res.status === false) {
-        if (res.message == "i_agree required true") {
-          this.setState({
-            i_agree_error: true,
-          });
-        } else {
-          this.setState({
-            i_agree_error: true,
-          });
-        }
-        // }
-        if (res.status === true) {
-          this.props.navigation.navigate("LoginScreen");
-        }
-      });
-  };
+  //       // return false;
+  //       // }
+  //       // else if (res.status === false) {
+  //       if (res.message == "i_agree required true") {
+  //         this.setState({
+  //           i_agree_error: true,
+  //         });
+  //       } else {
+  //         this.setState({
+  //           i_agree_error: true,
+  //         });
+  //       }
+  //       // }
+  //       if (res.status === true) {
+  //         this.props.navigation.navigate("LoginScreen");
+  //       }
+  //     });
+  // };
 
   DizainerRegisterApi = async () => {
     const {
@@ -394,53 +394,53 @@ export default class RegistrationUserScreenComponent extends Component {
     });
   };
 
-  componentDidMount() {
-    // const { navigation } = this.props;
-    // this.focusListener = navigation.addListener("focus", () => {
-    this.checkAvailable();
-    // });
-  }
+  // componentDidMount() {
+  //   // const { navigation } = this.props;
+  //   // this.focusListener = navigation.addListener("focus", () => {
+  //   this.checkAvailable();
+  //   // });
+  // }
 
   // componentWillUnmount() {
   //   if (this.focusListener) {
   //     this.focusListener();
   //   }
   // }
-  checkAvailable = async () => {
-    const isAvailable = await AppleAuthentication.isAvailableAsync();
-    await this.setState({ appleAuthAvailable: isAvailable });
-    console.log(isAvailable, "isAvailable");
-  };
+  // checkAvailable = async () => {
+  //   const isAvailable = await AppleAuthentication.isAvailableAsync();
+  //   await this.setState({ appleAuthAvailable: isAvailable });
+  //   console.log(isAvailable, "isAvailable");
+  // };
 
-  register = async () => {
-    try {
-      const credential = await AppleAuthentication.signInAsync({
-        requestedScopes: [
-          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-          AppleAuthentication.AppleAuthenticationScope.EMAIL,
-        ],
-      });
-      // console.log(credential);
-      this.setState({ authTokenApple: credential });
+  // register = async () => {
+  //   try {
+  //     const credential = await AppleAuthentication.signInAsync({
+  //       requestedScopes: [
+  //         AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+  //         AppleAuthentication.AppleAuthenticationScope.EMAIL,
+  //       ],
+  //     });
+  //     // console.log(credential);
+  //     this.setState({ authTokenApple: credential });
 
-      const decoded = jwtDecode(credential.identityToken);
-      const current = Date.now() / 1000;
-      this.setState({
-        appleRegisterEmail: decoded.email,
-        apple_id: decoded.sub,
-        appleRegisterEmail_error: false,
-      });
+  //     const decoded = jwtDecode(credential.identityToken);
+  //     const current = Date.now() / 1000;
+  //     this.setState({
+  //       appleRegisterEmail: decoded.email,
+  //       apple_id: decoded.sub,
+  //       appleRegisterEmail_error: false,
+  //     });
 
-      console.log(decoded);
-    } catch (e) {
-      // if (e.code === "ERR_REQUEST_CANCELED") {
-      //   // handle that the user canceled the sign-in flow
-      // } else {
-      //   // handle other errors
-      // }
-      console.log(e, "error");
-    }
-  };
+  //     console.log(decoded);
+  //   } catch (e) {
+  //     // if (e.code === "ERR_REQUEST_CANCELED") {
+  //     //   // handle that the user canceled the sign-in flow
+  //     // } else {
+  //     //   // handle other errors
+  //     // }
+  //     console.log(e, "error");
+  //   }
+  // };
 
   render() {
     return (
@@ -591,7 +591,7 @@ export default class RegistrationUserScreenComponent extends Component {
                 }
               />
             </View>
-            {Platform.OS === "ios" ? (
+            {/* {Platform.OS === "ios" ? (
               <View>
                 <Text
                   style={[
@@ -652,7 +652,7 @@ export default class RegistrationUserScreenComponent extends Component {
                     />
                   )}
               </View>
-            ) : (
+            ) : ( */}
               <View>
                 <Text
                   style={[
@@ -721,8 +721,8 @@ export default class RegistrationUserScreenComponent extends Component {
                   }}
                 />
               </View>
-            )}
-            {Platform.OS !== "ios" && (
+            {/* )} */}
+            {/* {Platform.OS !== "ios" && ( */}
               <View>
                 <Text
                   style={[
@@ -765,8 +765,8 @@ export default class RegistrationUserScreenComponent extends Component {
                   }}
                 />
               </View>
-            )}
-            {Platform.OS !== "ios" && (
+            {/* )} */}
+            {/* {Platform.OS !== "ios" && ( */}
               <View>
                 <Text
                   style={[
@@ -812,7 +812,7 @@ export default class RegistrationUserScreenComponent extends Component {
                   }}
                 />
               </View>
-            )}
+            {/* )} */}
             <View>
               <Text
                 style={[
@@ -1007,7 +1007,7 @@ export default class RegistrationUserScreenComponent extends Component {
                 flexDirection: "row",
               }}
             >
-              {Platform.OS === "ios" ? (
+              {/* {Platform.OS === "ios" ? (
                 <TouchableOpacity
                   style={{
                     marginVertical: 25,
@@ -1018,7 +1018,7 @@ export default class RegistrationUserScreenComponent extends Component {
                 >
                   <BlueButton name="Зарегистрироваться" />
                 </TouchableOpacity>
-              ) : (
+              ) : ( */}
                 <TouchableOpacity
                   style={{
                     marginVertical: 25,
@@ -1036,7 +1036,7 @@ export default class RegistrationUserScreenComponent extends Component {
                 >
                   <BlueButton name="Зарегистрироваться" />
                 </TouchableOpacity>
-              )}
+              {/* )} */}
             </View>
           </View>
         </ScrollView>
